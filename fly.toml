@@ -1,0 +1,37 @@
+# fly.toml app configuration file generated for tradewinds on 2025-05-24T02:57:01+01:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'tradewinds'
+primary_region = 'lhr'
+kill_signal = 'SIGTERM'
+
+[build]
+
+[deploy]
+release_command = '/app/bin/migrate'
+
+[env]
+PHX_HOST = 'tradewinds.fly.dev'
+PORT = '8080'
+DNS_CLUSTER_QUERY = "tradewinds.internal"
+RELEASE_COOKIE = "x58UfWPu8Ek021taA5TVgmJXhgwzmO_U4HBPlmp0Cl1pCEdldHhuKw=="
+
+[http_service]
+internal_port = 8080
+force_https = true
+auto_stop_machines = 'stop'
+auto_start_machines = true
+min_machines_running = 0
+processes = ['app']
+
+[http_service.concurrency]
+type = 'connections'
+hard_limit = 1000
+soft_limit = 1000
+
+[[vm]]
+memory = '512mb'
+cpu_kind = 'shared'
+cpus = 1
