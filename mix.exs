@@ -45,7 +45,9 @@ defmodule Tradewinds.MixProject do
       {:gettext, "~> 0.26"},
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
-      {:bandit, "~> 1.5"}
+      {:bandit, "~> 1.5"},
+      {:argon2_elixir, "~> 4.1"},
+      {:params, "~> 2.0"}
     ]
   end
 
@@ -60,7 +62,12 @@ defmodule Tradewinds.MixProject do
       setup: ["deps.get", "ecto.setup"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      "ecto.populate": ["ecto.drop", "ecto.create", "ecto.migrate", "run priv/repo/seeds/europe.exs"],
+      "ecto.populate": [
+        "ecto.drop",
+        "ecto.create",
+        "ecto.migrate",
+        "run priv/repo/seeds/europe.exs"
+      ],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"]
     ]
   end
