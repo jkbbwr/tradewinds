@@ -7,6 +7,8 @@ defmodule TradewindsWeb.Router do
 
   scope "/api", TradewindsWeb do
     pipe_through :api
+
+    post "/register", PlayerController, :register
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

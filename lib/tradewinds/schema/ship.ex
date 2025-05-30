@@ -21,7 +21,16 @@ defmodule Tradewinds.Schema.Ship do
   """
   def changeset(ship, attrs) do
     ship
-    |> cast(attrs, [:state, :type, :capacity, :speed, :company_id, :port_id, :route_id, :arriving_at])
+    |> cast(attrs, [
+      :state,
+      :type,
+      :capacity,
+      :speed,
+      :company_id,
+      :port_id,
+      :route_id,
+      :arriving_at
+    ])
     |> validate_required([:state, :type, :capacity, :speed, :company_id])
   end
 end

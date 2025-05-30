@@ -3,7 +3,7 @@ defmodule Tradewinds.Repo.Migrations.Initial do
 
   def change do
     create table(:season) do
-      add :password, :text, null: false
+      add :secret, :text, null: false
       add :start_date, :utc_datetime, null: false
       timestamps()
     end
@@ -12,6 +12,7 @@ defmodule Tradewinds.Repo.Migrations.Initial do
       add :name, :text, null: false
       add :email, :text, null: false
       add :password_hash, :string, null: false
+      add :enabled, :string, null: false, default: false
 
       timestamps()
     end
