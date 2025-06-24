@@ -9,6 +9,7 @@ defmodule TradewindsWeb.Router do
     pipe_through :api
 
     post "/register", PlayerController, :register
+    post "/companies", CompanyController, :create
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
