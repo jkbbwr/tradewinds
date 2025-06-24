@@ -12,7 +12,7 @@ defmodule Tradewinds.Repo.Migrations.Initial do
       add :name, :text, null: false
       add :email, :text, null: false
       add :password_hash, :string, null: false
-      add :enabled, :string, null: false, default: false
+      add :enabled, :boolean, null: false, default: false
 
       timestamps()
     end

@@ -24,8 +24,8 @@ defmodule TradewindsWeb.PlayerController do
 
   def login(conn, params) do
     with {:ok, attrs} <- validate(:login, params),
-         {:ok, player} <- Player.login(attrs.email, attrs.password) do
-      render(conn, :login, player: player)
+         {:ok, token} <- Player.login(attrs.email, attrs.password) do
+      render(conn, :login, token: token)
     end
   end
 end

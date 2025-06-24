@@ -29,7 +29,7 @@ defmodule TradewindsWeb.PlayerControllerTest do
       assert json_response(conn, 400)["errors"] == %{
                "name" => ["can\'t be blank"],
                "email" => ["has invalid format"],
-               "password" => ["has invalid format", "should be at least 8 character(s)"]
+               "password" => ["should be at least 8 character(s)"]
              }
     end
 

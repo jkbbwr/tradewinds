@@ -19,4 +19,8 @@ defmodule Tradewinds.Repo.PlayerRepo do
     |> put_password_hash()
     |> Repo.insert()
   end
+
+  def find_by_email(email) do
+    Repo.fetch_by(Player, email: email)
+  end
 end

@@ -8,14 +8,4 @@ defmodule Tradewinds.Schema.Officer do
 
     timestamps()
   end
-
-  @doc """
-  Builds a changeset for the officer schema.
-  """
-  def changeset(officer, attrs) do
-    officer
-    |> cast(attrs, [:company_id, :player_id])
-    |> validate_required([:company_id, :player_id])
-    |> unique_constraint([:company_id, :player_id])
-  end
 end
