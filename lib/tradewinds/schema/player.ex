@@ -10,4 +10,19 @@ defmodule Tradewinds.Schema.Player do
     many_to_many :companies, Tradewinds.Schema.Company, join_through: Tradewinds.Schema.Officer
     timestamps()
   end
+
+  def registration_changeset(player, attrs) do
+    player
+    |> cast(attrs, [:name, :email, :password])
+    |> validate_required([:name, :email, :password])
+    |> validate_length(:password, min: 8)
+    |> unique_constraint(:email)
+    |> prepare_changes(&hash_password/1)
+  end
+
+  defp hash_password(%{changes: %{password: password}} = changeset) do
+    Ecto.Changeset.change(changeset, password_hash: Argon2.hash_pwd_salt(password))
+  end
+
+  defp hash_password(changeset), do: changeset
 end

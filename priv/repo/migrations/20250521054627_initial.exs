@@ -2,11 +2,7 @@ defmodule Tradewinds.Repo.Migrations.Initial do
   use Ecto.Migration
 
   def change do
-    create table(:season) do
-      add :secret, :text, null: false
-      add :start_date, :utc_datetime, null: false
-      timestamps()
-    end
+    
 
     create table(:player) do
       add :name, :text, null: false
