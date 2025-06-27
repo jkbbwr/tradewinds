@@ -81,7 +81,7 @@ defmodule Tradewinds.Repo.Migrations.Initial do
       add :type, :text, null: false
       add :capacity, :integer, null: false
       add :speed, :integer, null: false
-      add :company_id, references(:company), null: false
+      add :company_id, references(:company)
       add :port_id, references(:port)
       add :route_id, references(:route)
       add :arriving_at, :utc_datetime

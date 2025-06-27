@@ -31,4 +31,10 @@ defmodule Tradewinds.Companies do
     Repo.get_by(Office, company_id: company.id, port_id: port.id)
     |> Repo.delete()
   end
+
+  def debit_treasury(company, amount) do
+    company
+    |> Ecto.Changeset.change(%{treasury: company.treasury - amount})
+    |> Repo.update()
+  end
 end

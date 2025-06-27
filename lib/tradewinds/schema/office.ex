@@ -23,7 +23,7 @@ defmodule Tradewinds.Schema.Office do
     company_id = get_field(changeset, :company_id)
 
     office_count =
-      Repo.aggregate(from(o in __MODULE__, where: o.company_id == ^company_id), :count, :id)
+      Repo.one(from o in __MODULE__, where: o.company_id == ^company_id, select: count(o.id))
 
     if office_count >= 3 do
       add_error(changeset, :company_id, "can't have more than 3 offices")

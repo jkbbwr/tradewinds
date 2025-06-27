@@ -34,10 +34,35 @@ defmodule Tradewinds.Factory do
     }
   end
 
+  def shipyard_factory do
+    %Tradewinds.Schema.Shipyard{
+      port: build(:port)
+    }
+  end
+
+  def ship_factory do
+    %Tradewinds.Schema.Ship{
+      name: "The Black Pearl",
+      state: :in_port,
+      type: :cutter,
+      capacity: 100,
+      speed: 10,
+      port: build(:port)
+    }
+  end
+
   def office_factory do
     %Tradewinds.Schema.Office{
       company: build(:company),
       port: build(:port)
+    }
+  end
+
+  def shipyard_inventory_factory do
+    %Tradewinds.Schema.ShipyardInventory{
+      shipyard: build(:shipyard),
+      ship: build(:ship),
+      cost: 10_000
     }
   end
 end
