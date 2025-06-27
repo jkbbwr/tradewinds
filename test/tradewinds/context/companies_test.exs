@@ -4,6 +4,7 @@ defmodule Tradewinds.CompaniesTest do
   import Tradewinds.Factory
 
   alias Tradewinds.Companies
+  alias Tradewinds.Schema.Company
   alias Tradewinds.Schema.Office
 
   describe "create_company/5" do
@@ -64,12 +65,14 @@ defmodule Tradewinds.CompaniesTest do
 
       {:ok, _office} = Companies.close_office(company, port)
 
-      assert Repo.get_by(Office, company_id: company.id, port_id: port.id) == nil
+      assert Repo.fetch_by(Office, company_id: company.id, port_id: port.id) ==
+               {:error, :not_found}
     end
 
     test "returns an error when opening a fourth office" do
       company = insert(:company)
       ports = insert_list(3, :port)
+
       for port <- ports do
         {:ok, _} = Companies.open_office(company, port)
       end
@@ -112,6 +115,59 @@ defmodule Tradewinds.CompaniesTest do
       company = insert(:company)
 
       assert Companies.check_presence_in_port(company, port.id) == {:error, :no_presence_in_port}
+    end
+  end
+
+  describe "warehouses" do
+    test "adjust_warehouse_capacity/3 creates a warehouse if one does not exist" do
+      port = insert(:port, warehouse_cost: 10)
+      company = insert(:company, treasury: 1000, home_port_id: port.id)
+
+      {:ok, warehouse} = Companies.adjust_warehouse_capacity(company, port, 50)
+
+      assert warehouse.capacity == 50
+      updated_company = Repo.get(Company, company.id)
+      assert updated_company.treasury == 500
+    end
+
+    test "adjust_warehouse_capacity/3 increases capacity of an existing warehouse" do
+      port = insert(:port, warehouse_cost: 10)
+      company = insert(:company, treasury: 1000, home_port_id: port.id)
+      insert(:warehouse, company: company, port: port, capacity: 20)
+
+      {:ok, warehouse} = Companies.adjust_warehouse_capacity(company, port, 50)
+
+      assert warehouse.capacity == 50
+      updated_company = Repo.get(Company, company.id)
+      assert updated_company.treasury == 700
+    end
+
+    test "adjust_warehouse_capacity/3 shrinks capacity of an existing warehouse" do
+      port = insert(:port, warehouse_cost: 10)
+      company = insert(:company, treasury: 1000, home_port_id: port.id)
+      insert(:warehouse, company: company, port: port, capacity: 50)
+
+      {:ok, warehouse} = Companies.adjust_warehouse_capacity(company, port, 20)
+
+      assert warehouse.capacity == 20
+      updated_company = Repo.get(Company, company.id)
+      assert updated_company.treasury == 1000
+    end
+
+    test "adjust_warehouse_capacity/3 returns an error for insufficient funds" do
+      port = insert(:port, warehouse_cost: 10)
+      company = insert(:company, treasury: 100, home_port_id: port.id)
+
+      assert Companies.adjust_warehouse_capacity(company, port, 50) ==
+               {:error, :insufficient_funds}
+    end
+
+    test "adjust_warehouse_capacity/3 returns an error if company has no presence" do
+      port = insert(:port)
+      company = insert(:company)
+
+      assert Companies.adjust_warehouse_capacity(company, port, 50) ==
+               {:error, :no_presence_in_port}
     end
   end
 

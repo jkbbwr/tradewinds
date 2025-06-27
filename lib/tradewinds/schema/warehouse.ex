@@ -13,9 +13,10 @@ defmodule Tradewinds.Schema.Warehouse do
   @doc """
   Builds a changeset for the warehouse schema.
   """
-  def changeset(warehouse, attrs) do
+  def create_changeset(warehouse, attrs) do
     warehouse
     |> cast(attrs, [:capacity, :company_id, :port_id])
     |> validate_required([:capacity, :company_id, :port_id])
+    |> unique_constraint([:company_id, :port_id])
   end
 end

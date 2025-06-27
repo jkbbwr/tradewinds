@@ -58,6 +58,14 @@ defmodule Tradewinds.Factory do
     }
   end
 
+  def warehouse_factory do
+    %Tradewinds.Schema.Warehouse{
+      company: build(:company),
+      port: build(:port),
+      capacity: 1000
+    }
+  end
+
   def route_factory do
     %Tradewinds.Schema.Route{
       from: build(:port),

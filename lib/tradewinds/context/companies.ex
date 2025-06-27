@@ -9,6 +9,7 @@ defmodule Tradewinds.Companies do
   alias Tradewinds.Schema.Director
   alias Tradewinds.Schema.Office
   alias Tradewinds.Schema.Ship
+  alias Tradewinds.Schema.Warehouse
   import Ecto.Query
 
   def create_company(name, ticker, treasury, home_port_id, directors) do
@@ -30,8 +31,52 @@ defmodule Tradewinds.Companies do
   end
 
   def close_office(company, port) do
-    Repo.get_by(Office, company_id: company.id, port_id: port.id)
-    |> Repo.delete()
+    with {:ok, office} <- Repo.fetch_by(Office, company_id: company.id, port_id: port.id) do
+      Repo.delete(office)
+    end
+  end
+
+  def adjust_warehouse_capacity(company, port, desired_capacity) do
+    Repo.transact(fn ->
+      with :ok <- check_presence_in_port(company, port.id),
+           {:ok, warehouse} <- find_or_create_warehouse(company, port),
+           cost = calculate_cost(warehouse, desired_capacity, port.warehouse_cost),
+           :ok <- check_sufficient_funds(company, cost),
+           {:ok, updated_warehouse} <- update_warehouse_capacity(warehouse, desired_capacity),
+           {:ok, _company} <- debit_treasury(company, cost) do
+        {:ok, updated_warehouse}
+      end
+    end)
+  end
+
+  defp find_or_create_warehouse(company, port) do
+    case Repo.fetch_by(Warehouse, company_id: company.id, port_id: port.id) do
+      {:ok, warehouse} ->
+        {:ok, warehouse}
+
+      {:error, :not_found} ->
+        %Warehouse{}
+        |> Warehouse.create_changeset(%{
+          company_id: company.id,
+          port_id: port.id,
+          capacity: 0
+        })
+        |> Repo.insert()
+    end
+  end
+
+  defp calculate_cost(warehouse, desired_capacity, cost_per_unit) do
+    if desired_capacity > warehouse.capacity do
+      (desired_capacity - warehouse.capacity) * cost_per_unit
+    else
+      0
+    end
+  end
+
+  defp update_warehouse_capacity(warehouse, desired_capacity) do
+    warehouse
+    |> Ecto.Changeset.change(%{capacity: desired_capacity})
+    |> Repo.update()
   end
 
   def debit_treasury(company, amount) do
@@ -57,9 +102,7 @@ defmodule Tradewinds.Companies do
       )
 
     has_ship =
-      Repo.exists?(
-        from(s in Ship, where: s.company_id == ^company.id and s.port_id == ^port_id)
-      )
+      Repo.exists?(from(s in Ship, where: s.company_id == ^company.id and s.port_id == ^port_id))
 
     if is_headquarters or has_office or has_ship do
       :ok
