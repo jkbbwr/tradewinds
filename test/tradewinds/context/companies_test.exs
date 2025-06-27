@@ -57,14 +57,19 @@ defmodule Tradewinds.CompaniesTest do
       assert office.port_id == port.id
     end
 
-    test "close_office/2 deletes an office for a company" do
+    test "returns an error when opening a fourth office" do
       company = insert(:company)
+      ports = insert_list(3, :port)
+      for port <- ports do
+        {:ok, _} = Companies.open_office(company, port)
+      end
+
       port = insert(:port)
-      insert(:office, company: company, port: port)
 
-      {:ok, _office} = Companies.close_office(company, port)
+      {:error, changeset} = Companies.open_office(company, port)
 
-      assert Repo.get_by(Office, company_id: company.id, port_id: port.id) == nil
+      assert !changeset.valid?
+      assert changeset.errors[:company_id] == {"can't have more than 3 offices", []}
     end
   end
 end

@@ -22,7 +22,8 @@ defmodule Tradewinds.Companies do
   end
 
   def open_office(company, port) do
-    %Office{company_id: company.id, port_id: port.id}
+    %Office{}
+    |> Office.create_changeset(%{company_id: company.id, port_id: port.id})
     |> Repo.insert()
   end
 
