@@ -5,6 +5,7 @@ defmodule Tradewinds.Schema.Port do
   schema "port" do
     field :name, :string
     field :shortcode, :string
+    field :warehouse_cost, :integer
 
     many_to_many :destinations, Tradewinds.Schema.Port,
       join_through: Tradewinds.Schema.Route,
@@ -21,8 +22,8 @@ defmodule Tradewinds.Schema.Port do
   """
   def changeset(port, attrs) do
     port
-    |> cast(attrs, [:name, :shortcode, :country_id])
-    |> validate_required([:name, :shortcode, :country_id])
+    |> cast(attrs, [:name, :shortcode, :country_id, :warehouse_cost])
+    |> validate_required([:name, :shortcode, :country_id, :warehouse_cost])
     |> unique_constraint(:name)
     |> unique_constraint(:shortcode)
   end

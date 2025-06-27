@@ -23,6 +23,7 @@ defmodule Tradewinds.Repo.Migrations.Initial do
       add :name, :text, null: false
       add :shortcode, :text, null: false
       add :country_id, references(:country), null: false
+      add :warehouse_cost, :integer, null: false, default: 10
       timestamps()
     end
 
