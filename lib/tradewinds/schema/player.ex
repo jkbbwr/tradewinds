@@ -15,6 +15,7 @@ defmodule Tradewinds.Schema.Player do
     player
     |> cast(attrs, [:name, :email, :password])
     |> validate_required([:name, :email, :password])
+    |> validate_format(:email, ~r/^[^\s@]+@[^\s@]+\.[^\s@]+$/)
     |> validate_length(:password, min: 8)
     |> unique_constraint(:email)
     |> prepare_changes(&hash_password/1)
@@ -25,4 +26,8 @@ defmodule Tradewinds.Schema.Player do
   end
 
   defp hash_password(changeset), do: changeset
+
+  def enabled_changeset(player, enabled) do
+    Ecto.Changeset.cast(player, %{enabled: enabled}, [:enabled])
+  end
 end

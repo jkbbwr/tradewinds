@@ -3,10 +3,10 @@ defmodule Tradewinds.Factory do
 
   def user_factory do
     %Tradewinds.Schema.Player{
-      name: "Test",
-      email: "test@test.com",
-      password_hash:
-        "$argon2id$v=19$m=65536,t=3,p=4$tY4/ZdNXFCNj2Kl4cYdChw$5V6CJnp6q5/ZzwL9WA481DPhwU0xgVvEGbnjSoPFIKw"
+      name: "Test User",
+      email: sequence(:email, &"user-#{&1}@example.com"),
+      password: "password123",
+      password_hash: Argon2.hash_pwd_salt("password123")
     }
   end
 
@@ -21,7 +21,7 @@ defmodule Tradewinds.Factory do
     %Tradewinds.Schema.Port{
       name: sequence(:name, &"Port #{&1}"),
       shortcode: sequence(:shortcode, &"P#{&1}"),
-      country_id: build(:country).id
+      country_id: insert(:country).id
     }
   end
 
