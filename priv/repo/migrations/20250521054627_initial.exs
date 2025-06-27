@@ -2,8 +2,6 @@ defmodule Tradewinds.Repo.Migrations.Initial do
   use Ecto.Migration
 
   def change do
-    
-
     create table(:player) do
       add :name, :text, null: false
       add :email, :text, null: false
@@ -43,13 +41,13 @@ defmodule Tradewinds.Repo.Migrations.Initial do
     create unique_index(:company, [:ticker])
     create unique_index(:company, [:name, :ticker])
 
-    create table(:officer) do
+    create table(:directors) do
       add :company_id, references(:company), null: false
       add :player_id, references(:player), null: false
       timestamps()
     end
 
-    create unique_index(:officer, [:company_id, :player_id])
+    create unique_index(:directors, [:company_id, :player_id])
 
     create table(:auth_token) do
       add :player_id, references(:player), null: false
