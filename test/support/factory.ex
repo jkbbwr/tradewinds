@@ -58,6 +58,14 @@ defmodule Tradewinds.Factory do
     }
   end
 
+  def route_factory do
+    %Tradewinds.Schema.Route{
+      from: build(:port),
+      to: build(:port),
+      distance: 100
+    }
+  end
+
   def shipyard_inventory_factory do
     %Tradewinds.Schema.ShipyardInventory{
       shipyard: build(:shipyard),

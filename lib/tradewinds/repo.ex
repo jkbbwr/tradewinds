@@ -21,6 +21,13 @@ defmodule Tradewinds.Repo do
     end
   end
 
+  def fetch_one(queryable, opts \\ []) do
+    case one(queryable, opts) do
+      nil -> {:error, :not_found}
+      record -> {:ok, record}
+    end
+  end
+
   @doc """
   A small wrapper around `Repo.transaction/2'.
 

@@ -28,20 +28,16 @@ defmodule Tradewinds.Shipyard do
 
   def purchase_ship(company, shipyard_inventory) do
     Repo.transact(fn ->
-      do_purchase_ship(company, shipyard_inventory)
+      with {:ok, ship} <- Repo.fetch(Ship, shipyard_inventory.ship_id),
+           {:ok, company} <- Repo.fetch(Company, company.id),
+           {:ok, shipyard} <-
+             Repo.fetch(Tradewinds.Schema.Shipyard, shipyard_inventory.shipyard_id),
+           :ok <- Companies.check_presence_in_port(company, shipyard.port_id),
+           :ok <- Companies.check_sufficient_funds(company, shipyard_inventory.cost),
+           {:ok, updated_ship} <- complete_purchase(company, ship, shipyard_inventory) do
+        {:ok, updated_ship}
+      end
     end)
-  end
-
-  defp do_purchase_ship(company, shipyard_inventory) do
-    with {:ok, ship} <- Repo.fetch(Ship, shipyard_inventory.ship_id),
-         {:ok, company} <- Repo.fetch(Company, company.id),
-         {:ok, shipyard} <-
-           Repo.fetch(Tradewinds.Schema.Shipyard, shipyard_inventory.shipyard_id),
-         :ok <- Companies.check_presence_in_port(company, shipyard.port_id),
-         :ok <- Companies.check_sufficient_funds(company, shipyard_inventory.cost),
-         {:ok, updated_ship} <- complete_purchase(company, ship, shipyard_inventory) do
-      {:ok, updated_ship}
-    end
   end
 
   defp complete_purchase(company, ship, shipyard_inventory) do
