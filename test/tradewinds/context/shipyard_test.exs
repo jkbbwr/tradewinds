@@ -31,26 +31,34 @@ defmodule Tradewinds.ShipyardTest do
 
   describe "purchase_ship/2" do
     test "allows a company to purchase a ship" do
+      port = insert(:port)
+      company = insert(:company, treasury: 20_000, home_port_id: port.id)
+      shipyard = insert(:shipyard, port: port)
+      ship = insert(:ship)
+      shipyard_inventory = insert(:shipyard_inventory, shipyard: shipyard, ship: ship, cost: 10_000)
+
+      {:ok, purchased_ship} = Shipyard.purchase_ship(company, shipyard_inventory)
+
+      assert purchased_ship.company_id == company.id
+    end
+
+    test "prevents a company from purchasing a ship with insufficient funds" do
+      port = insert(:port)
+      company = insert(:company, treasury: 5_000, home_port_id: port.id)
+      shipyard = insert(:shipyard, port: port)
+      ship = insert(:ship)
+      shipyard_inventory = insert(:shipyard_inventory, shipyard: shipyard, ship: ship, cost: 10_000)
+
+      assert Shipyard.purchase_ship(company, shipyard_inventory) == {:error, :insufficient_funds}
+    end
+
+    test "prevents a company from purchasing a ship with no presence in the port" do
       company = insert(:company, treasury: 20_000)
       shipyard = insert(:shipyard)
       ship = insert(:ship)
       shipyard_inventory = insert(:shipyard_inventory, shipyard: shipyard, ship: ship, cost: 10_000)
 
-      {:ok, result} = Shipyard.purchase_ship(company, shipyard_inventory)
-
-      assert result.company.treasury == 10_000
-      assert result.ship.company_id == company.id
-    end
-
-    test "prevents a company from purchasing a ship with insufficient funds" do
-      company = insert(:company, treasury: 5_000)
-      shipyard = insert(:shipyard)
-      ship = insert(:ship)
-      shipyard_inventory = insert(:shipyard_inventory, shipyard: shipyard, ship: ship, cost: 10_000)
-
-      {:error, reason} = Shipyard.purchase_ship(company, shipyard_inventory)
-
-      assert reason == "Not enough funds to purchase ship"
+      assert Shipyard.purchase_ship(company, shipyard_inventory) == {:error, :no_presence_in_port}
     end
   end
 end

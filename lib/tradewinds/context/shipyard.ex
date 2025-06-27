@@ -28,22 +28,29 @@ defmodule Tradewinds.Shipyard do
 
   def purchase_ship(company, shipyard_inventory) do
     Repo.transact(fn ->
-      ship = Repo.get!(Ship, shipyard_inventory.ship_id)
-      company = Repo.get!(Company, company.id)
-
-      if company.treasury >= shipyard_inventory.cost do
-        ship_changeset = Ship.changeset(ship, %{company_id: company.id})
-
-        with {:ok, updated_company} <- Companies.debit_treasury(company, shipyard_inventory.cost),
-             {:ok, updated_ship} <- Repo.update(ship_changeset),
-             {:ok, _} <- Repo.delete(shipyard_inventory) do
-          {:ok, %{company: updated_company, ship: updated_ship}}
-        else
-          _ -> {:error, "Failed to purchase ship"}
-        end
-      else
-        {:error, "Not enough funds to purchase ship"}
-      end
+      do_purchase_ship(company, shipyard_inventory)
     end)
+  end
+
+  defp do_purchase_ship(company, shipyard_inventory) do
+    with {:ok, ship} <- Repo.fetch(Ship, shipyard_inventory.ship_id),
+         {:ok, company} <- Repo.fetch(Company, company.id),
+         {:ok, shipyard} <-
+           Repo.fetch(Tradewinds.Schema.Shipyard, shipyard_inventory.shipyard_id),
+         :ok <- Companies.check_presence_in_port(company, shipyard.port_id),
+         :ok <- Companies.check_sufficient_funds(company, shipyard_inventory.cost),
+         {:ok, updated_ship} <- complete_purchase(company, ship, shipyard_inventory) do
+      {:ok, updated_ship}
+    end
+  end
+
+  defp complete_purchase(company, ship, shipyard_inventory) do
+    ship_changeset = Ship.changeset(ship, %{company_id: company.id})
+
+    with {:ok, _updated_company} <- Companies.debit_treasury(company, shipyard_inventory.cost),
+         {:ok, updated_ship} <- Repo.update(ship_changeset),
+         {:ok, _} <- Repo.delete(shipyard_inventory) do
+      {:ok, updated_ship}
+    end
   end
 end

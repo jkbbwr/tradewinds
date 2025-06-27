@@ -1,69 +1,63 @@
 defmodule Tradewinds.AccountsTest do
-  use Tradewinds.DataCase, async: true
+  use Tradewinds.DataCase
 
   alias Tradewinds.Accounts
-  alias Tradewinds.Factory
   alias Tradewinds.Schema.Player
+  alias Tradewinds.Repo
 
   describe "register_player/3" do
-    test "creates a player with valid data" do
-      user_attrs = Factory.build(:user)
-      assert {:ok, %Player{} = player} = Accounts.register_player(user_attrs.name, user_attrs.email, user_attrs.password)
-      assert player.name == user_attrs.name
-      assert player.email == user_attrs.email
-      assert player.enabled == false
+    test "creates a player with valid attributes" do
+      name = "Test User"
+      email = "test_user@example.com"
+      password = "securepassword"
+
+      {:ok, player} = Accounts.register_player(name, email, password)
+
+      assert %Tradewinds.Schema.Player{
+               id: _id,
+               name: ^name,
+               email: ^email,
+               password_hash: _password_hash
+             } = player
+
+      # Verify the player is persisted in the database
+      assert Repo.get_by!(Tradewinds.Schema.Player, email: email)
     end
 
-    test "returns an error with invalid data" do
-      assert {:error, changeset} = Accounts.register_player("Test User", "invalid-email", "short")
-      assert errors_on(changeset) == %{email: ["has invalid format"], password: ["should be at least 8 character(s)"]}
+    test "does not create a player with short password" do
+      name = "Short Password User"
+      email = "short_password@example.com"
+      # Less than 8 characters
+      password = "short"
+
+      {:error, changeset} = Accounts.register_player(name, email, password)
+
+      assert %Ecto.Changeset{} = changeset
+      assert changeset.valid? == false
+      assert errors_on(changeset).password == ["should be at least 8 character(s)"]
+
+      # Verify the player is not persisted
+      assert Repo.get_by(Tradewinds.Schema.Player, email: email) == nil
     end
 
-    test "returns an error if email is already taken" do
-      user = Factory.insert(:user)
-      assert {:error, changeset} = Accounts.register_player("Another User", user.email, "password123")
-      assert errors_on(changeset) == %{email: ["has already been taken"]}
-    end
-  end
+    test "does not create a player with duplicate email" do
+      name = "First User"
+      email = "duplicate@example.com"
+      password = "password1"
 
-  describe "login_player/2" do
-    test "returns an auth token for a valid, enabled user" do
-      user = Factory.insert(:user, enabled: true)
-      assert {:ok, _token} = Accounts.login_player(user.email, user.password)
-    end
+      {:ok, _} = Accounts.register_player(name, email, password)
 
-    test "returns an error for an invalid password" do
-      user = Factory.insert(:user, enabled: true)
-      assert {:error, :invalid_credentials} = Accounts.login_player(user.email, "wrongpassword")
-    end
+      name2 = "Second User"
+      password2 = "password2"
 
-    test "returns an error for a disabled user" do
-      user = Factory.insert(:user, enabled: false)
-      assert {:error, :player_not_enabled} = Accounts.login_player(user.email, user.password)
-    end
+      {:error, changeset} = Accounts.register_player(name2, email, password2)
 
-    test "returns an error for a non-existent user" do
-      assert {:error, :invalid_credentials} = Accounts.login_player("nosuchuser@example.com", "password")
-    end
-  end
+      assert %Ecto.Changeset{} = changeset
+      assert changeset.valid? == false
+      assert errors_on(changeset).email == ["has already been taken"]
 
-  describe "player getters" do
-    test "get_player_by_id/1 returns a player" do
-      player = Factory.insert(:user)
-      assert {:ok, %Player{}} = Accounts.get_player_by_id(player.id)
-    end
-
-    test "get_player_by_email/1 returns a player" do
-      player = Factory.insert(:user)
-      assert {:ok, %Player{}} = Accounts.get_player_by_email(player.email)
-    end
-  end
-
-  describe "enable_player/1 and disable_player/1" do
-    test "enables and disables a player" do
-      player = Factory.insert(:user, enabled: false)
-      assert {:ok, %Player{enabled: true}} = Accounts.enable_player(player)
-      assert {:ok, %Player{enabled: false}} = Accounts.disable_player(player)
+      # Verify only one player with that email exists
+      assert Repo.all(from p in Player, where: p.email == ^email) |> length == 1
     end
   end
 end

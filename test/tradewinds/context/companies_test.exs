@@ -83,6 +83,38 @@ defmodule Tradewinds.CompaniesTest do
     end
   end
 
+  describe "presence" do
+    test "check_presence_in_port/2 returns :ok if port is headquarters" do
+      port = insert(:port)
+      company = insert(:company, home_port_id: port.id)
+
+      assert Companies.check_presence_in_port(company, port.id) == :ok
+    end
+
+    test "check_presence_in_port/2 returns :ok if company has an office in the port" do
+      port = insert(:port)
+      company = insert(:company)
+      insert(:office, company: company, port: port)
+
+      assert Companies.check_presence_in_port(company, port.id) == :ok
+    end
+
+    test "check_presence_in_port/2 returns :ok if company has a ship in the port" do
+      port = insert(:port)
+      company = insert(:company)
+      insert(:ship, company: company, port: port)
+
+      assert Companies.check_presence_in_port(company, port.id) == :ok
+    end
+
+    test "check_presence_in_port/2 returns an error if company has no presence" do
+      port = insert(:port)
+      company = insert(:company)
+
+      assert Companies.check_presence_in_port(company, port.id) == {:error, :no_presence_in_port}
+    end
+  end
+
   describe "treasury" do
     test "debit_treasury/2 deducts from the treasury" do
       company = insert(:company, treasury: 1000)
@@ -90,6 +122,18 @@ defmodule Tradewinds.CompaniesTest do
       {:ok, updated_company} = Companies.debit_treasury(company, 500)
 
       assert updated_company.treasury == 500
+    end
+
+    test "check_sufficient_funds/2 returns :ok if funds are sufficient" do
+      company = insert(:company, treasury: 1000)
+
+      assert Companies.check_sufficient_funds(company, 500) == :ok
+    end
+
+    test "check_sufficient_funds/2 returns an error if funds are insufficient" do
+      company = insert(:company, treasury: 1000)
+
+      assert Companies.check_sufficient_funds(company, 1500) == {:error, :insufficient_funds}
     end
   end
 end
