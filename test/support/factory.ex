@@ -30,7 +30,14 @@ defmodule Tradewinds.Factory do
       name: sequence(:name, &"Company #{&1}"),
       ticker: sequence(:ticker, &"C#{&1}"),
       treasury: 1000,
-      home_port_id: build(:port).id
+      home_port_id: insert(:port).id
+    }
+  end
+
+  def office_factory do
+    %Tradewinds.Schema.Office{
+      company: build(:company),
+      port: build(:port)
     }
   end
 end

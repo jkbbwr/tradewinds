@@ -9,6 +9,7 @@ defmodule Tradewinds.Schema.Company do
     belongs_to :home_port, Tradewinds.Schema.Port, foreign_key: :home_port_id
 
     many_to_many :directors, Tradewinds.Schema.Player, join_through: Tradewinds.Schema.Director
+    has_many :offices, Tradewinds.Schema.Office
 
     timestamps()
   end

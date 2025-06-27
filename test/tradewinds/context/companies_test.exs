@@ -4,6 +4,7 @@ defmodule Tradewinds.CompaniesTest do
   import Tradewinds.Factory
 
   alias Tradewinds.Companies
+  alias Tradewinds.Schema.Office
 
   describe "create_company/5" do
     test "creates a company with valid data" do
@@ -38,9 +39,32 @@ defmodule Tradewinds.CompaniesTest do
         )
 
       assert !changeset.valid?
+
       assert changeset.errors[:directors] ==
-             {"must have at least one director",
-              [count: 1, validation: :length, kind: :min, type: :list]}
+               {"must have at least one director",
+                [count: 1, validation: :length, kind: :min, type: :list]}
+    end
+  end
+
+  describe "offices" do
+    test "open_office/2 creates an office for a company" do
+      company = insert(:company)
+      port = insert(:port)
+
+      {:ok, office} = Companies.open_office(company, port)
+
+      assert office.company_id == company.id
+      assert office.port_id == port.id
+    end
+
+    test "close_office/2 deletes an office for a company" do
+      company = insert(:company)
+      port = insert(:port)
+      insert(:office, company: company, port: port)
+
+      {:ok, _office} = Companies.close_office(company, port)
+
+      assert Repo.get_by(Office, company_id: company.id, port_id: port.id) == nil
     end
   end
 end

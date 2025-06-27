@@ -7,6 +7,7 @@ defmodule Tradewinds.Companies do
   alias Tradewinds.Repo
   alias Tradewinds.Schema.Company
   alias Tradewinds.Schema.Director
+  alias Tradewinds.Schema.Office
 
   def create_company(name, ticker, treasury, home_port_id, directors) do
     %Company{}
@@ -18,5 +19,15 @@ defmodule Tradewinds.Companies do
       directors: directors
     })
     |> Repo.insert()
+  end
+
+  def open_office(company, port) do
+    %Office{company_id: company.id, port_id: port.id}
+    |> Repo.insert()
+  end
+
+  def close_office(company, port) do
+    Repo.get_by(Office, company_id: company.id, port_id: port.id)
+    |> Repo.delete()
   end
 end

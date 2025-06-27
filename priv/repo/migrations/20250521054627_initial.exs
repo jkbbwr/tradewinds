@@ -49,6 +49,14 @@ defmodule Tradewinds.Repo.Migrations.Initial do
 
     create unique_index(:directors, [:company_id, :player_id])
 
+    create table(:offices) do
+      add :company_id, references(:company), null: false
+      add :port_id, references(:port), null: false
+      timestamps()
+    end
+
+    create unique_index(:offices, [:company_id, :port_id])
+
     create table(:auth_token) do
       add :player_id, references(:player), null: false
       add :token, :text, null: false
