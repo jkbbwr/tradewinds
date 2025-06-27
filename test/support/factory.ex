@@ -21,7 +21,7 @@ defmodule Tradewinds.Factory do
     %Tradewinds.Schema.Port{
       name: sequence(:name, &"Port #{&1}"),
       shortcode: sequence(:shortcode, &"P#{&1}"),
-      country_id: insert(:country).id
+      country: build(:country)
     }
   end
 
