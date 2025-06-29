@@ -6,7 +6,6 @@ defmodule Tradewinds.Companies do
 
   alias Tradewinds.Repo
   alias Tradewinds.Schema.Company
-  alias Tradewinds.Schema.Director
   alias Tradewinds.Schema.Office
   alias Tradewinds.Schema.Ship
   alias Tradewinds.Schema.Warehouse

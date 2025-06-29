@@ -186,7 +186,7 @@ defmodule Tradewinds.Repo.Migrations.Initial do
     create table(:company_agent) do
       add :company_id, references(:company), null: false
       add :port_id, references(:port), null: false
-      add :ship_id, references(:shi), null: false
+      add :ship_id, references(:ship), null: false
       timestamps()
     end
 

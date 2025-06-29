@@ -5,7 +5,7 @@ defmodule Tradewinds.Schema.Office do
 
   alias Tradewinds.Repo
 
-  @max_offices 1
+  @max_offices 3
 
   schema "office" do
     belongs_to :company, Tradewinds.Schema.Company, foreign_key: :company_id
