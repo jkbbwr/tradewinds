@@ -170,6 +170,7 @@ defmodule Tradewinds.Repo.Migrations.Initial do
       add :stock, :integer, null: false
       add :cost, :integer, null: false
       add :desire, :integer, null: false
+      add :action, :text, null: false
       timestamps()
     end
 
