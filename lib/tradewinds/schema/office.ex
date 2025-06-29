@@ -5,7 +5,9 @@ defmodule Tradewinds.Schema.Office do
 
   alias Tradewinds.Repo
 
-  schema "offices" do
+  @max_offices 1
+
+  schema "office" do
     belongs_to :company, Tradewinds.Schema.Company, foreign_key: :company_id
     belongs_to :port, Tradewinds.Schema.Port, foreign_key: :port_id
 
@@ -25,8 +27,8 @@ defmodule Tradewinds.Schema.Office do
     office_count =
       Repo.one(from o in __MODULE__, where: o.company_id == ^company_id, select: count(o.id))
 
-    if office_count >= 3 do
-      add_error(changeset, :company_id, "can't have more than 3 offices")
+    if office_count >= @max_offices do
+      add_error(changeset, :company_id, "can't have more than #{@max_offices} offices")
     else
       changeset
     end

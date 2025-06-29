@@ -12,14 +12,14 @@ defmodule Tradewinds.Companies do
   alias Tradewinds.Schema.Warehouse
   import Ecto.Query
 
-  def create_company(name, ticker, treasury, home_port_id, directors) do
+  def create_company(name, ticker, treasury, home_port_id, director) do
     %Company{}
     |> Company.create_changeset(%{
       name: name,
       ticker: ticker,
       treasury: treasury,
       home_port_id: home_port_id,
-      directors: directors
+      director: director
     })
     |> Repo.insert()
   end

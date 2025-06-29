@@ -27,7 +27,7 @@ defmodule Tradewinds.CompaniesTest do
       assert company.home_port_id == port.id
     end
 
-    test "returns an error when there are no directors" do
+    test "returns an error when there are no director" do
       port = insert(:port)
 
       {:error, changeset} =
@@ -41,7 +41,7 @@ defmodule Tradewinds.CompaniesTest do
 
       assert !changeset.valid?
 
-      assert changeset.errors[:directors] ==
+      assert changeset.errors[:director] ==
                {"must have at least one director",
                 [count: 1, validation: :length, kind: :min, type: :list]}
     end

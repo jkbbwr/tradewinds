@@ -13,6 +13,12 @@ defmodule Tradewinds.Repo.Migrations.Initial do
 
     create unique_index(:player, [:email])
 
+    create table(:preference) do
+      add :player_id, references(:player), null: false
+      add :key, :text, null: false
+      add :value, :text, null: false
+    end
+
     create table(:country) do
       add :name, :text, null: false
       add :description, :text
@@ -42,21 +48,21 @@ defmodule Tradewinds.Repo.Migrations.Initial do
     create unique_index(:company, [:ticker])
     create unique_index(:company, [:name, :ticker])
 
-    create table(:directors) do
+    create table(:director) do
       add :company_id, references(:company), null: false
       add :player_id, references(:player), null: false
       timestamps()
     end
 
-    create unique_index(:directors, [:company_id, :player_id])
+    create unique_index(:director, [:company_id, :player_id])
 
-    create table(:offices) do
+    create table(:office) do
       add :company_id, references(:company), null: false
       add :port_id, references(:port), null: false
       timestamps()
     end
 
-    create unique_index(:offices, [:company_id, :port_id])
+    create unique_index(:office, [:company_id, :port_id])
 
     create table(:auth_token) do
       add :player_id, references(:player), null: false
@@ -80,6 +86,8 @@ defmodule Tradewinds.Repo.Migrations.Initial do
       add :name, :text, null: false
       add :state, :text, null: false
       add :type, :text, null: false
+      # add :crew, :integer, null: false
+      # add :supplies, :integer, null: false
       add :capacity, :integer, null: false
       add :speed, :integer, null: false
       add :company_id, references(:company)
@@ -137,6 +145,10 @@ defmodule Tradewinds.Repo.Migrations.Initial do
       timestamps()
     end
 
+    create unique_index(:warehouse, [:company_id, :port_id],
+             comment: "companies can only have one warehouse in each port"
+           )
+
     create table(:warehouse_inventory) do
       add :warehouse_id, references(:warehouse), null: false
       add :item_id, references(:item), null: false
@@ -145,5 +157,46 @@ defmodule Tradewinds.Repo.Migrations.Initial do
     end
 
     create unique_index(:warehouse_inventory, [:warehouse_id, :item_id])
+
+    create table(:trader) do
+      add :port_id, references(:port), null: false
+      add :name, :text, null: false
+      timestamps()
+    end
+
+    create table(:trader_inventory) do
+      add :trader_id, references(:trader), null: false
+      add :item_id, references(:item), null: false
+      add :stock, :integer, null: false
+      add :cost, :integer, null: false
+      add :desire, :integer, null: false
+      timestamps()
+    end
+
+    create table(:orderbook) do
+      add :port_id, references(:port), null: false
+      add :company_id, references(:company), null: false
+      add :item_id, references(:item), null: false
+      add :order, :text, null: false
+      add :amount, :integer, null: false
+      add :cost, :integer, null: false
+      timestamps()
+    end
+
+    create table(:company_agent) do
+      add :company_id, references(:company), null: false
+      add :port_id, references(:port), null: false
+      add :ship_id, references(:shi), null: false
+      timestamps()
+    end
+
+    create unique_index(:company_agent, [:company_id, :port_id],
+             comment: "companies can only have one agent in each port"
+           )
+
+    create constraint(:company_agent, "port_xor_ship_constraint",
+             check:
+               "((port_id IS NOT NULL AND ship_id IS NULL) OR (port_id IS NULL AND ship_id IS NOT NULL))"
+           )
   end
 end
