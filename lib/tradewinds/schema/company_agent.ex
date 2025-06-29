@@ -1,13 +1,11 @@
-
 defmodule Tradewinds.Schema.CompanyAgent do
-  use Ecto.Schema
+  use Tradewinds.Schema
   import Ecto.Changeset
 
   alias Tradewinds.Schema.Company
   alias Tradewinds.Schema.Port
   alias Tradewinds.Schema.Ship
 
-  @primary_key false
   schema "company_agent" do
     belongs_to :company, Company
     belongs_to :port, Port

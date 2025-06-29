@@ -6,6 +6,7 @@ defmodule Tradewinds.Companies do
 
   alias Tradewinds.Repo
   alias Tradewinds.Schema.Company
+  alias Tradewinds.Schema.CompanyAgent
   alias Tradewinds.Schema.Office
   alias Tradewinds.Schema.Ship
   alias Tradewinds.Schema.Warehouse
@@ -103,7 +104,12 @@ defmodule Tradewinds.Companies do
     has_ship =
       Repo.exists?(from(s in Ship, where: s.company_id == ^company.id and s.port_id == ^port_id))
 
-    if is_headquarters or has_office or has_ship do
+    has_agent =
+      Repo.exists?(
+        from(ca in CompanyAgent, where: ca.company_id == ^company.id and ca.port_id == ^port_id)
+      )
+
+    if is_headquarters or has_office or has_ship or has_agent do
       :ok
     else
       {:error, :no_presence_in_port}

@@ -1,13 +1,11 @@
-
 defmodule Tradewinds.Schema.Orderbook do
-  use Ecto.Schema
+  use Tradewinds.Schema
   import Ecto.Changeset
 
   alias Tradewinds.Schema.Company
   alias Tradewinds.Schema.Item
   alias Tradewinds.Schema.Port
 
-  @primary_key false
   schema "orderbook" do
     field :order, :string
     field :amount, :integer
