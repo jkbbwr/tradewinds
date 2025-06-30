@@ -199,5 +199,17 @@ defmodule Tradewinds.Repo.Migrations.Initial do
              check:
                "((port_id IS NOT NULL AND ship_id IS NULL) OR (port_id IS NULL AND ship_id IS NOT NULL))"
            )
+
+    create table(:trades) do
+      add :item_id, references(:item), null: false
+      add :port_id, references(:port), null: false
+      add :company_id, references(:company), null: false
+      add :player_id, references(:player), null: false
+      add :amount, :integer, null: false
+      add :price, :integer, null: false
+      add :game_tick, :integer, null: false
+      add :action, :text, null: false
+      timestamps()
+    end
   end
 end

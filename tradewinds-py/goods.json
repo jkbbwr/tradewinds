@@ -1,0 +1,241 @@
+{
+  "goods": [
+    "Beer",
+    "Books",
+    "Charcoal",
+    "Cloth",
+    "Coal",
+    "Coffee",
+    "Copper",
+    "Cotton",
+    "Dyes",
+    "Fish",
+    "Furs",
+    "Glassware",
+    "Gold",
+    "Grain",
+    "Hardwood",
+    "Hops",
+    "Instruments",
+    "Iron",
+    "Ivory",
+    "Jewelry",
+    "Linen",
+    "Luxury Fabrics",
+    "Marble",
+    "Metalwares",
+    "Olive Oil",
+    "Paper",
+    "Porcelain",
+    "Pottery",
+    "Rice",
+    "Rum",
+    "Salt",
+    "Ships",
+    "Silk",
+    "Silver",
+    "Spices",
+    "Spirits",
+    "Sugar",
+    "Supplies",
+    "Tea",
+    "Textile Fibers",
+    "Timber",
+    "Tobacco",
+    "Weapons",
+    "Whale Oil",
+    "Wine",
+    "Wool"
+  ],
+  "ports": [
+    {
+      "port_name": "London",
+      "exports": [
+        "Cloth",
+        "Ships",
+        "Tobacco",
+        "Sugar",
+        "Tea",
+        "Spices",
+        "Dyes",
+        "Hardwood",
+        "Porcelain",
+        "Hops",
+        "Instruments",
+        "Ivory"
+      ]
+    },
+    {
+      "port_name": "Bristol",
+      "exports": ["Cloth", "Fish", "Tobacco", "Rum"]
+    },
+    {
+      "port_name": "Plymouth",
+      "exports": ["Fish", "Cloth", "Ships"]
+    },
+    {
+      "port_name": "Liverpool",
+      "exports": ["Cloth", "Coal", "Metalwares", "Hardwood", "Ivory", "Rum"]
+    },
+    {
+      "port_name": "Leith",
+      "exports": ["Linen", "Fish", "Furs"]
+    },
+    {
+      "port_name": "Glasgow",
+      "exports": ["Fish", "Linen", "Coal"]
+    },
+    {
+      "port_name": "Dublin",
+      "exports": ["Wool", "Linen", "Furs"]
+    },
+    {
+      "port_name": "Amsterdam",
+      "exports": [
+        "Fish",
+        "Spices",
+        "Sugar",
+        "Tobacco",
+        "Weapons",
+        "Glassware",
+        "Pottery",
+        "Books",
+        "Ships",
+        "Jewelry",
+        "Porcelain",
+        "Tea",
+        "Coffee",
+        "Dyes",
+        "Cloth",
+        "Hops",
+        "Paper",
+        "Instruments"
+      ]
+    },
+    {
+      "port_name": "Rotterdam",
+      "exports": ["Fish", "Pottery", "Spirits", "Weapons"]
+    },
+    {
+      "port_name": "Middelburg",
+      "exports": ["Wine", "Salt"]
+    },
+    {
+      "port_name": "Antwerp",
+      "exports": ["Luxury Fabrics", "Books", "Glassware", "Instruments"]
+    },
+    {
+      "port_name": "Rouen",
+      "exports": ["Linen", "Wine", "Grain", "Paper"]
+    },
+    {
+      "port_name": "La Rochelle",
+      "exports": ["Wine", "Spirits", "Salt", "Rum"]
+    },
+    {
+      "port_name": "Bordeaux",
+      "exports": ["Wine", "Spirits", "Rum"]
+    },
+    {
+      "port_name": "Marseille",
+      "exports": ["Olive Oil", "Wine", "Luxury Fabrics", "Marble"]
+    },
+    {
+      "port_name": "Seville",
+      "exports": ["Gold", "Silver", "Olive Oil", "Wine", "Wool", "Dyes"]
+    },
+    {
+      "port_name": "Cadiz",
+      "exports": ["Gold", "Silver", "Olive Oil", "Wine", "Salt"]
+    },
+    {
+      "port_name": "Barcelona",
+      "exports": ["Wine", "Spirits", "Metalwares"]
+    },
+    {
+      "port_name": "Lisbon",
+      "exports": [
+        "Sugar",
+        "Spices",
+        "Wine",
+        "Salt",
+        "Olive Oil",
+        "Jewelry",
+        "Hardwood",
+        "Ivory"
+      ]
+    },
+    {
+      "port_name": "Porto",
+      "exports": ["Wine"]
+    },
+    {
+      "port_name": "Venice",
+      "exports": ["Glassware", "Luxury Fabrics", "Books", "Rice"]
+    },
+    {
+      "port_name": "Genoa",
+      "exports": ["Luxury Fabrics", "Olive Oil", "Gold", "Silver", "Paper"]
+    },
+    {
+      "port_name": "Naples",
+      "exports": ["Grain", "Wine", "Silk"]
+    },
+    {
+      "port_name": "Livorno",
+      "exports": ["Olive Oil", "Wine", "Luxury Fabrics", "Marble"]
+    },
+    {
+      "port_name": "Ancona",
+      "exports": ["Grain", "Wine", "Textile Fibers"]
+    },
+    {
+      "port_name": "Valletta",
+      "exports": ["Cotton"]
+    },
+    {
+      "port_name": "Constantinople",
+      "exports": ["Coffee", "Cotton", "Silk", "Spices"]
+    },
+    {
+      "port_name": "Izmir",
+      "exports": ["Cotton", "Silk", "Dyes"]
+    },
+    {
+      "port_name": "Thessaloniki",
+      "exports": ["Grain", "Cotton", "Tobacco"]
+    },
+    {
+      "port_name": "Copenhagen",
+      "exports": ["Grain", "Fish"]
+    },
+    {
+      "port_name": "Stockholm",
+      "exports": ["Iron", "Copper", "Timber", "Supplies", "Charcoal"]
+    },
+    {
+      "port_name": "Bergen",
+      "exports": ["Fish", "Timber", "Charcoal"]
+    },
+    {
+      "port_name": "Hamburg",
+      "exports": ["Linen", "Grain", "Beer", "Hops"]
+    },
+    {
+      "port_name": "Lübeck",
+      "exports": ["Grain", "Salt", "Fish"]
+    },
+    {
+      "port_name": "Bremen",
+      "exports": ["Linen", "Grain", "Whale Oil"]
+    },
+    {
+      "port_name": "Gdańsk",
+      "exports": ["Grain", "Timber", "Textile Fibers"]
+    },
+    {
+      "port_name": "Arkhangelsk",
+      "exports": ["Furs", "Grain", "Timber", "Supplies", "Textile Fibers"]
+    }
+  ]
+}
