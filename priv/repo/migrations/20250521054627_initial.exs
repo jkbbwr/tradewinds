@@ -19,12 +19,13 @@ defmodule Tradewinds.Repo.Migrations.Initial do
       add :value, :text, null: false
     end
 
+    create index(:preference, [:player_id, :key])
+
     create table(:country) do
       add :name, :text, null: false
       add :description, :text
       timestamps()
     end
-
     create table(:port) do
       add :name, :text, null: false
       add :shortcode, :text, null: false
@@ -97,6 +98,10 @@ defmodule Tradewinds.Repo.Migrations.Initial do
       timestamps()
     end
 
+    create index(:ship, [:state])
+    create index(:ship, [:type])
+    create index(:ship, [:arriving_at])
+
     create constraint(:ship, "port_xor_route_constraint",
              check:
                "((port_id IS NOT NULL AND route_id IS NULL) OR (port_id IS NULL AND route_id IS NOT NULL))"
@@ -138,6 +143,8 @@ defmodule Tradewinds.Repo.Migrations.Initial do
       timestamps()
     end
 
+    create unique_index(:ship_inventory, [:ship_id, :item_id])
+
     create table(:warehouse) do
       add :capacity, :integer, null: false
       add :company_id, references(:company), null: false
@@ -164,6 +171,8 @@ defmodule Tradewinds.Repo.Migrations.Initial do
       timestamps()
     end
 
+    create index(:trader, [:name])
+
     create table(:trader_inventory) do
       add :trader_id, references(:trader), null: false
       add :item_id, references(:item), null: false
@@ -173,6 +182,59 @@ defmodule Tradewinds.Repo.Migrations.Initial do
       add :action, :text, null: false
       timestamps()
     end
+
+    create unique_index(:trader_inventory, [:trader_id, :item_id])
+
+    create table(:trader_plan) do
+      add :trader_id, references(:traders), null: false
+      add :item_id, references(:items), null: false
+
+      add :average_acquisition_cost, :integer,
+        null: false,
+        comment: "weighted average acquisition cost in the base currency."
+
+      add :ideal_stock_level, :integer,
+        null: false,
+        comment: "the ideal stock level the trader wants to maintain."
+
+      add :target_profit_margin, :float,
+        null: false,
+        comment: "target profit margin, e.g., 1.2 for a 20% markup."
+
+      add :max_buy_sell_spread, :float,
+        null: false,
+        comment: "maximum buy/sell price spread, e.g., 0.4 for a 40% spread."
+
+      add :price_elasticity, :float,
+        null: false,
+        comment: "price elasticity of the good, controls price sensitivity to supply."
+
+      add :liquidity_factor, :float,
+        null: false,
+        comment:
+          "liquidity factor for price impact, controls how much large trades affect the price."
+
+      add :consumption_rate, :integer,
+        null: false,
+        comment: "the quantity of the good consumed each market tick."
+
+      add :reversion_rate, :float,
+        null: false,
+        comment:
+          "the rate at which the average cost reverts to the regional average (0.0 to 1.0)."
+
+      # C_regional: Stored as an integer (cents)
+      add :regional_cost, :integer,
+        null: false,
+        comment: "the long-term regional average cost of the good in base currency."
+
+      timestamps()
+    end
+
+    create index(:trader_plans, [:trader_id])
+    create index(:trader_plans, [:item_id])
+
+    create unique_index(:trader_plans, [:trader_id, :item_id])
 
     create table(:orderbook) do
       add :port_id, references(:port), null: false
@@ -184,6 +246,10 @@ defmodule Tradewinds.Repo.Migrations.Initial do
       timestamps()
     end
 
+    create index(:orderbook, [:port_id, :item_id])
+    create index(:orderbook, [:company_id])
+    create index(:orderbook, [:order])
+
     create table(:company_agent) do
       add :company_id, references(:company), null: false
       add :port_id, references(:port), null: false
@@ -194,6 +260,8 @@ defmodule Tradewinds.Repo.Migrations.Initial do
     create unique_index(:company_agent, [:company_id, :port_id],
              comment: "companies can only have one agent in each port"
            )
+
+    create index(:company_agent, [:ship_id])
 
     create constraint(:company_agent, "port_xor_ship_constraint",
              check:
@@ -211,5 +279,13 @@ defmodule Tradewinds.Repo.Migrations.Initial do
       add :action, :text, null: false
       timestamps()
     end
+
+    create index(:trades, [:item_id])
+    create index(:trades, [:port_id])
+    create index(:trades, [:company_id])
+    create index(:trades, [:player_id])
+    create index(:trades, [:port_id, :item_id])
+    create index(:trades, [:game_tick])
+    create index(:trades, [:port_id, :item_id, :game_tick])
   end
 end
