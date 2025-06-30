@@ -1,4 +1,3 @@
-
 defmodule Tradewinds.Schema.Trader do
   use Ecto.Schema
   import Ecto.Changeset

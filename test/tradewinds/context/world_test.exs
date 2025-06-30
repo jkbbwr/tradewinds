@@ -57,7 +57,8 @@ defmodule Tradewinds.WorldTest do
       country = insert(:country)
       insert(:port, country: country)
       insert(:port, country: country)
-      insert(:port) # Other port in another country
+      # Other port in another country
+      insert(:port)
 
       ports = World.get_ports_by_country(country)
 

@@ -26,6 +26,7 @@ defmodule Tradewinds.Repo.Migrations.Initial do
       add :description, :text
       timestamps()
     end
+
     create table(:port) do
       add :name, :text, null: false
       add :shortcode, :text, null: false
@@ -87,8 +88,6 @@ defmodule Tradewinds.Repo.Migrations.Initial do
       add :name, :text, null: false
       add :state, :text, null: false
       add :type, :text, null: false
-      # add :crew, :integer, null: false
-      # add :supplies, :integer, null: false
       add :capacity, :integer, null: false
       add :speed, :integer, null: false
       add :company_id, references(:company)
@@ -171,8 +170,6 @@ defmodule Tradewinds.Repo.Migrations.Initial do
       timestamps()
     end
 
-    create index(:trader, [:name])
-
     create table(:trader_inventory) do
       add :trader_id, references(:trader), null: false
       add :item_id, references(:item), null: false
@@ -186,8 +183,8 @@ defmodule Tradewinds.Repo.Migrations.Initial do
     create unique_index(:trader_inventory, [:trader_id, :item_id])
 
     create table(:trader_plan) do
-      add :trader_id, references(:traders), null: false
-      add :item_id, references(:items), null: false
+      add :trader_id, references(:trader), null: false
+      add :item_id, references(:item), null: false
 
       add :average_acquisition_cost, :integer,
         null: false,
@@ -223,7 +220,6 @@ defmodule Tradewinds.Repo.Migrations.Initial do
         comment:
           "the rate at which the average cost reverts to the regional average (0.0 to 1.0)."
 
-      # C_regional: Stored as an integer (cents)
       add :regional_cost, :integer,
         null: false,
         comment: "the long-term regional average cost of the good in base currency."
@@ -231,10 +227,10 @@ defmodule Tradewinds.Repo.Migrations.Initial do
       timestamps()
     end
 
-    create index(:trader_plans, [:trader_id])
-    create index(:trader_plans, [:item_id])
+    create index(:trader_plan, [:trader_id])
+    create index(:trader_plan, [:item_id])
 
-    create unique_index(:trader_plans, [:trader_id, :item_id])
+    create unique_index(:trader_plan, [:trader_id, :item_id])
 
     create table(:orderbook) do
       add :port_id, references(:port), null: false
@@ -261,31 +257,28 @@ defmodule Tradewinds.Repo.Migrations.Initial do
              comment: "companies can only have one agent in each port"
            )
 
-    create index(:company_agent, [:ship_id])
-
     create constraint(:company_agent, "port_xor_ship_constraint",
              check:
                "((port_id IS NOT NULL AND ship_id IS NULL) OR (port_id IS NULL AND ship_id IS NOT NULL))"
            )
 
-    create table(:trades) do
+    create table(:trade) do
       add :item_id, references(:item), null: false
-      add :port_id, references(:port), null: false
+      add :trader_id, references(:trader), null: false
       add :company_id, references(:company), null: false
       add :player_id, references(:player), null: false
       add :amount, :integer, null: false
       add :price, :integer, null: false
       add :game_tick, :integer, null: false
-      add :action, :text, null: false
+      add :action, :text, null: false, comment: "from the perspective of the player!"
       timestamps()
     end
 
-    create index(:trades, [:item_id])
-    create index(:trades, [:port_id])
-    create index(:trades, [:company_id])
-    create index(:trades, [:player_id])
-    create index(:trades, [:port_id, :item_id])
-    create index(:trades, [:game_tick])
-    create index(:trades, [:port_id, :item_id, :game_tick])
+    create index(:trade, [:item_id])
+    create index(:trade, [:trader_id])
+    create index(:trade, [:company_id])
+    create index(:trade, [:player_id])
+    create index(:trade, [:game_tick])
+    create index(:trade, [:item_id, :game_tick])
   end
 end

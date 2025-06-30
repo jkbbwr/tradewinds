@@ -6,6 +6,7 @@ defmodule Tradewinds.Schema.Warehouse do
     field :capacity, :integer
     belongs_to :company, Tradewinds.Schema.Company, foreign_key: :company_id
     belongs_to :port, Tradewinds.Schema.Port, foreign_key: :port_id
+    has_many :inventory, Tradewinds.Schema.WarehouseInventory, foreign_key: :warehouse_id
 
     timestamps()
   end

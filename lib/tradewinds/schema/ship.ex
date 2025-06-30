@@ -11,6 +11,7 @@ defmodule Tradewinds.Schema.Ship do
     belongs_to :company, Tradewinds.Schema.Company, foreign_key: :company_id
     belongs_to :port, Tradewinds.Schema.Port, foreign_key: :port_id
     belongs_to :route, Tradewinds.Schema.Route, foreign_key: :route_id
+    has_many :inventory, Tradewinds.Schema.ShipInventory, foreign_key: :ship_id
     field :arriving_at, :utc_datetime
 
     timestamps()

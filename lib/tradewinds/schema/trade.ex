@@ -2,11 +2,11 @@ defmodule Tradewinds.Schema.Trade do
   use Tradewinds.Schema
   import Ecto.Changeset
 
-  schema "trades" do
+  schema "trade" do
     field :amount, :integer
     field :price, :integer
     field :game_tick, :integer
-    field :state, Ecto.Enum, values: [:sell, :buy]
+    field :action, Ecto.Enum, values: [:sell, :buy]
 
     belongs_to :item, Tradewinds.Schema.Item
     belongs_to :port, Tradewinds.Schema.Port

@@ -35,7 +35,9 @@ defmodule Tradewinds.ShipyardTest do
       company = insert(:company, treasury: 20_000, home_port_id: port.id)
       shipyard = insert(:shipyard, port: port)
       ship = insert(:ship)
-      shipyard_inventory = insert(:shipyard_inventory, shipyard: shipyard, ship: ship, cost: 10_000)
+
+      shipyard_inventory =
+        insert(:shipyard_inventory, shipyard: shipyard, ship: ship, cost: 10_000)
 
       {:ok, purchased_ship} = Shipyard.purchase_ship(company, shipyard_inventory)
 
@@ -47,7 +49,9 @@ defmodule Tradewinds.ShipyardTest do
       company = insert(:company, treasury: 5_000, home_port_id: port.id)
       shipyard = insert(:shipyard, port: port)
       ship = insert(:ship)
-      shipyard_inventory = insert(:shipyard_inventory, shipyard: shipyard, ship: ship, cost: 10_000)
+
+      shipyard_inventory =
+        insert(:shipyard_inventory, shipyard: shipyard, ship: ship, cost: 10_000)
 
       assert Shipyard.purchase_ship(company, shipyard_inventory) == {:error, :insufficient_funds}
     end
@@ -56,7 +60,9 @@ defmodule Tradewinds.ShipyardTest do
       company = insert(:company, treasury: 20_000)
       shipyard = insert(:shipyard)
       ship = insert(:ship)
-      shipyard_inventory = insert(:shipyard_inventory, shipyard: shipyard, ship: ship, cost: 10_000)
+
+      shipyard_inventory =
+        insert(:shipyard_inventory, shipyard: shipyard, ship: ship, cost: 10_000)
 
       assert Shipyard.purchase_ship(company, shipyard_inventory) == {:error, :no_presence_in_port}
     end

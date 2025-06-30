@@ -24,6 +24,14 @@ defmodule Tradewinds.Companies do
     |> Repo.insert()
   end
 
+  def fetch_ship(company_id) do
+    Repo.fetch_by(Ship, company_id: company_id)
+  end
+
+  def fetch_warehouse(company_id, port_id) do
+    Repo.fetch_by(Warehouse, company_id: company_id, port_id: port_id)
+  end
+
   def open_office(company, port) do
     %Office{}
     |> Office.create_changeset(%{company_id: company.id, port_id: port.id})

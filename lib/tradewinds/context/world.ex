@@ -29,6 +29,10 @@ defmodule Tradewinds.World do
     Repo.fetch_by(Country, name: name)
   end
 
+  def get_item_by_id(id) do
+    Repo.fetch_by(Item, id: id)
+  end
+
   def get_distance_between_ports(port1, port2) do
     query =
       from(r in Route,

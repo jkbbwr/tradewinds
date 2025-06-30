@@ -81,4 +81,28 @@ defmodule Tradewinds.Factory do
       cost: 10_000
     }
   end
+
+  def item_factory do
+    %Tradewinds.Schema.Item{
+      name: sequence(:name, &"Item #{&1}"),
+      shortcode: sequence(:shortcode, &"I#{&1}"),
+      description: "A test item"
+    }
+  end
+
+  def ship_inventory_factory do
+    %Tradewinds.Schema.ShipInventory{
+      ship: build(:ship),
+      item: build(:item),
+      amount: 10
+    }
+  end
+
+  def warehouse_inventory_factory do
+    %Tradewinds.Schema.WarehouseInventory{
+      warehouse: build(:warehouse),
+      item: build(:item),
+      amount: 10
+    }
+  end
 end

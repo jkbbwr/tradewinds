@@ -1,4 +1,3 @@
-
 defmodule Tradewinds.Schema.Preference do
   use Ecto.Schema
   import Ecto.Changeset

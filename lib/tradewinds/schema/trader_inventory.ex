@@ -1,4 +1,3 @@
-
 defmodule Tradewinds.Schema.TraderInventory do
   use Ecto.Schema
   import Ecto.Changeset
@@ -8,8 +7,6 @@ defmodule Tradewinds.Schema.TraderInventory do
 
   schema "trader_inventory" do
     field :stock, :integer
-    field :cost, :integer
-    field :desire, :integer
     belongs_to :trader, Trader
     belongs_to :item, Item
 
