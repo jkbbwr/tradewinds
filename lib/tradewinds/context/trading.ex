@@ -63,7 +63,9 @@ defmodule Tradewinds.Trading do
       with :ok <- Companies.check_presence_in_port(company, trader.port_id),
            {:ok, [item_id, quantity, price, game_tick]} <- validate_quote(quote),
            stock_in_port <- get_stock_in_port(company.id, trader.port_id, item_id) do
-        # TODO: do something with ship and warehouse
+        # TODO: check the player has enough stock in port to forfil the quote.
+        # Then pay them, and eat the stock, starting with any stock on ships and moving downwards.
+        # Then log it
         {:ok, :bought}
       end
     end)
@@ -72,22 +74,21 @@ defmodule Tradewinds.Trading do
   def get_stock_in_port(company_id, port_id, item_id) do
     ship_inventory =
       from s in Ship,
-           join: si in ShipInventory,
-           on: s.id == si.ship_id,
-           where: s.company_id == ^company_id and s.port_id == ^port_id and si.item_id == ^item_id,
-           select: %{type: "ship", id: si.id, amount: si.amount}
+        join: si in ShipInventory,
+        on: s.id == si.ship_id,
+        where: s.company_id == ^company_id and s.port_id == ^port_id and si.item_id == ^item_id,
+        select: %{type: "ship", id: si.id, amount: si.amount}
 
     warehouse_inventory =
       from w in Warehouse,
-           join: wi in WarehouseInventory,
-           on: w.id == wi.warehouse_id,
-           where:
-             w.company_id == ^company_id and w.port_id == ^port_id and wi.item_id == ^item_id,
-           select: %{type: "warehouse", id: wi.id, amount: wi.amount}
+        join: wi in WarehouseInventory,
+        on: w.id == wi.warehouse_id,
+        where: w.company_id == ^company_id and w.port_id == ^port_id and wi.item_id == ^item_id,
+        select: %{type: "warehouse", id: wi.id, amount: wi.amount}
 
     query =
       from u in subquery(ship_inventory),
-      union_all: ^subquery(warehouse_inventory)
+        union_all: ^subquery(warehouse_inventory)
 
     Repo.all(query)
   end
