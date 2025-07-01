@@ -7,7 +7,7 @@ defmodule Tradewinds.Schema.Player do
     field :password_hash, :string
     field :password, :string, virtual: true
     field :enabled, :boolean, default: false
-    many_to_many :companies, Tradewinds.Schema.Company, join_through: Tradewinds.Schema.Officer
+    many_to_many :companies, Tradewinds.Schema.Company, join_through: Tradewinds.Schema.Director
     timestamps()
   end
 

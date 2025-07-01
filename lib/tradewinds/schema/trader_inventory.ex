@@ -1,5 +1,5 @@
 defmodule Tradewinds.Schema.TraderInventory do
-  use Ecto.Schema
+  use Tradewinds.Schema
   import Ecto.Changeset
 
   alias Tradewinds.Schema.Item
@@ -15,7 +15,7 @@ defmodule Tradewinds.Schema.TraderInventory do
 
   def changeset(trader_inventory, attrs) do
     trader_inventory
-    |> cast(attrs, [:stock, :cost, :desire, :trader_id, :item_id])
-    |> validate_required([:stock, :cost, :desire, :trader_id, :item_id])
+    |> cast(attrs, [:stock, :trader_id, :item_id])
+    |> validate_required([:stock, :trader_id, :item_id])
   end
 end

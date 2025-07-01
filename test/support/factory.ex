@@ -1,12 +1,49 @@
 defmodule Tradewinds.Factory do
   use ExMachina.Ecto, repo: Tradewinds.Repo
 
-  def user_factory do
+  def player_factory do
     %Tradewinds.Schema.Player{
       name: "Test User",
       email: sequence(:email, &"user-#{&1}@example.com"),
       password: "password123",
       password_hash: Argon2.hash_pwd_salt("password123")
+    }
+  end
+
+  def company_agent_factory do
+    %Tradewinds.Schema.CompanyAgent{
+      company: build(:company),
+      port: build(:port)
+    }
+  end
+
+  def trader_factory do
+    %Tradewinds.Schema.Trader{
+      name: "Test Trader"
+    }
+  end
+
+  def trader_inventory_factory do
+    %Tradewinds.Schema.TraderInventory{
+      trader: build(:trader),
+      item: build(:item),
+      stock: 100
+    }
+  end
+
+  def trader_plan_factory do
+    %Tradewinds.Schema.TraderPlan{
+      trader: build(:trader),
+      item: build(:item),
+      average_acquisition_cost: 10,
+      ideal_stock_level: 1000,
+      target_profit_margin: 1.2,
+      max_buy_sell_spread: 0.2,
+      price_elasticity: 0.5,
+      liquidity_factor: 0.5,
+      consumption_rate: 10,
+      reversion_rate: 0.1,
+      regional_cost: 10
     }
   end
 

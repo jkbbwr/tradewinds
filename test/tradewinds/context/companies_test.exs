@@ -9,7 +9,7 @@ defmodule Tradewinds.CompaniesTest do
 
   describe "create_company/5" do
     test "creates a company with valid data" do
-      player = insert(:user)
+      player = insert(:player)
       port = insert(:port)
 
       {:ok, company} =
@@ -66,7 +66,7 @@ defmodule Tradewinds.CompaniesTest do
       {:ok, _office} = Companies.close_office(company, port)
 
       assert Repo.fetch_by(Office, company_id: company.id, port_id: port.id) ==
-               {:error, :not_found}
+               {:error, {:not_found, Tradewinds.Schema.Office}}
     end
 
     test "returns an error when opening a fourth office" do

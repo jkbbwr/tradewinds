@@ -9,13 +9,13 @@ defmodule Tradewinds.WorldTest do
     test "returns a port by name" do
       port = insert(:port, name: "Test Port")
 
-      {:ok, found_port} = World.get_port_by_name("Test Port")
+      {:ok, found_port} = World.fetch_port_by_name("Test Port")
 
       assert found_port.id == port.id
     end
 
     test "returns an error if port is not found" do
-      assert World.get_port_by_name("Nonexistent Port") == {:error, :not_found}
+      assert World.fetch_port_by_name("Nonexistent Port") == {:error, {:not_found, Tradewinds.Schema.Port}}
     end
   end
 
@@ -23,13 +23,13 @@ defmodule Tradewinds.WorldTest do
     test "returns a port by shortcode" do
       port = insert(:port, shortcode: "TEST")
 
-      {:ok, found_port} = World.get_port_by_shortcode("TEST")
+      {:ok, found_port} = World.fetch_port_by_shortcode("TEST")
 
       assert found_port.id == port.id
     end
 
     test "returns an error if port is not found" do
-      assert World.get_port_by_shortcode("NONE") == {:error, :not_found}
+      assert World.fetch_port_by_shortcode("NONE") == {:error, {:not_found, Tradewinds.Schema.Port}}
     end
   end
 
@@ -39,7 +39,7 @@ defmodule Tradewinds.WorldTest do
       port2 = insert(:port)
       insert(:route, from: port1, to: port2, distance: 100)
 
-      {:ok, distance} = World.get_distance_between_ports(port1, port2)
+      {:ok, distance} = World.fetch_distance_between_ports(port1, port2)
 
       assert distance == 100
     end
@@ -48,7 +48,7 @@ defmodule Tradewinds.WorldTest do
       port1 = insert(:port)
       port2 = insert(:port)
 
-      assert World.get_distance_between_ports(port1, port2) == {:error, :not_found}
+      assert World.fetch_distance_between_ports(port1, port2) == {:error, :not_found}
     end
   end
 
@@ -71,13 +71,13 @@ defmodule Tradewinds.WorldTest do
     test "returns a country by name" do
       country = insert(:country, name: "Test Country")
 
-      {:ok, found_country} = World.get_country_by_name("Test Country")
+      {:ok, found_country} = World.fetch_country_by_name("Test Country")
 
       assert found_country.id == country.id
     end
 
     test "returns an error if country is not found" do
-      assert World.get_country_by_name("Nonexistent Country") == {:error, :not_found}
+      assert World.fetch_country_by_name("Nonexistent Country") == {:error, {:not_found, Tradewinds.Schema.Country}}
     end
   end
 end

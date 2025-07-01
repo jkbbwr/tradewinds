@@ -9,7 +9,7 @@ defmodule Tradewinds.Schema.Trade do
     field :action, Ecto.Enum, values: [:sell, :buy]
 
     belongs_to :item, Tradewinds.Schema.Item
-    belongs_to :port, Tradewinds.Schema.Port
+    belongs_to :trader, Tradewinds.Schema.Trader
     belongs_to :company, Tradewinds.Schema.Company
     belongs_to :player, Tradewinds.Schema.Player
 
@@ -26,20 +26,20 @@ defmodule Tradewinds.Schema.Trade do
       :price,
       :game_tick,
       :action,
-      :good_id,
-      :port_id,
+      :trader_id,
       :company_id,
-      :player_id
+      :player_id,
+      :item_id
     ])
     |> validate_required([
       :amount,
       :price,
       :game_tick,
       :action,
-      :good_id,
-      :port_id,
+      :trader_id,
       :company_id,
-      :player_id
+      :player_id,
+      :item_id
     ])
   end
 end

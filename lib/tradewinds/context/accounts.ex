@@ -4,10 +4,14 @@ defmodule Tradewinds.Accounts do
   Handles players, authentication, and user management.
   """
 
+  alias Tradewinds.AccountsRepo
   alias Tradewinds.Repo
   alias Tradewinds.Schema.Player
   alias Tradewinds.Schema.AuthToken
   alias Argon2
+
+  defdelegate fetch_player_by_id(id), to: AccountsRepo
+  defdelegate fetch_player_by_email(email), to: AccountsRepo
 
   def register_player(name, email, password) do
     %Player{}
@@ -20,12 +24,12 @@ defmodule Tradewinds.Accounts do
   end
 
   def login_player(email, password) do
-    with {:ok, player} <- get_player_by_email(email),
+    with {:ok, player} <- fetch_player_by_email(email),
          :ok <- verify_pass(player, password),
          :ok <- is_enabled(player) do
       create_auth_token(player)
     else
-      {:error, :not_found} ->
+      {:error, {:not_found, _}} ->
         Argon2.no_user_verify()
         {:error, :invalid_credentials}
 
@@ -44,14 +48,6 @@ defmodule Tradewinds.Accounts do
 
   defp is_enabled(player) do
     if player.enabled, do: :ok, else: {:error, :player_not_enabled}
-  end
-
-  def get_player_by_id(id) do
-    Repo.fetch(Player, id)
-  end
-
-  def get_player_by_email(email) do
-    Repo.fetch_by(Player, email: email)
   end
 
   def disable_player(player) do

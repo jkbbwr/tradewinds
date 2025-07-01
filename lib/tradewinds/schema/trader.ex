@@ -1,5 +1,5 @@
 defmodule Tradewinds.Schema.Trader do
-  use Ecto.Schema
+  use Tradewinds.Schema
   import Ecto.Changeset
 
   alias Tradewinds.Schema.Port

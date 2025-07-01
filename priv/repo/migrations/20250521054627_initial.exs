@@ -174,9 +174,6 @@ defmodule Tradewinds.Repo.Migrations.Initial do
       add :trader_id, references(:trader), null: false
       add :item_id, references(:item), null: false
       add :stock, :integer, null: false
-      add :cost, :integer, null: false
-      add :desire, :integer, null: false
-      add :action, :text, null: false
       timestamps()
     end
 
@@ -248,8 +245,8 @@ defmodule Tradewinds.Repo.Migrations.Initial do
 
     create table(:company_agent) do
       add :company_id, references(:company), null: false
-      add :port_id, references(:port), null: false
-      add :ship_id, references(:ship), null: false
+      add :port_id, references(:port)
+      add :ship_id, references(:ship)
       timestamps()
     end
 

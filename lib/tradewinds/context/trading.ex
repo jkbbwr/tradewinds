@@ -1,7 +1,7 @@
 defmodule Tradewinds.Trading do
   alias Tradewinds.Repo
   alias Tradewinds.Companies
-  alias Tradewinds.Schema.Item
+  alias Tradewinds.TradingRepo
   alias Tradewinds.Schema.TraderInventory
   alias Tradewinds.Schema.TraderPlan
   alias Tradewinds.Schema.Trade
@@ -11,86 +11,79 @@ defmodule Tradewinds.Trading do
   alias Tradewinds.Schema.WarehouseInventory
   import Ecto.Query
 
-  @moduledoc """
-  The Trading context.
-  Encapsulates the primary game loop of trade, managing ships, cargo, and markets.
-  """
+  defdelegate fetch_trader_inventory(trader_id, item_id), to: TradingRepo
+  defdelegate fetch_trader_plan(trader_id, item_id), to: TradingRepo
 
-  @doc """
-
-  First check the player is in the port they want to buy from
-  """
   defp validate_quote(quote) do
     Phoenix.Token.verify(TradewindsWeb.Endpoint, "trader quote", quote, max_age: 15)
-  end
-
-  def get_trader_inventory(trader_id, item_id) do
-    Repo.fetch_by(TraderInventory, trader_id: trader_id, item_id: item_id)
-  end
-
-  def get_trader_plan(trader_id, item_id) do
-    Repo.fetch_by(TraderPlan, trader_id: trader_id, item_id: item_id)
   end
 
   def sell_to_player(player, company, trader, quote) do
     Repo.transact(fn ->
       with :ok <- Companies.check_presence_in_port(company, trader.port.id),
            {:ok, [item_id, quantity, price, game_tick]} <- validate_quote(quote),
-           {:ok, inventory} <- get_trader_inventory(trader.id, item_id),
+           {:ok, inventory} <- fetch_trader_inventory(trader.id, item_id),
            :ok <- check_stock_quantity(inventory, quantity),
-           :ok <- Companies.check_sufficient_funds(company, quantity * price) do
-        Companies.debit_treasury(company, quantity * price)
-        execute_sell(inventory, quantity)
-
+           :ok <- Companies.check_sufficient_funds(company, quantity * price),
+           {:ok, _company} <- Companies.debit_treasury(company, quantity * price),
+           {:ok, _inventory} <- execute_sell(inventory, quantity) do
         create_trade_log(
           player.id,
           company.id,
           item_id,
-          trader.port.id,
+          trader.id,
           quantity,
           price,
+          # from the perspective of the player, they are buying something.
           :buy,
           game_tick
         )
 
         {:ok, :sold}
+      else
+        error -> error
       end
     end)
+  end
+
+  defp check_enough_stock_in_port(stock, desired) do
+    total = Enum.reduce(stock, 0, fn %{amount: amount}, acc -> amount + acc end)
+
+    if total >= desired do
+      :ok
+    else
+      {:error, :not_enough_stock_in_port}
+    end
   end
 
   def buy_from_player(player, company, trader, quote) do
     Repo.transact(fn ->
-      with :ok <- Companies.check_presence_in_port(company, trader.port_id),
+      with :ok <- Companies.check_presence_in_port(company, trader.port.id),
            {:ok, [item_id, quantity, price, game_tick]} <- validate_quote(quote),
-           stock_in_port <- get_stock_in_port(company.id, trader.port_id, item_id) do
-        # TODO: check the player has enough stock in port to forfil the quote.
-        # Then pay them, and eat the stock, starting with any stock on ships and moving downwards.
-        # Then log it
+           {:ok, trader_plan} <- fetch_trader_plan(trader.id, item_id),
+           {:ok, inventory} <- fetch_trader_inventory(trader.id, item_id),
+           stock_in_port <- TradingRepo.get_stock_in_port(company.id, trader.port.id, item_id),
+           :ok <- check_enough_stock_in_port(stock_in_port, quantity),
+           :ok <- execute_buy(trader_plan, inventory, quantity, price),
+           :ok <- consume_stock(stock_in_port, quantity),
+           {:ok, _company} <- Companies.credit_treasury(company, price * quantity) do
+        create_trade_log(
+          player.id,
+          company.id,
+          item_id,
+          trader.id,
+          quantity,
+          price,
+          # from the perspective of the player, they are selling something.
+          :sell,
+          game_tick
+        )
+
         {:ok, :bought}
+      else
+        error -> error
       end
     end)
-  end
-
-  def get_stock_in_port(company_id, port_id, item_id) do
-    ship_inventory =
-      from s in Ship,
-        join: si in ShipInventory,
-        on: s.id == si.ship_id,
-        where: s.company_id == ^company_id and s.port_id == ^port_id and si.item_id == ^item_id,
-        select: %{type: "ship", id: si.id, amount: si.amount}
-
-    warehouse_inventory =
-      from w in Warehouse,
-        join: wi in WarehouseInventory,
-        on: w.id == wi.warehouse_id,
-        where: w.company_id == ^company_id and w.port_id == ^port_id and wi.item_id == ^item_id,
-        select: %{type: "warehouse", id: wi.id, amount: wi.amount}
-
-    query =
-      from u in subquery(ship_inventory),
-        union_all: ^subquery(warehouse_inventory)
-
-    Repo.all(query)
   end
 
   defp check_stock_quantity(inventory, quantity) do
@@ -118,19 +111,21 @@ defmodule Tradewinds.Trading do
     inventory
     |> TraderInventory.changeset(%{stock: new_stock})
     |> Repo.update!()
+
+    :ok
   end
 
   def execute_sell(inventory, quantity) do
     inventory
     |> TraderInventory.changeset(%{stock: inventory.stock - quantity})
-    |> Repo.update!()
+    |> Repo.update()
   end
 
   defp create_trade_log(
          player_id,
          company_id,
          item_id,
-         port_id,
+         trader_id,
          amount,
          price,
          action,
@@ -141,7 +136,7 @@ defmodule Tradewinds.Trading do
       player_id: player_id,
       company_id: company_id,
       item_id: item_id,
-      port_id: port_id,
+      trader_id: trader_id,
       amount: amount,
       price: price,
       action: action,
@@ -169,5 +164,31 @@ defmodule Tradewinds.Trading do
 
     buy_price = sell_price * (1 - spread_factor)
     round(buy_price)
+  end
+
+  def consume_stock([], 0), do: :ok
+  def consume_stock([], _quantity), do: {:error, :not_enough_stock_in_port}
+  def consume_stock(_, 0), do: :ok
+
+  def consume_stock([%{type: type, id: id, amount: amount} | tail], quantity) do
+    schema =
+      case type do
+        "ship" -> ShipInventory
+        "warehouse" -> WarehouseInventory
+      end
+
+    inventory = Repo.get!(schema, id)
+
+    if quantity >= amount do
+      Repo.delete!(inventory)
+      remaining_quantity = quantity - amount
+      consume_stock(tail, remaining_quantity)
+    else
+      inventory
+      |> schema.changeset(%{amount: inventory.amount - quantity})
+      |> Repo.update!()
+
+      consume_stock([], 0)
+    end
   end
 end

@@ -6,6 +6,7 @@ defmodule Tradewinds.Shipyard do
   alias Tradewinds.Repo
   alias Tradewinds.Schema.Ship
   alias Tradewinds.Schema.ShipyardInventory
+  alias Tradewinds.Schema.Shipyard
   alias Tradewinds.Schema.Company
   alias Tradewinds.Companies
 
@@ -30,12 +31,17 @@ defmodule Tradewinds.Shipyard do
     Repo.transact(fn ->
       with {:ok, ship} <- Repo.fetch(Ship, shipyard_inventory.ship_id),
            {:ok, company} <- Repo.fetch(Company, company.id),
-           {:ok, shipyard} <-
-             Repo.fetch(Tradewinds.Schema.Shipyard, shipyard_inventory.shipyard_id),
+           {:ok, shipyard} <- Repo.fetch(Shipyard, shipyard_inventory.shipyard_id),
            :ok <- Companies.check_presence_in_port(company, shipyard.port_id),
            :ok <- Companies.check_sufficient_funds(company, shipyard_inventory.cost),
            {:ok, updated_ship} <- complete_purchase(company, ship, shipyard_inventory) do
         {:ok, updated_ship}
+      else
+        {:error, {:not_found, Ship}} ->
+          {:error, {:not_found, "Couldn't find ship with id #{shipyard_inventory.ship_id}"}}
+
+        {:error, {:not_found, Company}} ->
+          {:error, {:not_found, "Couldn't find company with id #{company.id}"}}
       end
     end)
   end

@@ -71,4 +71,39 @@ defmodule Tradewinds.TradingTest do
       assert %{type: "warehouse", id: warehouse_inventory.id, amount: 20} in results
     end
   end
+
+  describe "sell_to_player/4" do
+    test "successfully sells to player" do
+      player = insert(:player)
+      company = insert(:company, treasury: 1000)
+      port = insert(:port)
+      item = insert(:item)
+      trader = insert(:trader, port_id: port.id) |> Repo.preload(:port)
+      insert(:trader_inventory, trader: trader, item: item, stock: 100)
+      insert(:company_agent, company: company, port: port)
+
+      quote = Phoenix.Token.sign(TradewindsWeb.Endpoint, "trader quote", [item.id, 10, 50, 1])
+
+      assert {:ok, :sold} == Trading.sell_to_player(player, company, trader, quote)
+    end
+  end
+
+  describe "buy_from_player/4" do
+    test "successfully buys from player" do
+      player = insert(:player)
+      company = insert(:company, treasury: 1000)
+      port = insert(:port)
+      item = insert(:item)
+      trader = insert(:trader, port_id: port.id) |> Repo.preload(:port)
+      insert(:trader_inventory, trader: trader, item: item, stock: 100)
+      insert(:trader_plan, trader: trader, item: item)
+      insert(:company_agent, company: company, port: port)
+      ship = insert(:ship, company: company, port: port)
+      insert(:ship_inventory, ship: ship, item: item, amount: 20)
+
+      quote = Phoenix.Token.sign(TradewindsWeb.Endpoint, "trader quote", [item.id, 10, 50, 1])
+
+      assert {:ok, :bought} == Trading.buy_from_player(player, company, trader, quote)
+    end
+  end
 end

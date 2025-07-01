@@ -10,6 +10,8 @@ defmodule TradewindsWeb.Router do
 
     post "/register", PlayerController, :register
     post "/companies", CompanyController, :create
+
+    get "/fuck", CompanyController, :fuck
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
