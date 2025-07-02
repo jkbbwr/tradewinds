@@ -29,5 +29,6 @@ use AliasHack
 alias Tradewinds.Repo
 import Ecto.Query
 
-player = Repo.get_by!(Player, name: "test")
+player = Repo.get_by!(Player, name: "kibb")
+company = Repo.get_by!(Company, ticker: "EIC")
 london = Repo.get_by!(Port, name: "London")

@@ -145,7 +145,7 @@ defmodule Tradewinds.Repo.Migrations.Initial do
     create unique_index(:ship_inventory, [:ship_id, :item_id])
 
     create table(:warehouse) do
-      add :capacity, :integer, null: false
+      add :locked, :boolean, null: false, default: false
       add :company_id, references(:company), null: false
       add :port_id, references(:port), null: false
       timestamps()

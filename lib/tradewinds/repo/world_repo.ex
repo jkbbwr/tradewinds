@@ -7,11 +7,13 @@ defmodule Tradewinds.WorldRepo do
   import Ecto.Query
 
   def fetch_port_by_name(name) do
-    Repo.fetch_by(Port, name: name)
+    Repo.get_by(Port, name: name)
+    |> Repo.ok_or("couldn't find port with name #{name}")
   end
 
   def fetch_port_by_shortcode(shortcode) do
-    Repo.fetch_by(Port, shortcode: shortcode)
+    Repo.get_by(Port, shortcode: shortcode)
+    |> Repo.ok_or("couldn't find port with shortcode #{shortcode}")
   end
 
   def get_ports_by_country(country) do
@@ -22,11 +24,13 @@ defmodule Tradewinds.WorldRepo do
   end
 
   def fetch_country_by_name(name) do
-    Repo.fetch_by(Country, name: name)
+    Repo.get_by(Country, name: name)
+    |> Repo.ok_or("couldn't find country with name #{name}")
   end
 
   def fetch_item_by_id(id) do
-    Repo.fetch_by(Item, id: id)
+    Repo.get_by(Item, id: id)
+    |> Repo.ok_or("couldn't find item with id #{id}")
   end
 
   def fetch_distance_between_ports(port1, port2) do

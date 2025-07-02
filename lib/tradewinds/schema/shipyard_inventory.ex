@@ -13,4 +13,10 @@ defmodule Tradewinds.Schema.ShipyardInventory do
     |> cast(attrs, [:shipyard_id, :ship_id, :cost])
     |> validate_required([:shipyard_id, :ship_id, :cost])
   end
+
+  def create_changeset(shipyard_inventory, attrs) do
+    shipyard_inventory
+    |> cast(attrs, [:shipyard_id, :ship_id, :cost])
+    |> validate_required([:shipyard_id, :ship_id, :cost])
+  end
 end

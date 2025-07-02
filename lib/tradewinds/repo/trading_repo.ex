@@ -9,11 +9,13 @@ defmodule Tradewinds.TradingRepo do
   import Ecto.Query
 
   def fetch_trader_inventory(trader_id, item_id) do
-    Repo.fetch_by(TraderInventory, trader_id: trader_id, item_id: item_id)
+    Repo.get_by(TraderInventory, trader_id: trader_id, item_id: item_id)
+    |> Repo.ok_or("couldn't find trader inventory for trader #{trader_id} and item #{item_id}")
   end
 
   def fetch_trader_plan(trader_id, item_id) do
-    Repo.fetch_by(TraderPlan, trader_id: trader_id, item_id: item_id)
+    Repo.get_by(TraderPlan, trader_id: trader_id, item_id: item_id)
+    |> Repo.ok_or("couldn't find trader plan for trader #{trader_id} and item #{item_id}")
   end
 
   def get_stock_in_port(company_id, port_id, item_id) do

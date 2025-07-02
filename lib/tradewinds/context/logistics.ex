@@ -2,23 +2,28 @@ defmodule Tradewinds.Logistics do
   @moduledoc """
   The Logistics context, responsible for ship movement and management.
   """
-
-  alias Tradewinds.LogisticsRepo
   alias Tradewinds.Repo
-  alias Tradewinds.Schema.Ship
-  import Ecto.Query
+  alias Tradewinds.LogisticsRepo
+  alias Tradewinds.Companies
+
+  def create_warehouse(company, port, initial_capacity) do
+    with :ok <- Companies.check_presence_in_port(company, port) do
+      LogisticsRepo.create_warehouse(company, port, initial_capacity)
+    end
+  end
+
+  def change_warehouse_capacity(warehouse, new_capacity) do
+    warehouse = Repo.preload(warehouse, [:company, :port])
+
+    with :ok <- Companies.check_presence_in_port(warehouse.company, warehouse.port) do
+      LogisticsRepo.update_warehouse_capacity(warehouse, new_capacity)
+    end
+  end
 
   def set_sail(ship, destination_port) do
     with {:ok, route} <- LogisticsRepo.find_route(ship.port_id, destination_port.id),
          arriving_at <- calculate_arrival(route.distance, ship.speed) do
-      ship
-      |> Ship.changeset(%{
-        state: :at_sea,
-        port_id: nil,
-        route_id: route.id,
-        arriving_at: arriving_at
-      })
-      |> Repo.update()
+      LogisticsRepo.set_ship_to_sail(ship, route, arriving_at)
     end
   end
 

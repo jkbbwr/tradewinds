@@ -8,7 +8,7 @@ defmodule Tradewinds.Schema.Company do
     field :treasury, :integer
     belongs_to :home_port, Tradewinds.Schema.Port, foreign_key: :home_port_id
 
-    many_to_many :director, Tradewinds.Schema.Player, join_through: Tradewinds.Schema.Director
+    many_to_many :directors, Tradewinds.Schema.Player, join_through: Tradewinds.Schema.Director
     has_many :office, Tradewinds.Schema.Office
 
     timestamps()
@@ -20,9 +20,8 @@ defmodule Tradewinds.Schema.Company do
   def create_changeset(company, attrs) do
     company
     |> cast(attrs, [:name, :ticker, :treasury, :home_port_id])
-    |> put_assoc(:director, attrs.director)
-    |> validate_required([:name, :ticker, :treasury, :home_port_id, :director])
-    |> validate_length(:director, min: 1, message: "must have at least one director")
+    |> put_assoc(:directors, attrs.directors)
+    |> validate_required([:name, :ticker, :treasury, :home_port_id, :directors])
     |> validate_length(:ticker, max: 5)
     |> unique_constraint(:name)
     |> unique_constraint(:ticker)

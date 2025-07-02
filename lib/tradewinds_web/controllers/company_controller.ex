@@ -14,10 +14,6 @@ defmodule TradewindsWeb.CompanyController do
     required(:directors, {:array, :string})
   end
 
-  def fuck(conn, _params) do
-    Tradewinds.Repo.get!(Tradewinds.Schema.Company, Ecto.UUID.generate())
-  end
-
   def create(conn, params) do
     with {:ok, attrs} <- validate(:create, params),
          {:ok, company} <-

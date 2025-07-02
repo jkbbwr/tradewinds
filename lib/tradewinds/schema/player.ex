@@ -11,7 +11,7 @@ defmodule Tradewinds.Schema.Player do
     timestamps()
   end
 
-  def registration_changeset(player, attrs) do
+  def create_changeset(player, attrs) do
     player
     |> cast(attrs, [:name, :email, :password])
     |> validate_required([:name, :email, :password])

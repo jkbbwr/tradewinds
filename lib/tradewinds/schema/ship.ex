@@ -17,10 +17,7 @@ defmodule Tradewinds.Schema.Ship do
     timestamps()
   end
 
-  @doc """
-  Builds a changeset for the ship schema.
-  """
-  def changeset(ship, attrs) do
+  def create_changeset(ship, attrs) do
     ship
     |> cast(attrs, [
       :name,
@@ -34,5 +31,21 @@ defmodule Tradewinds.Schema.Ship do
       :arriving_at
     ])
     |> validate_required([:name, :state, :type, :capacity, :speed])
+  end
+
+  def update_company_changeset(ship, attrs) do
+    ship
+    |> cast(attrs, [:company_id])
+    |> validate_required([:company_id])
+  end
+
+  def transit_changeset(ship, route, arriving_at) do
+    ship
+    |> cast(%{state: :at_sea, route_id: route.id, arriving_at: arriving_at}, [
+      :state,
+      :route_id,
+      :arriving_at
+    ])
+    |> validate_required([:state, :route_id, :arriving_at])
   end
 end

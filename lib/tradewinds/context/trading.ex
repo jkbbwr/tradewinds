@@ -1,15 +1,13 @@
 defmodule Tradewinds.Trading do
   alias Tradewinds.Repo
   alias Tradewinds.Companies
+  alias Tradewinds.CompanyRepo
   alias Tradewinds.TradingRepo
   alias Tradewinds.Schema.TraderInventory
   alias Tradewinds.Schema.TraderPlan
   alias Tradewinds.Schema.Trade
-  alias Tradewinds.Schema.Ship
-  alias Tradewinds.Schema.Warehouse
   alias Tradewinds.Schema.ShipInventory
   alias Tradewinds.Schema.WarehouseInventory
-  import Ecto.Query
 
   defdelegate fetch_trader_inventory(trader_id, item_id), to: TradingRepo
   defdelegate fetch_trader_plan(trader_id, item_id), to: TradingRepo
@@ -22,10 +20,10 @@ defmodule Tradewinds.Trading do
     Repo.transact(fn ->
       with :ok <- Companies.check_presence_in_port(company, trader.port.id),
            {:ok, [item_id, quantity, price, game_tick]} <- validate_quote(quote),
-           {:ok, inventory} <- fetch_trader_inventory(trader.id, item_id),
+           {:ok, inventory} <- TradingRepo.fetch_trader_inventory(trader.id, item_id),
            :ok <- check_stock_quantity(inventory, quantity),
            :ok <- Companies.check_sufficient_funds(company, quantity * price),
-           {:ok, _company} <- Companies.debit_treasury(company, quantity * price),
+           {:ok, _company} <- CompanyRepo.debit_treasury(company, quantity * price),
            {:ok, _inventory} <- execute_sell(inventory, quantity) do
         create_trade_log(
           player.id,
@@ -60,13 +58,13 @@ defmodule Tradewinds.Trading do
     Repo.transact(fn ->
       with :ok <- Companies.check_presence_in_port(company, trader.port.id),
            {:ok, [item_id, quantity, price, game_tick]} <- validate_quote(quote),
-           {:ok, trader_plan} <- fetch_trader_plan(trader.id, item_id),
-           {:ok, inventory} <- fetch_trader_inventory(trader.id, item_id),
+           {:ok, trader_plan} <- TradingRepo.fetch_trader_plan(trader.id, item_id),
+           {:ok, inventory} <- TradingRepo.fetch_trader_inventory(trader.id, item_id),
            stock_in_port <- TradingRepo.get_stock_in_port(company.id, trader.port.id, item_id),
            :ok <- check_enough_stock_in_port(stock_in_port, quantity),
            :ok <- execute_buy(trader_plan, inventory, quantity, price),
            :ok <- consume_stock(stock_in_port, quantity),
-           {:ok, _company} <- Companies.credit_treasury(company, price * quantity) do
+           {:ok, _company} <- CompanyRepo.credit_treasury(company, price * quantity) do
         create_trade_log(
           player.id,
           company.id,
