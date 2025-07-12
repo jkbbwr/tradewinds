@@ -32,3 +32,5 @@ import Ecto.Query
 player = Repo.get_by!(Player, name: "kibb")
 company = Repo.get_by!(Company, ticker: "EIC")
 london = Repo.get_by!(Port, name: "London")
+warehouse = Repo.get_by!(Warehouse, company_id: company.id)
+beer = Repo.get_by!(Item, name: "Beer")

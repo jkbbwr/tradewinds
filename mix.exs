@@ -48,6 +48,8 @@ defmodule Tradewinds.MixProject do
       {:bandit, "~> 1.5"},
       {:argon2_elixir, "~> 4.1"},
       {:goal, "~> 1.1"},
+      {:ecto_cursor, "~> 0.1.0"},
+      {:open_api_spex, "~> 3.21"},
       {:ex_machina, "~> 2.8.0", only: :test}
     ]
   end

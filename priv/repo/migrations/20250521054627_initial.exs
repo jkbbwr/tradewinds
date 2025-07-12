@@ -94,6 +94,7 @@ defmodule Tradewinds.Repo.Migrations.Initial do
       add :port_id, references(:port)
       add :route_id, references(:route)
       add :arriving_at, :utc_datetime
+      add :max_passengers, :integer, null: false
       timestamps()
     end
 
@@ -103,7 +104,8 @@ defmodule Tradewinds.Repo.Migrations.Initial do
 
     create constraint(:ship, "port_xor_route_constraint",
              check:
-               "((port_id IS NOT NULL AND route_id IS NULL) OR (port_id IS NULL AND route_id IS NOT NULL))"
+               "((port_id IS NOT NULL AND route_id IS NULL) OR (port_id IS NULL AND route_id IS NOT NULL))",
+             comment: "a ship is either at sea or its in port. it cannot be neither."
            )
 
     create table(:modification) do
@@ -145,7 +147,6 @@ defmodule Tradewinds.Repo.Migrations.Initial do
     create unique_index(:ship_inventory, [:ship_id, :item_id])
 
     create table(:warehouse) do
-      add :locked, :boolean, null: false, default: false
       add :company_id, references(:company), null: false
       add :port_id, references(:port), null: false
       timestamps()
@@ -258,6 +259,17 @@ defmodule Tradewinds.Repo.Migrations.Initial do
              check:
                "((port_id IS NOT NULL AND ship_id IS NULL) OR (port_id IS NULL AND ship_id IS NOT NULL))"
            )
+
+    create table(:passenger) do
+      add :ship_id, references(:ship)
+      add :passenger_id, :uuid
+      # currently its just :company_agent
+      add :type, :text
+    end
+
+    create table(:loan_requests) do
+      timestamps()
+    end
 
     create table(:trade) do
       add :item_id, references(:item), null: false

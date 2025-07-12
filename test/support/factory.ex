@@ -2,7 +2,7 @@ defmodule Tradewinds.Factory do
   use ExMachina.Ecto, repo: Tradewinds.Repo
 
   def player_factory do
-    %Tradewinds.Schema.Player{
+    %Tradewinds.Accounts.Player{
       name: "Test User",
       email: sequence(:email, &"user-#{&1}@example.com"),
       password: "password123",
@@ -11,20 +11,20 @@ defmodule Tradewinds.Factory do
   end
 
   def company_agent_factory do
-    %Tradewinds.Schema.CompanyAgent{
+    %Tradewinds.Companies.CompanyAgent{
       company: build(:company),
       port: build(:port)
     }
   end
 
   def trader_factory do
-    %Tradewinds.Schema.Trader{
+    %Tradewinds.Trading.Trader{
       name: "Test Trader"
     }
   end
 
   def trader_inventory_factory do
-    %Tradewinds.Schema.TraderInventory{
+    %Tradewinds.Trading.TraderInventory{
       trader: build(:trader),
       item: build(:item),
       stock: 100
@@ -32,7 +32,7 @@ defmodule Tradewinds.Factory do
   end
 
   def trader_plan_factory do
-    %Tradewinds.Schema.TraderPlan{
+    %Tradewinds.Trading.TraderPlan{
       trader: build(:trader),
       item: build(:item),
       average_acquisition_cost: 10,
@@ -48,14 +48,14 @@ defmodule Tradewinds.Factory do
   end
 
   def country_factory do
-    %Tradewinds.Schema.Country{
+    %Tradewinds.World.Country{
       name: sequence(:name, &"Country #{&1}"),
       description: "A test country"
     }
   end
 
   def port_factory do
-    %Tradewinds.Schema.Port{
+    %Tradewinds.World.Port{
       name: sequence(:name, &"Port #{&1}"),
       shortcode: sequence(:shortcode, &"P#{&1}"),
       country: build(:country)
@@ -63,7 +63,7 @@ defmodule Tradewinds.Factory do
   end
 
   def company_factory do
-    %Tradewinds.Schema.Company{
+    %Tradewinds.Companies.Company{
       name: sequence(:name, &"Company #{&1}"),
       ticker: sequence(:ticker, &"C#{&1}"),
       treasury: 1000,
@@ -72,13 +72,13 @@ defmodule Tradewinds.Factory do
   end
 
   def shipyard_factory do
-    %Tradewinds.Schema.Shipyard{
+    %Tradewinds.Shipyard{
       port: build(:port)
     }
   end
 
   def ship_factory do
-    %Tradewinds.Schema.Ship{
+    %Tradewinds.Ships.Ship{
       name: "The Black Pearl",
       state: :in_port,
       type: :cutter,
@@ -89,22 +89,21 @@ defmodule Tradewinds.Factory do
   end
 
   def office_factory do
-    %Tradewinds.Schema.Office{
+    %Tradewinds.Companies.Office{
       company: build(:company),
       port: build(:port)
     }
   end
 
   def warehouse_factory do
-    %Tradewinds.Schema.Warehouse{
+    %Tradewinds.Warehouse{
       company: build(:company),
-      port: build(:port),
-      capacity: 1000
+      port: build(:port)
     }
   end
 
   def route_factory do
-    %Tradewinds.Schema.Route{
+    %Tradewinds.World.Route{
       from: build(:port),
       to: build(:port),
       distance: 100
@@ -112,7 +111,7 @@ defmodule Tradewinds.Factory do
   end
 
   def shipyard_inventory_factory do
-    %Tradewinds.Schema.ShipyardInventory{
+    %Tradewinds.Shipyard.ShipyardInventory{
       shipyard: build(:shipyard),
       ship: build(:ship),
       cost: 10_000
@@ -120,7 +119,7 @@ defmodule Tradewinds.Factory do
   end
 
   def item_factory do
-    %Tradewinds.Schema.Item{
+    %Tradewinds.World.Item{
       name: sequence(:name, &"Item #{&1}"),
       shortcode: sequence(:shortcode, &"I#{&1}"),
       description: "A test item"
@@ -128,7 +127,7 @@ defmodule Tradewinds.Factory do
   end
 
   def ship_inventory_factory do
-    %Tradewinds.Schema.ShipInventory{
+    %Tradewinds.Ships.ShipInventory{
       ship: build(:ship),
       item: build(:item),
       amount: 10
@@ -136,8 +135,8 @@ defmodule Tradewinds.Factory do
   end
 
   def warehouse_inventory_factory do
-    %Tradewinds.Schema.WarehouseInventory{
-      warehouse: build(:warehouse),
+    %Tradewinds.Warehouse.WarehouseInventory{
+      warehouse: insert(:warehouse),
       item: build(:item),
       amount: 10
     }
