@@ -1,5 +1,7 @@
 alias Tradewinds.Repo
-alias Tradewinds.Schema.{Country, Port, Route}
+alias Tradewinds.World.Country
+alias Tradewinds.World.Port
+alias Tradewinds.World.Route
 
 england =
   Repo.insert!(%Country{

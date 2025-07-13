@@ -19,7 +19,8 @@ defmodule Tradewinds.Factory do
 
   def trader_factory do
     %Tradewinds.Trading.Trader{
-      name: "Test Trader"
+      name: "Test Trader",
+      port: build(:port)
     }
   end
 
@@ -84,7 +85,9 @@ defmodule Tradewinds.Factory do
       type: :cutter,
       capacity: 100,
       speed: 10,
-      port: build(:port)
+      max_passengers: 10,
+      port: build(:port),
+      company: build(:company)
     }
   end
 
@@ -96,7 +99,7 @@ defmodule Tradewinds.Factory do
   end
 
   def warehouse_factory do
-    %Tradewinds.Warehouse{
+    %Tradewinds.Warehouses.Warehouse{
       company: build(:company),
       port: build(:port)
     }
@@ -135,7 +138,7 @@ defmodule Tradewinds.Factory do
   end
 
   def warehouse_inventory_factory do
-    %Tradewinds.Warehouse.WarehouseInventory{
+    %Tradewinds.Warehouses.WarehouseInventory{
       warehouse: insert(:warehouse),
       item: build(:item),
       amount: 10

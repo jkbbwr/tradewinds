@@ -5,10 +5,7 @@ defmodule AliasHack do
       |> elem(1)
       |> Enum.map(&Module.split/1)
       |> Enum.filter(fn
-        ["Tradewinds", "Repo" | _] ->
-          true
-
-        ["Tradewinds", "Schema" | _] ->
+        ["Tradewinds" | _] ->
           true
 
         _ ->
@@ -31,6 +28,6 @@ import Ecto.Query
 
 player = Repo.get_by!(Player, name: "kibb")
 company = Repo.get_by!(Company, ticker: "EIC")
-london = Repo.get_by!(Port, name: "London")
+london = Repo.get_by!(Port, name: "London") |> Repo.preload(:traders)
 warehouse = Repo.get_by!(Warehouse, company_id: company.id)
 beer = Repo.get_by!(Item, name: "Beer")

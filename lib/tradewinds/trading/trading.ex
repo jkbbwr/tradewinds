@@ -5,7 +5,7 @@ defmodule Tradewinds.Trading do
   alias Tradewinds.Ledger
   alias Tradewinds.Ships
 
-  alias Tradewinds.Warehouse
+  alias Tradewinds.Warehouses
   alias Tradewinds.Trading.TraderInventory
   alias Tradewinds.Trading.TraderPlan
 
@@ -34,7 +34,7 @@ defmodule Tradewinds.Trading do
 
   def buy_from_trader(trader, company, quote, inventories, player, game_tick) do
     Repo.transact(fn ->
-      with :ok <- Companies.check_presence_in_port(company, trader.port.id),
+      with :ok <- Companies.check_presence_in_port(company, trader.port),
            {:ok, [item_id, quantity, price]} <- validate_quote(quote),
            {:ok, item} <- World.fetch_item(item_id),
            {:ok, inventory} <- fetch_trader_inventory(trader.id, item.id),
@@ -117,7 +117,7 @@ defmodule Tradewinds.Trading do
         with {:ok, warehouse} <- Companies.fetch_warehouse(company, warehouse_id) do
           amount_to_store = min(amount, remaining_quantity)
 
-          case Warehouse.store(warehouse, item, amount_to_store) do
+          case Warehouses.store(warehouse, item, amount_to_store) do
             {:ok, _} -> {:cont, remaining_quantity - amount_to_store}
             error -> {:halt, error}
           end
@@ -148,7 +148,7 @@ defmodule Tradewinds.Trading do
         with {:ok, warehouse} <- Companies.fetch_warehouse(company, warehouse_id) do
           amount_to_withdraw = min(amount, remaining_quantity)
 
-          case Warehouse.withdraw(warehouse, item, amount_to_withdraw) do
+          case Warehouses.withdraw(warehouse, item, amount_to_withdraw) do
             {:ok, _} -> {:cont, remaining_quantity - amount_to_withdraw}
             error -> {:halt, error}
           end

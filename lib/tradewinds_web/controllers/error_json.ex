@@ -9,8 +9,7 @@ defmodule TradewindsWeb.ErrorJSON do
     %{errors: Ecto.Changeset.traverse_errors(changeset, &translate_error/1)}
   end
 
-  def render("404.json", error) do
-    IO.puts(inspect(error))
+  def render("404.json", _error) do
     %{errors: %{detail: "Not Found"}}
   end
 

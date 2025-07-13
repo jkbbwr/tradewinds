@@ -13,6 +13,7 @@ defmodule Tradewinds.Ships.Ship do
     field :type, Ecto.Enum, values: [:cutter]
     field :capacity, :integer
     field :speed, :integer
+    field :max_passengers, :integer
     belongs_to :company, Company, foreign_key: :company_id
     belongs_to :port, Port, foreign_key: :port_id
     belongs_to :route, Route, foreign_key: :route_id
@@ -31,11 +32,12 @@ defmodule Tradewinds.Ships.Ship do
       :capacity,
       :speed,
       :company_id,
+      :max_passengers,
       :port_id,
       :route_id,
       :arriving_at
     ])
-    |> validate_required([:name, :state, :type, :capacity, :speed])
+    |> validate_required([:name, :state, :max_passengers, :type, :capacity, :speed])
   end
 
   def update_company_changeset(ship, attrs) do
@@ -46,11 +48,10 @@ defmodule Tradewinds.Ships.Ship do
 
   def transit_changeset(ship, route, arriving_at) do
     ship
-    |> cast(%{state: :at_sea, route_id: route.id, arriving_at: arriving_at}, [
-      :state,
-      :route_id,
-      :arriving_at
-    ])
+    |> cast(
+      %{state: :at_sea, port_id: nil, route_id: route.id, arriving_at: arriving_at},
+      [:state, :port_id, :route_id, :arriving_at]
+    )
     |> validate_required([:state, :route_id, :arriving_at])
   end
 end

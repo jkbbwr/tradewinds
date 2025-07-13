@@ -7,7 +7,7 @@ defmodule Tradewinds.Companies do
   alias Tradewinds.Ships.Ship
   alias Tradewinds.Companies.CompanyAgent
   alias Tradewinds.Companies.Office
-  alias Tradewinds.Warehouse
+  alias Tradewinds.Warehouses.Warehouse
   alias Tradewinds.Repo
   import Ecto.Query
 

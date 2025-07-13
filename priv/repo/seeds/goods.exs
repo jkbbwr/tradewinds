@@ -1,5 +1,5 @@
 alias Tradewinds.Repo
-alias Tradewinds.Schema.Item
+alias Tradewinds.World.Item
 
 Repo.insert!(%Item{
   name: "Beer",

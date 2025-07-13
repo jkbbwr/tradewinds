@@ -3,7 +3,7 @@ defmodule Tradewinds.Shipyard.ShipyardInventory do
   import Ecto.Changeset
 
   alias Tradewinds.Shipyard
-  alias Tradewinds.Fleet.Ship
+  alias Tradewinds.Ships.Ship
 
   schema "shipyard_inventory" do
     belongs_to :shipyard, Shipyard

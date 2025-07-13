@@ -12,6 +12,7 @@ defmodule Tradewinds.World.Port do
       join_keys: [from_id: :id, to_id: :id]
 
     has_many :routes, Tradewinds.World.Route, foreign_key: :from_id
+    has_many :traders, Tradewinds.Trading.Trader, foreign_key: :port_id
 
     belongs_to :country, Tradewinds.World.Country
     timestamps()

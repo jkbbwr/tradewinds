@@ -1,8 +1,8 @@
-defmodule Tradewinds.Warehouse.WarehouseInventory do
+defmodule Tradewinds.Warehouses.WarehouseInventory do
   use Tradewinds.Schema
   import Ecto.Changeset
 
-  alias Tradewinds.Warehouse
+  alias Tradewinds.Warehouses.Warehouse
   alias Tradewinds.World.Item
 
   schema "warehouse_inventory" do

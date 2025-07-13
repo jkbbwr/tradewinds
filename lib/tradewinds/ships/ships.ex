@@ -37,7 +37,7 @@ defmodule Tradewinds.Ships do
     if current_weight + new_weight > ship.capacity do
       {:error, :not_enough_capacity}
     else
-      Repo.insert!(
+      Repo.insert(
         %ShipInventory{ship_id: ship.id, item_id: item.id, amount: amount},
         on_conflict: [inc: [amount: amount]],
         conflict_target: [:ship_id, :item_id]

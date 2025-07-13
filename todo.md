@@ -16,7 +16,6 @@ get ports/routes/distance/etc
 ### Shipyard
 create ship
 sell ship
-modify ship (?)
 
 ### Agents
 passenger agents
