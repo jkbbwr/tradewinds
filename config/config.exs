@@ -8,6 +8,10 @@
 import Config
 
 config :tradewinds,
+  gametime_anchor: ~U[1600-01-01 12:00:00Z],
+  realtime_anchor: ~U[2025-07-15 00:00:00Z]
+
+config :tradewinds,
   ecto_repos: [Tradewinds.Repo],
   generators: [timestamp_type: :utc_datetime, binary_id: true]
 

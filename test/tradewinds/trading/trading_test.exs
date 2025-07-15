@@ -50,7 +50,8 @@ defmodule Tradewinds.TradingTest do
       {:ok, quote} = Trading.buy_from_trader_quote(trader, item, 50)
       inventories = [%{type: :warehouse, id: warehouse.id, amount: 50}]
 
-      assert {:ok, :bought} = Trading.buy_from_trader(trader, company, quote, inventories, player, 1)
+      assert {:ok, :bought} =
+               Trading.buy_from_trader(trader, company, quote, inventories, player, 1)
     end
 
     test "sell_to_trader/6 successfully sells to a trader", %{

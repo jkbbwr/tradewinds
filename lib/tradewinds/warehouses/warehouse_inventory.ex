@@ -29,4 +29,10 @@ defmodule Tradewinds.Warehouses.WarehouseInventory do
     |> validate_required([:amount])
     |> validate_number(:amount, greater_than_or_equal_to: 0)
   end
+
+  def create_changeset(warehouse_inventory, attrs) do
+    warehouse_inventory
+    |> cast(attrs, [:warehouse_id, :item_id, :amount])
+    |> validate_required([:warehouse_id, :item_id, :amount])
+  end
 end

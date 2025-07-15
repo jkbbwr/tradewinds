@@ -16,7 +16,9 @@ defmodule Tradewinds.Application do
       # {Tradewinds.Worker, arg},
       # Start to serve requests, typically the last entry
       TradewindsWeb.Endpoint,
-      {Tradewinds.Manager, {Tradewinds.Counter, [0]}}
+      {Tradewinds.Manager,
+       {Tradewinds.GameLoop,
+        [realtime_anchor: Application.fetch_env!(:tradewinds, :realtime_anchor)]}}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

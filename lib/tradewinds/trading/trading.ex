@@ -12,8 +12,8 @@ defmodule Tradewinds.Trading do
   @quote_age 360
 
   def buy_from_trader_quote(trader, item, amount) do
-    with {:ok, trader_plan} <- fetch_trader_plan(trader.id, item.id),
-         {:ok, inventory} <- fetch_trader_inventory(trader.id, item.id),
+    with {:ok, trader_plan} <- fetch_trader_plan(trader, item),
+         {:ok, inventory} <- fetch_trader_inventory(trader, item),
          :ok <- check_stock_quantity(inventory, amount) do
       price = spot_sell_price(trader_plan, inventory.stock)
 
@@ -23,8 +23,8 @@ defmodule Tradewinds.Trading do
   end
 
   def sell_to_trader_quote(trader, item, amount, game_tick) do
-    with {:ok, trader_plan} <- fetch_trader_plan(trader.id, item.id),
-         {:ok, inventory} <- fetch_trader_inventory(trader.id, item.id) do
+    with {:ok, trader_plan} <- fetch_trader_plan(trader, item),
+         {:ok, inventory} <- fetch_trader_inventory(trader, item) do
       price = spot_buy_price(trader_plan, inventory.stock)
 
       quote = sign_quote([item.id, amount, price, game_tick])
@@ -37,7 +37,7 @@ defmodule Tradewinds.Trading do
       with :ok <- Companies.check_presence_in_port(company, trader.port),
            {:ok, [item_id, quantity, price]} <- validate_quote(quote),
            {:ok, item} <- World.fetch_item(item_id),
-           {:ok, inventory} <- fetch_trader_inventory(trader.id, item.id),
+           {:ok, inventory} <- fetch_trader_inventory(trader, item),
            :ok <- check_stock_quantity(inventory, quantity),
            :ok <- Companies.check_sufficient_funds(company, quantity * price),
            {:ok, _company} <- Companies.debit_treasury(company, quantity * price),
@@ -67,8 +67,8 @@ defmodule Tradewinds.Trading do
            {:ok, [item_id, quantity, price, _quote_game_tick]} <- validate_quote(quote),
            {:ok, item} <- World.fetch_item(item_id),
            :ok <- check_enough_stock_in_port(inventories, quantity),
-           {:ok, trader_plan} <- fetch_trader_plan(trader.id, item.id),
-           {:ok, inventory} <- fetch_trader_inventory(trader.id, item.id),
+           {:ok, trader_plan} <- fetch_trader_plan(trader, item),
+           {:ok, inventory} <- fetch_trader_inventory(trader, item),
            :ok <- credit_trader_stock(trader_plan, inventory, quantity, price),
            :ok <- fulfill_sale(company, inventories, item, quantity),
            {:ok, _company} <- Companies.credit_treasury(company, price * quantity) do
@@ -226,13 +226,13 @@ defmodule Tradewinds.Trading do
     round(buy_price)
   end
 
-  defp fetch_trader_inventory(trader_id, item_id) do
-    Repo.get_by(TraderInventory, trader_id: trader_id, item_id: item_id)
+  defp fetch_trader_inventory(trader, item) do
+    Repo.get_by(TraderInventory, trader_id: trader.id, item_id: item.id)
     |> Repo.ok_or(:trader_inventory_not_found)
   end
 
-  defp fetch_trader_plan(trader_id, item_id) do
-    Repo.get_by(TraderPlan, trader_id: trader_id, item_id: item_id)
+  defp fetch_trader_plan(trader, item) do
+    Repo.get_by(TraderPlan, trader_id: trader.id, item_id: item.id)
     |> Repo.ok_or(:trader_plan_not_found)
   end
 end

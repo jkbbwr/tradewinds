@@ -283,6 +283,18 @@ defmodule Tradewinds.Repo.Migrations.Initial do
       timestamps()
     end
 
+    create table(:bug_report) do
+      add :player_id, references(:player)
+      add :report, :text, null: false
+      timestamps()
+    end
+
+    create table(:feedback) do
+      add :player_id, references(:player)
+      add :feedback, :text, null: false
+      timestamps()
+    end
+
     create index(:trade, [:item_id])
     create index(:trade, [:trader_id])
     create index(:trade, [:company_id])

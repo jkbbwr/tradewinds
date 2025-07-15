@@ -6,7 +6,9 @@ defmodule Tradewinds.AccountsTest do
 
   describe "players" do
     test "create_player/3 creates a player" do
-      assert {:ok, player} = Accounts.create_player("Test User", "test@example.com", "password123")
+      assert {:ok, player} =
+               Accounts.create_player("Test User", "test@example.com", "password123")
+
       assert player.name == "Test User"
       assert player.email == "test@example.com"
     end
@@ -49,7 +51,9 @@ defmodule Tradewinds.AccountsTest do
 
     test "returns error for invalid credentials" do
       player = Factory.insert(:player, password: "password123")
-      assert {:error, :invalid_credentials} = Accounts.login_player(player.email, "wrong_password")
+
+      assert {:error, :invalid_credentials} =
+               Accounts.login_player(player.email, "wrong_password")
     end
 
     test "returns error for disabled player" do

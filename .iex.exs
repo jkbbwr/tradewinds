@@ -5,6 +5,9 @@ defmodule AliasHack do
       |> elem(1)
       |> Enum.map(&Module.split/1)
       |> Enum.filter(fn
+        ["Tradewinds", "Application" | _] ->
+          false
+
         ["Tradewinds" | _] ->
           true
 

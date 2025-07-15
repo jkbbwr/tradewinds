@@ -3,17 +3,16 @@ defmodule Tradewinds.Warehouses do
   alias Tradewinds.Warehouses.WarehouseInventory
 
   def store(warehouse, item, amount) do
-    Repo.insert!(
-      %WarehouseInventory{
-        warehouse_id: warehouse.id,
-        item_id: item.id,
-        amount: amount
-      },
+    %WarehouseInventory{}
+    |> WarehouseInventory.create_changeset(%{
+      warehouse_id: warehouse.id,
+      item_id: item.id,
+      amount: amount
+    })
+    |> Repo.insert(
       on_conflict: [inc: [amount: amount]],
       conflict_target: [:warehouse_id, :item_id]
     )
-
-    {:ok, :stored}
   end
 
   def withdraw(warehouse, item, amount) do
@@ -28,9 +27,7 @@ defmodule Tradewinds.Warehouses do
 
           inventory.amount > amount ->
             inventory
-            |> WarehouseInventory.update_amount_changeset(
-              inventory.amount - amount
-            )
+            |> WarehouseInventory.update_amount_changeset(inventory.amount - amount)
             |> Repo.update()
         end
       end

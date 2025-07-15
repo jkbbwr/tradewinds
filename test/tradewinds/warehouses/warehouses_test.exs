@@ -10,11 +10,13 @@ defmodule Tradewinds.WarehousesTest do
       item = Factory.insert(:item)
 
       assert {:ok, :stored} = Warehouses.store(warehouse, item, 50)
+
       inventory =
         Repo.get_by(Tradewinds.Warehouses.WarehouseInventory,
           warehouse_id: warehouse.id,
           item_id: item.id
         )
+
       assert inventory.amount == 50
     end
 
@@ -24,11 +26,13 @@ defmodule Tradewinds.WarehousesTest do
       Factory.insert(:warehouse_inventory, warehouse: warehouse, item: item, amount: 100)
 
       assert {:ok, _} = Warehouses.withdraw(warehouse, item, 50)
+
       inventory =
         Repo.get_by(Tradewinds.Warehouses.WarehouseInventory,
           warehouse_id: warehouse.id,
           item_id: item.id
         )
+
       assert inventory.amount == 50
     end
 
@@ -38,6 +42,7 @@ defmodule Tradewinds.WarehousesTest do
       Factory.insert(:warehouse_inventory, warehouse: warehouse, item: item, amount: 100)
 
       assert {:ok, _} = Warehouses.withdraw(warehouse, item, 100)
+
       assert nil ==
                Repo.get_by(Tradewinds.Warehouses.WarehouseInventory,
                  warehouse_id: warehouse.id,
