@@ -79,4 +79,24 @@ defmodule Tradewinds.Ships do
     |> Repo.one()
     |> then(&(&1 || 0))
   end
+
+  @doc """
+  Returns a list of all ships that are currently at sea.
+  """
+  def list_at_sea_ships do
+    from(s in Ship, where: s.state == :at_sea)
+    |> Repo.all()
+  end
+
+  @doc """
+  Updates a ship's state to indicate it has arrived in port.
+  """
+  def ship_arrived(%Ship{} = ship) do
+    ship = Repo.preload(ship, :route)
+    destination_port_id = ship.route.end_port_id
+
+    ship
+    |> Ship.arrival_changeset(destination_port_id)
+    |> Repo.update()
+  end
 end

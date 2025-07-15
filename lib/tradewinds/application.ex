@@ -7,6 +7,9 @@ defmodule Tradewinds.Application do
 
   @impl true
   def start(_type, _args) do
+    realtime_anchor = Application.fetch_env!(:tradewinds, :realtime_anchor)
+    gametime_anchor = Application.fetch_env!(:tradewinds, :gametime_anchor)
+
     children = [
       TradewindsWeb.Telemetry,
       Tradewinds.Repo,
@@ -16,9 +19,9 @@ defmodule Tradewinds.Application do
       # {Tradewinds.Worker, arg},
       # Start to serve requests, typically the last entry
       TradewindsWeb.Endpoint,
-      {Tradewinds.Manager,
-       {Tradewinds.GameLoop,
-        [realtime_anchor: Application.fetch_env!(:tradewinds, :realtime_anchor)]}}
+      {Highlander,
+       {Tradewinds.GameLoop, realtime_anchor: realtime_anchor, gametime_anchor: gametime_anchor}},
+      {Highlander, {Tradewinds.Ships.TransitManager, []}}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

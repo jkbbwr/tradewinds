@@ -54,4 +54,18 @@ defmodule Tradewinds.Ships.Ship do
     )
     |> validate_required([:state, :route_id, :arriving_at])
   end
+
+  def arrival_changeset(ship, destination_port_id) do
+    ship
+    |> cast(
+      %{
+        state: :in_port,
+        port_id: destination_port_id,
+        route_id: nil,
+        arriving_at: nil
+      },
+      [:state, :port_id, :route_id, :arriving_at]
+    )
+    |> validate_required([:state, :port_id])
+  end
 end
