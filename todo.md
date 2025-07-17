@@ -1,19 +1,16 @@
 # TODO
 
 
-## REWRITE SEEDS FOR EUROPE
-## ADD IN THE REST OF THE TRADERS AND TRADER PLANS
-## ADD IN SHIPYARD
 ## ADD IN SINKS AND SOURCES
+## ADD IN SHIP CREATION OVER TIME
 
 - Passengers (agents)
 - Events layer?
 - Test transit logic
 - taxes?
-- setup shipyards + production
 - figure out travel time
 - REST layer
-- Fill out traders and stocks and initial prices
+
 
 # Alpha!
 

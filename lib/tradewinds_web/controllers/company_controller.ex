@@ -26,7 +26,7 @@ defmodule TradewindsWeb.CompanyController do
            Companies.create_company(
              attrs.name,
              attrs.ticker,
-             1000,
+             20000,
              attrs.home_port_id,
              attrs.directors || []
            ) do
