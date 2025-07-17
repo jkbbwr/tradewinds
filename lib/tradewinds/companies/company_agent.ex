@@ -1,4 +1,7 @@
 defmodule Tradewinds.Companies.CompanyAgent do
+  @moduledoc """
+  CompanyAgent schema.
+  """
   use Tradewinds.Schema
   import Ecto.Changeset
 
@@ -14,6 +17,9 @@ defmodule Tradewinds.Companies.CompanyAgent do
     timestamps()
   end
 
+  @doc """
+  Changeset for creating a new company agent.
+  """
   def create_changeset(company_agent, attrs) do
     company_agent
     |> cast(attrs, [:company_id, :port_id])

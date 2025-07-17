@@ -1,4 +1,7 @@
 defmodule Tradewinds.World.Item do
+  @moduledoc """
+  Item schema.
+  """
   use Tradewinds.Schema
   import Ecto.Changeset
 

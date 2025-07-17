@@ -1,4 +1,7 @@
 defmodule Tradewinds.Shipyard do
+  @moduledoc """
+  Shipyard schema.
+  """
   use Tradewinds.Schema
 
   alias Tradewinds.World.Port
@@ -10,6 +13,9 @@ defmodule Tradewinds.Shipyard do
     timestamps()
   end
 
+  @doc """
+  Changeset for creating a new shipyard.
+  """
   def create_changeset(shipyard, attrs) do
     shipyard
     |> Ecto.Changeset.cast(attrs, [:port_id])

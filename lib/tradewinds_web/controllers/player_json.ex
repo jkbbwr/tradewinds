@@ -1,12 +1,25 @@
 defmodule TradewindsWeb.PlayerJSON do
+  @moduledoc """
+  Renders player data as JSON.
+  """
+
+  @doc """
+  Renders the response for a newly registered player.
+  """
   def register(%{player: player}) do
     %{"player" => player(player)}
   end
 
+  @doc """
+  Renders the response for a successful login.
+  """
   def login(%{token: token}) do
     %{"token" => token(token)}
   end
 
+  @doc """
+  Renders a single auth token.
+  """
   def token(token) do
     %{
       id: token.id,
@@ -17,6 +30,9 @@ defmodule TradewindsWeb.PlayerJSON do
     }
   end
 
+  @doc """
+  Renders a single player.
+  """
   def player(player) do
     %{
       id: player.id,

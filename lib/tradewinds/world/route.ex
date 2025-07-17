@@ -1,4 +1,7 @@
 defmodule Tradewinds.World.Route do
+  @moduledoc """
+  Route schema.
+  """
   use Tradewinds.Schema
   import Ecto.Changeset
 

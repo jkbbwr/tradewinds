@@ -1,4 +1,7 @@
 defmodule Tradewinds.Ledger.NpcTrade do
+  @moduledoc """
+  NpcTrade schema.
+  """
   use Tradewinds.Schema
   import Ecto.Changeset
 

@@ -5,6 +5,9 @@ defmodule Tradewinds.Ledger do
   alias Tradewinds.Repo
   alias Tradewinds.Ledger.NpcTrade
 
+  @doc """
+  Logs an NPC trade event.
+  """
   def log_npc_trade(
         player,
         company,

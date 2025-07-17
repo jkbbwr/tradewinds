@@ -1,4 +1,7 @@
 defmodule Tradewinds.Ships.ShipInventory do
+  @moduledoc """
+  ShipInventory schema.
+  """
   use Tradewinds.Schema
   import Ecto.Changeset
 
@@ -22,6 +25,9 @@ defmodule Tradewinds.Ships.ShipInventory do
     |> validate_required([:item_id, :ship_id, :amount])
   end
 
+  @doc """
+  Changeset for updating the amount of an item in a ship's inventory.
+  """
   def update_amount_changeset(ship_inventory, amount) do
     ship_inventory
     |> changeset(%{amount: amount})

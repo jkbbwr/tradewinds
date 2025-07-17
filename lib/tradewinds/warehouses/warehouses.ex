@@ -1,7 +1,13 @@
 defmodule Tradewinds.Warehouses do
+  @moduledoc """
+  The Warehouses context.
+  """
   alias Tradewinds.Repo
   alias Tradewinds.Warehouses.WarehouseInventory
 
+  @doc """
+  Stores a specific amount of an item in a warehouse.
+  """
   def store(warehouse, item, amount) do
     %WarehouseInventory{}
     |> WarehouseInventory.create_changeset(%{
@@ -15,6 +21,9 @@ defmodule Tradewinds.Warehouses do
     )
   end
 
+  @doc """
+  Withdraws a specific amount of an item from a warehouse.
+  """
   def withdraw(warehouse, item, amount) do
     Repo.transact(fn ->
       with {:ok, inventory} <- fetch_inventory_by_item_id(warehouse, item) do

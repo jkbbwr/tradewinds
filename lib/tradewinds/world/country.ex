@@ -1,4 +1,7 @@
 defmodule Tradewinds.World.Country do
+  @moduledoc """
+  Country schema.
+  """
   use Tradewinds.Schema
   import Ecto.Changeset
 
@@ -18,6 +21,9 @@ defmodule Tradewinds.World.Country do
     |> validate_required([:name])
   end
 
+  @doc """
+  Changeset for creating a new country.
+  """
   def create_changeset(country, attrs) do
     country
     |> changeset(attrs)

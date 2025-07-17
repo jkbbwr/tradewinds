@@ -1,4 +1,7 @@
 defmodule Tradewinds.Ships.TransitManager do
+  @moduledoc """
+  Manages ship transits and arrivals.
+  """
   use GenServer
   require Logger
   alias Tradewinds.Repo
@@ -9,6 +12,9 @@ defmodule Tradewinds.Ships.TransitManager do
   @pubsub Tradewinds.PubSub
   @tick_topic "tick"
 
+  @doc """
+  Starts the TransitManager GenServer.
+  """
   def start_link(_opts) do
     GenServer.start_link(__MODULE__, %{}, name: @name)
   end

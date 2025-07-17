@@ -1,4 +1,7 @@
 defmodule Tradewinds.Trading.Trader do
+  @moduledoc """
+  Trader schema.
+  """
   use Tradewinds.Schema
   import Ecto.Changeset
 
@@ -11,6 +14,9 @@ defmodule Tradewinds.Trading.Trader do
     timestamps()
   end
 
+  @doc """
+  Changeset for creating and updating traders.
+  """
   def changeset(trader, attrs) do
     trader
     |> cast(attrs, [:name, :port_id])

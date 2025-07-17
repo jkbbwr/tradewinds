@@ -1,4 +1,7 @@
 defmodule Tradewinds.Trading.Orderbook do
+  @moduledoc """
+  Orderbook schema.
+  """
   use Tradewinds.Schema
   import Ecto.Changeset
 
@@ -17,6 +20,9 @@ defmodule Tradewinds.Trading.Orderbook do
     timestamps()
   end
 
+  @doc """
+  Changeset for creating and updating orderbook entries.
+  """
   def changeset(orderbook, attrs) do
     orderbook
     |> cast(attrs, [:order, :amount, :cost, :port_id, :company_id, :item_id])

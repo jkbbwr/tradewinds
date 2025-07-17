@@ -1,4 +1,7 @@
 defmodule Tradewinds.Ships.Ship do
+  @moduledoc """
+  Ship schema.
+  """
   use Tradewinds.Schema
   import Ecto.Changeset
 
@@ -23,6 +26,9 @@ defmodule Tradewinds.Ships.Ship do
     timestamps()
   end
 
+  @doc """
+  Changeset for creating a new ship.
+  """
   def create_changeset(ship, attrs) do
     ship
     |> cast(attrs, [
@@ -40,12 +46,18 @@ defmodule Tradewinds.Ships.Ship do
     |> validate_required([:name, :state, :max_passengers, :type, :capacity, :speed])
   end
 
+  @doc """
+  Changeset for updating a ship's company.
+  """
   def update_company_changeset(ship, attrs) do
     ship
     |> cast(attrs, [:company_id])
     |> validate_required([:company_id])
   end
 
+  @doc """
+  Changeset for putting a ship in transit.
+  """
   def transit_changeset(ship, route, arriving_at) do
     ship
     |> cast(
@@ -55,6 +67,9 @@ defmodule Tradewinds.Ships.Ship do
     |> validate_required([:state, :route_id, :arriving_at])
   end
 
+  @doc """
+  Changeset for a ship's arrival at a port.
+  """
   def arrival_changeset(ship, destination_port_id) do
     ship
     |> cast(

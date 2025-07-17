@@ -1,4 +1,7 @@
 defmodule TradewindsWeb.Router do
+  @moduledoc """
+  Defines the application's routes.
+  """
   use TradewindsWeb, :router
 
   pipeline :api do

@@ -1,4 +1,7 @@
 defmodule Tradewinds.Companies.Company do
+  @moduledoc """
+  Company schema.
+  """
   use Tradewinds.Schema
   import Ecto.Changeset
 
@@ -34,6 +37,9 @@ defmodule Tradewinds.Companies.Company do
     |> foreign_key_constraint(:home_port_id)
   end
 
+  @doc """
+  Changeset for updating a company's treasury.
+  """
   def treasury_changeset(company, new_treasury) do
     company
     |> cast(%{treasury: new_treasury}, [:treasury])

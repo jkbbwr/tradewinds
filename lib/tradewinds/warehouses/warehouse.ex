@@ -1,4 +1,7 @@
 defmodule Tradewinds.Warehouses.Warehouse do
+  @moduledoc """
+  Warehouse schema.
+  """
   use Tradewinds.Schema
   import Ecto.Changeset
 

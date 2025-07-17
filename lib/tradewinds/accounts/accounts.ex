@@ -9,28 +9,43 @@ defmodule Tradewinds.Accounts do
   alias Tradewinds.Accounts.AuthToken
   alias Tradewinds.Accounts.Player
 
+  @doc """
+  Fetches a player by their ID.
+  """
   def fetch_player_by_id(id) do
     Repo.get(Player, id)
     |> Repo.ok_or("can't find player with id #{id}")
   end
 
+  @doc """
+  Fetches a player by their email address.
+  """
   def fetch_player_by_email(email) do
     Repo.get_by(Player, email: email)
     |> Repo.ok_or("can't find player with email #{email}")
   end
 
+  @doc """
+  Enables a player's account.
+  """
   def enable_player(player) do
     player
     |> Player.enabled_changeset(true)
     |> Repo.update()
   end
 
+  @doc """
+  Disables a player's account.
+  """
   def disable_player(player) do
     player
     |> Player.enabled_changeset(false)
     |> Repo.update()
   end
 
+  @doc """
+  Creates a new player.
+  """
   def create_player(name, email, password) do
     %Player{}
     |> Player.create_changeset(%{
@@ -41,6 +56,9 @@ defmodule Tradewinds.Accounts do
     |> Repo.insert()
   end
 
+  @doc """
+  Creates a new authentication token for a player.
+  """
   def create_auth_token(player, token) do
     %AuthToken{player_id: player.id, token: token}
     |> Repo.insert()
@@ -58,6 +76,9 @@ defmodule Tradewinds.Accounts do
     if player.enabled, do: :ok, else: {:error, :player_not_enabled}
   end
 
+  @doc """
+  Logs a player in and returns an authentication token.
+  """
   def login_player(email, password) do
     with {:ok, player} <- fetch_player_by_email(email),
          :ok <- verify_pass(player, password),
@@ -74,6 +95,9 @@ defmodule Tradewinds.Accounts do
     end
   end
 
+  @doc """
+  Generates a new authentication token for a player.
+  """
   def generate_token(player) do
     token_lifespan = 24 * 60 * 60
     Phoenix.Token.sign(TradewindsWeb.Endpoint, "user auth", player.id, max_age: token_lifespan)

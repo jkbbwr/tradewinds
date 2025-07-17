@@ -1,4 +1,7 @@
 defmodule Tradewinds.Ships.Modification do
+  @moduledoc """
+  Modification schema.
+  """
   use Tradewinds.Schema
   import Ecto.Changeset
 

@@ -1,4 +1,7 @@
 defmodule Tradewinds.Companies.Director do
+  @moduledoc """
+  Director schema, representing the join table between players and companies.
+  """
   use Tradewinds.Schema
 
   schema "director" do

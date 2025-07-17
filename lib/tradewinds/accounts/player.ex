@@ -1,4 +1,7 @@
 defmodule Tradewinds.Accounts.Player do
+  @moduledoc """
+  Player account schema.
+  """
   use Tradewinds.Schema
 
   alias Tradewinds.Companies.Director
@@ -16,6 +19,9 @@ defmodule Tradewinds.Accounts.Player do
     timestamps()
   end
 
+  @doc """
+  Changeset for creating a new player.
+  """
   def create_changeset(player, attrs) do
     player
     |> cast(attrs, [:name, :email, :password])
@@ -32,6 +38,9 @@ defmodule Tradewinds.Accounts.Player do
 
   defp hash_password(changeset), do: changeset
 
+  @doc """
+  Changeset for enabling or disabling a player.
+  """
   def enabled_changeset(player, enabled) do
     Ecto.Changeset.cast(player, %{enabled: enabled}, [:enabled])
   end

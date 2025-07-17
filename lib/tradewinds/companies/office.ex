@@ -1,4 +1,7 @@
 defmodule Tradewinds.Companies.Office do
+  @moduledoc """
+  Office schema.
+  """
   use Tradewinds.Schema
   import Ecto.Changeset
 
@@ -12,6 +15,9 @@ defmodule Tradewinds.Companies.Office do
     timestamps()
   end
 
+  @doc """
+  Changeset for creating a new office.
+  """
   def create_changeset(office, attrs) do
     office
     |> cast(attrs, [:company_id, :port_id])

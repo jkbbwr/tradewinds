@@ -1,4 +1,7 @@
 defmodule TradewindsWeb.CompanyController do
+  @moduledoc """
+  Controller for handling company-related requests.
+  """
   use TradewindsWeb, :controller
 
   alias Tradewinds.Companies
@@ -14,6 +17,9 @@ defmodule TradewindsWeb.CompanyController do
     required(:directors, {:array, :string})
   end
 
+  @doc """
+  Creates a new company.
+  """
   def create(conn, params) do
     with {:ok, attrs} <- validate(:create, params),
          {:ok, company} <-

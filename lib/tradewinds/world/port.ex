@@ -1,4 +1,7 @@
 defmodule Tradewinds.World.Port do
+  @moduledoc """
+  Port schema.
+  """
   use Tradewinds.Schema
   import Ecto.Changeset
 
@@ -18,6 +21,9 @@ defmodule Tradewinds.World.Port do
     timestamps()
   end
 
+  @doc """
+  Changeset for creating a new port.
+  """
   def create_changeset(port, attrs) do
     port
     |> cast(attrs, [:name, :shortcode, :country_id])

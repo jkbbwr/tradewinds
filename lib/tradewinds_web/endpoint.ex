@@ -1,4 +1,7 @@
 defmodule TradewindsWeb.Endpoint do
+  @moduledoc """
+  The application's endpoint.
+  """
   use Phoenix.Endpoint, otp_app: :tradewinds
 
   # The session will be stored in the cookie and signed,

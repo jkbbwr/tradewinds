@@ -1,4 +1,7 @@
 defmodule Tradewinds.Trading.TraderPlan do
+  @moduledoc """
+  TraderPlan schema.
+  """
   use Tradewinds.Schema
   import Ecto.Changeset
 
@@ -22,6 +25,9 @@ defmodule Tradewinds.Trading.TraderPlan do
     timestamps()
   end
 
+  @doc """
+  Changeset for creating and updating trader plans.
+  """
   def changeset(trader_plan, attrs) do
     trader_plan
     |> cast(attrs, [

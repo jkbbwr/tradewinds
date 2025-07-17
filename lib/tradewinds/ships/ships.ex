@@ -8,6 +8,9 @@ defmodule Tradewinds.Ships do
   alias Tradewinds.Ships.ShipInventory
   import Ecto.Query
 
+  @doc """
+  Sets a ship to sail to a destination port.
+  """
   def set_sail(ship, destination_port) do
     with {:ok, route} <- World.find_route(ship.port_id, destination_port.id),
          arriving_at <- calculate_arrival(route.distance, ship.speed) do
@@ -30,6 +33,9 @@ defmodule Tradewinds.Ships do
     |> Repo.update()
   end
 
+  @doc """
+  Loads a specific amount of an item onto a ship.
+  """
   def load(ship, item, amount) do
     current_weight = get_ship_total_cargo(ship.id)
     new_weight = amount
@@ -47,6 +53,9 @@ defmodule Tradewinds.Ships do
     end
   end
 
+  @doc """
+  Unloads a specific amount of an item from a ship.
+  """
   def unload(ship, item, amount) do
     Repo.transact(fn ->
       with {:ok, inventory} <- fetch_inventory_by_item_id(ship, item) do
@@ -71,6 +80,9 @@ defmodule Tradewinds.Ships do
     |> Repo.ok_or(:ship_inventory_not_found)
   end
 
+  @doc """
+  Returns the total cargo weight of a ship.
+  """
   def get_ship_total_cargo(ship_id) do
     from(si in Tradewinds.Ships.ShipInventory,
       where: si.ship_id == ^ship_id,

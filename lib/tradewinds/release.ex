@@ -5,6 +5,9 @@ defmodule Tradewinds.Release do
   """
   @app :tradewinds
 
+  @doc """
+  Runs all outstanding migrations.
+  """
   def migrate do
     load_app()
 
@@ -13,6 +16,9 @@ defmodule Tradewinds.Release do
     end
   end
 
+  @doc """
+  Rolls back migrations to a specific version.
+  """
   def rollback(repo, version) do
     load_app()
     {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :down, to: version))

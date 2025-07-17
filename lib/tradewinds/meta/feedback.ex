@@ -1,4 +1,7 @@
 defmodule Tradewinds.Meta.Feedback do
+  @moduledoc """
+  Feedback schema.
+  """
   use Tradewinds.Schema
   import Ecto.Changeset
 
@@ -11,6 +14,9 @@ defmodule Tradewinds.Meta.Feedback do
     timestamps()
   end
 
+  @doc """
+  Changeset for creating and updating feedback.
+  """
   def changeset(feedback, attrs) do
     feedback
     |> cast(attrs, [:feedback, :player_id])

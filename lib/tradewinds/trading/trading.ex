@@ -1,4 +1,7 @@
 defmodule Tradewinds.Trading do
+  @moduledoc """
+  Handles trading between companies and NPC traders.
+  """
   alias Tradewinds.Repo
   alias Tradewinds.Companies
   alias Tradewinds.World
@@ -12,12 +15,18 @@ defmodule Tradewinds.Trading do
 
   @quote_age 360
 
+  @doc """
+  Creates a new NPC trader for a given port.
+  """
   def create_trader(port) do
     %Trader{}
     |> Trader.changeset(%{name: "#{port.name} Trader", port_id: port.id})
     |> Repo.insert()
   end
 
+  @doc """
+  Creates a new trading plan for a trader and an item.
+  """
   def create_trader_plan(
         trader_id,
         item_id,
@@ -48,6 +57,9 @@ defmodule Tradewinds.Trading do
     |> Repo.insert()
   end
 
+  @doc """
+  Generates a quote for buying a specific amount of an item from a trader.
+  """
   def buy_from_trader_quote(trader, item, amount) do
     with {:ok, trader_plan} <- fetch_trader_plan(trader, item),
          {:ok, inventory} <- fetch_trader_inventory(trader, item),
@@ -59,6 +71,9 @@ defmodule Tradewinds.Trading do
     end
   end
 
+  @doc """
+  Generates a quote for selling a specific amount of an item to a trader.
+  """
   def sell_to_trader_quote(trader, item, amount, game_tick) do
     with {:ok, trader_plan} <- fetch_trader_plan(trader, item),
          {:ok, inventory} <- fetch_trader_inventory(trader, item) do
@@ -69,6 +84,9 @@ defmodule Tradewinds.Trading do
     end
   end
 
+  @doc """
+  Executes a buy transaction from a trader using a valid quote.
+  """
   def buy_from_trader(trader, company, quote, inventories, player, game_tick) do
     Repo.transact(fn ->
       with :ok <- Companies.check_presence_in_port(company, trader.port),
@@ -98,6 +116,9 @@ defmodule Tradewinds.Trading do
     end)
   end
 
+  @doc """
+  Executes a sell transaction to a trader using a valid quote.
+  """
   def sell_to_trader(player, company, trader, quote, inventories, game_tick) do
     Repo.transact(fn ->
       with :ok <- Companies.check_presence_in_port(company, trader.port),

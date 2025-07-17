@@ -1,7 +1,13 @@
 defmodule TradewindsWeb.Telemetry do
+  @moduledoc """
+  The Telemetry supervisor.
+  """
   use Supervisor
   import Telemetry.Metrics
 
+  @doc """
+  Starts the Telemetry supervisor.
+  """
   def start_link(arg) do
     Supervisor.start_link(__MODULE__, arg, name: __MODULE__)
   end
@@ -19,6 +25,9 @@ defmodule TradewindsWeb.Telemetry do
     Supervisor.init(children, strategy: :one_for_one)
   end
 
+  @doc """
+  Returns a list of Telemetry metrics.
+  """
   def metrics do
     [
       # Phoenix Metrics

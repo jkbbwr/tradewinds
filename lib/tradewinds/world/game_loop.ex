@@ -1,4 +1,7 @@
 defmodule Tradewinds.GameLoop do
+  @moduledoc """
+  The main game loop, responsible for publishing ticks.
+  """
   use GenServer
   alias Phoenix.PubSub
   alias Tradewinds.Clock
@@ -8,6 +11,9 @@ defmodule Tradewinds.GameLoop do
   @pubsub Tradewinds.PubSub
   @tick_topic "tick"
 
+  @doc """
+  Starts the GameLoop GenServer.
+  """
   def start_link(opts) do
     GenServer.start_link(__MODULE__, opts, name: @name)
   end

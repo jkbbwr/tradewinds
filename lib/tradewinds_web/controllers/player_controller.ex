@@ -1,4 +1,7 @@
 defmodule TradewindsWeb.PlayerController do
+  @moduledoc """
+  Controller for handling player-related requests.
+  """
   use TradewindsWeb, :controller
   action_fallback TradewindsWeb.FallbackController
   use Goal
