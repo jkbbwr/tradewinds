@@ -1,0 +1,286 @@
+[
+  {
+    "name": "England",
+    "description": "The home country of the British Empire.",
+    "ports": [
+      {
+        "name": "London",
+        "shortcode": "LON",
+        "shipyard": true
+      },
+      {
+        "name": "Bristol",
+        "shortcode": "BRS",
+        "shipyard": true
+      },
+      {
+        "name": "Plymouth",
+        "shortcode": "PLY",
+        "shipyard": true
+      },
+      {
+        "name": "Liverpool",
+        "shortcode": "LIV"
+      }
+    ]
+  },
+  {
+    "name": "Scotland",
+    "description": "A nation in the United Kingdom.",
+    "ports": [
+      {
+        "name": "Leith",
+        "shortcode": "EDI",
+        "shipyard": true
+      },
+      {
+        "name": "Glasgow",
+        "shortcode": "GLA"
+      }
+    ]
+  },
+  {
+    "name": "Ireland",
+    "description": "The Emerald Isle.",
+    "ports": [
+      {
+        "name": "Dublin",
+        "shortcode": "DUB"
+      }
+    ]
+  },
+  {
+    "name": "Netherlands",
+    "description": "A low-lying country known for windmills.",
+    "ports": [
+      {
+        "name": "Amsterdam",
+        "shortcode": "AMS",
+        "shipyard": true
+      },
+      {
+        "name": "Rotterdam",
+        "shortcode": "ROT",
+        "shipyard": true
+      },
+      {
+        "name": "Middelburg",
+        "shortcode": "MID"
+      }
+    ]
+  },
+  {
+    "name": "Belgium",
+    "description": "Known for its waffles and chocolate.",
+    "ports": [
+      {
+        "name": "Antwerp",
+        "shortcode": "ANT",
+        "shipyard": true
+      }
+    ]
+  },
+  {
+    "name": "France",
+    "description": "A major European power.",
+    "ports": [
+      {
+        "name": "Rouen",
+        "shortcode": "ROU"
+      },
+      {
+        "name": "La Rochelle",
+        "shortcode": "LRO"
+      },
+      {
+        "name": "Bordeaux",
+        "shortcode": "BOR"
+      },
+      {
+        "name": "Marseille",
+        "shortcode": "MRS",
+        "shipyard": true
+      }
+    ]
+  },
+  {
+    "name": "Spain",
+    "description": "Located on the Iberian Peninsula.",
+    "ports": [
+      {
+        "name": "Seville",
+        "shortcode": "SEV",
+        "shipyard": true
+      },
+      {
+        "name": "Cadiz",
+        "shortcode": "CAD",
+        "shipyard": true
+      },
+      {
+        "name": "Barcelona",
+        "shortcode": "BAR"
+      }
+    ]
+  },
+  {
+    "name": "Portugal",
+    "description": "A maritime nation on the Atlantic coast.",
+    "ports": [
+      {
+        "name": "Lisbon",
+        "shortcode": "LIS",
+        "shipyard": true
+      },
+      {
+        "name": "Porto",
+        "shortcode": "POR",
+        "shipyard": true
+      }
+    ]
+  },
+  {
+    "name": "Italy",
+    "description": "Shaped like a boot, with a rich history.",
+    "ports": [
+      {
+        "name": "Venice",
+        "shortcode": "VEN",
+        "shipyard": true
+      },
+      {
+        "name": "Genoa",
+        "shortcode": "GEN",
+        "shipyard": true
+      },
+      {
+        "name": "Naples",
+        "shortcode": "NAP",
+        "shipyard": true
+      },
+      {
+        "name": "Livorno",
+        "shortcode": "LVO",
+        "shipyard": true
+      }
+    ]
+  },
+  {
+    "name": "Papal States",
+    "description": "The territories under the direct sovereign rule of the Pope.",
+    "ports": [
+      {
+        "name": "Ancona",
+        "shortcode": "ANC",
+        "shipyard": true
+      }
+    ]
+  },
+  {
+    "name": "Malta",
+    "description": "An archipelago in the central Mediterranean.",
+    "ports": [
+      {
+        "name": "Valletta",
+        "shortcode": "VAL",
+        "shipyard": true
+      }
+    ]
+  },
+  {
+    "name": "Ottoman Empire",
+    "description": "A vast empire spanning three continents.",
+    "ports": [
+      {
+        "name": "Constantinople",
+        "shortcode": "CON",
+        "shipyard": true
+      },
+      {
+        "name": "Izmir",
+        "shortcode": "SMI",
+        "shipyard": true
+      },
+      {
+        "name": "Thessaloniki",
+        "shortcode": "SAL",
+        "shipyard": true
+      }
+    ]
+  },
+  {
+    "name": "Denmark",
+    "description": "A Scandinavian country.",
+    "ports": [
+      {
+        "name": "Copenhagen",
+        "shortcode": "CPH",
+        "shipyard": true
+      }
+    ]
+  },
+  {
+    "name": "Sweden",
+    "description": "A Nordic country with vast forests.",
+    "ports": [
+      {
+        "name": "Stockholm",
+        "shortcode": "STO",
+        "shipyard": true
+      }
+    ]
+  },
+  {
+    "name": "Norway",
+    "description": "Known for its fjords and mountains.",
+    "ports": [
+      {
+        "name": "Bergen",
+        "shortcode": "BER",
+        "shipyard": true
+      }
+    ]
+  },
+  {
+    "name": "Hanseatic League",
+    "description": "A commercial and defensive confederation.",
+    "ports": [
+      {
+        "name": "Hamburg",
+        "shortcode": "HAM",
+        "shipyard": true
+      },
+      {
+        "name": "L\u00fcbeck",
+        "shortcode": "LUB",
+        "shipyard": true
+      },
+      {
+        "name": "Bremen",
+        "shortcode": "BRE",
+        "shipyard": true
+      }
+    ]
+  },
+  {
+    "name": "Poland",
+    "description": "A country in Central Europe.",
+    "ports": [
+      {
+        "name": "Gda\u0144sk",
+        "shortcode": "GDN",
+        "shipyard": true
+      }
+    ]
+  },
+  {
+    "name": "Russia",
+    "description": "The largest country in the world.",
+    "ports": [
+      {
+        "name": "Arkhangelsk",
+        "shortcode": "ARG"
+      }
+    ]
+  }
+]

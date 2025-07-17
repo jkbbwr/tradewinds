@@ -28,15 +28,23 @@ defmodule Tradewinds.Ships.TransitManager do
     )
 
     Repo.transact(fn ->
-      for ship <- Ships.list_at_sea_ships() do
-        if !is_nil(ship.arriving_at) &&
-             DateTime.compare(current_gametime, ship.arriving_at) != :lt do
-          Logger.info("Ship '#{ship.name}' (ID: #{ship.id}) has arrived at its destination.")
-          Ships.ship_arrived(ship)
-        end
-      end
+      with {:ok, true} <- Repo.try_advisory_xact_lock(1) do
+        Logger.info("Acquired transit lock. Checking for arrivals...")
 
-      {:ok, nil}
+        for ship <- Ships.list_at_sea_ships() do
+          if !is_nil(ship.arriving_at) &&
+               DateTime.compare(current_gametime, ship.arriving_at) != :lt do
+            Logger.info("Ship '#{ship.name}' (ID: #{ship.id}) has arrived at its destination.")
+            Ships.ship_arrived(ship)
+          end
+        end
+
+        {:ok, :processed}
+      else
+        _ ->
+          Logger.info("Transit lock held by another process. Skipping.")
+          {:ok, :skipped}
+      end
     end)
 
     {:noreply, state}

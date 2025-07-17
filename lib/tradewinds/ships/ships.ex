@@ -95,8 +95,15 @@ defmodule Tradewinds.Ships do
     ship = Repo.preload(ship, :route)
     destination_port_id = ship.route.end_port_id
 
-    ship
-    |> Ship.arrival_changeset(destination_port_id)
-    |> Repo.update()
+    from(s in Ship, where: s.id == ^ship.id and s.state == :at_sea)
+    |> Repo.update_all(
+      set: [
+        state: :in_port,
+        port_id: destination_port_id,
+        route_id: nil,
+        arriving_at: nil,
+        updated_at: DateTime.utc_now()
+      ]
+    )
   end
 end

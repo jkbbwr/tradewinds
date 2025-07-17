@@ -36,6 +36,28 @@ defmodule Tradewinds.World do
     Repo.get(Country, id) |> Repo.ok_or(:country_not_found)
   end
 
+  def create_port(name, shortcode, country_id) do
+    %Port{}
+    |> Port.create_changeset(%{
+      name: name,
+      shortcode: shortcode,
+      country_id: country_id
+    })
+    |> Repo.insert()
+  end
+
+  def create_country(name, description) do
+    %Country{}
+    |> Country.create_changeset(%{name: name, description: description})
+    |> Repo.insert()
+  end
+
+  def create_route(from_id, to_id, distance) do
+    %Route{}
+    |> Route.changeset(%{from_id: from_id, to_id: to_id, distance: distance})
+    |> Repo.insert()
+  end
+
   def routes_from(port_id) do
     from(r in Route, where: r.from_id == ^port_id or r.to_id == ^port_id) |> Repo.all()
   end

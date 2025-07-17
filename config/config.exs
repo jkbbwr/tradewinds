@@ -9,7 +9,8 @@ import Config
 
 config :tradewinds,
   gametime_anchor: ~U[1600-01-01 12:00:00Z],
-  realtime_anchor: ~U[2025-07-15 00:00:00Z]
+  realtime_anchor: ~U[2025-07-15 00:00:00Z],
+  game_loop_enabled: true
 
 config :tradewinds,
   ecto_repos: [Tradewinds.Repo],

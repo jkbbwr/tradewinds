@@ -7,22 +7,18 @@ defmodule Tradewinds.Application do
 
   @impl true
   def start(_type, _args) do
-    realtime_anchor = Application.fetch_env!(:tradewinds, :realtime_anchor)
-    gametime_anchor = Application.fetch_env!(:tradewinds, :gametime_anchor)
-
-    children = [
-      TradewindsWeb.Telemetry,
-      Tradewinds.Repo,
-      {DNSCluster, query: Application.get_env(:tradewinds, :dns_cluster_query) || :ignore},
-      {Phoenix.PubSub, name: Tradewinds.PubSub},
-      # Start a worker by calling: Tradewinds.Worker.start_link(arg)
-      # {Tradewinds.Worker, arg},
-      # Start to serve requests, typically the last entry
-      TradewindsWeb.Endpoint,
-      {Highlander,
-       {Tradewinds.GameLoop, realtime_anchor: realtime_anchor, gametime_anchor: gametime_anchor}},
-      {Highlander, {Tradewinds.Ships.TransitManager, []}}
-    ]
+    children =
+      [
+        TradewindsWeb.Telemetry,
+        Tradewinds.Repo,
+        {DNSCluster, query: Application.get_env(:tradewinds, :dns_cluster_query) || :ignore},
+        {Phoenix.PubSub, name: Tradewinds.PubSub},
+        # Start a worker by calling: Tradewinds.Worker.start_link(arg)
+        # {Tradewinds.Worker, arg},
+        # Start to serve requests, typically the last entry
+        TradewindsWeb.Endpoint,
+        {Highlander, {Tradewinds.Ships.TransitManager, []}}
+      ] ++ game_loop()
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
@@ -36,5 +32,19 @@ defmodule Tradewinds.Application do
   def config_change(changed, _new, removed) do
     TradewindsWeb.Endpoint.config_change(changed, removed)
     :ok
+  end
+
+  defp game_loop() do
+    if Application.get_env(:tradewinds, :game_loop_enabled) do
+      realtime_anchor = Application.fetch_env!(:tradewinds, :realtime_anchor)
+      gametime_anchor = Application.fetch_env!(:tradewinds, :gametime_anchor)
+
+      [
+        {Highlander,
+         {Tradewinds.GameLoop, realtime_anchor: realtime_anchor, gametime_anchor: gametime_anchor}}
+      ]
+    else
+      []
+    end
   end
 end

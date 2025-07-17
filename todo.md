@@ -1,5 +1,11 @@
 # TODO
 
+
+## REWRITE SEEDS FOR EUROPE
+## ADD IN THE REST OF THE TRADERS AND TRADER PLANS
+## ADD IN SHIPYARD
+## ADD IN SINKS AND SOURCES
+
 - Passengers (agents)
 - Events layer?
 - Test transit logic
@@ -19,3 +25,10 @@
 - pirates
 - insurance
 - shares?
+- events
+- illegal goods
+- weather!
+- quests
+- npcs
+
+Velocity alarms

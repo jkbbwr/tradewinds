@@ -1,0 +1,6622 @@
+[
+    {
+        "from": "LON",
+        "to": "BRS",
+        "distance": 198
+    },
+    {
+        "from": "LON",
+        "to": "PLY",
+        "distance": 334
+    },
+    {
+        "from": "LON",
+        "to": "LIV",
+        "distance": 278
+    },
+    {
+        "from": "LON",
+        "to": "EDI",
+        "distance": 445
+    },
+    {
+        "from": "LON",
+        "to": "GLA",
+        "distance": 408
+    },
+    {
+        "from": "LON",
+        "to": "DUB",
+        "distance": 491
+    },
+    {
+        "from": "LON",
+        "to": "AMS",
+        "distance": 220
+    },
+    {
+        "from": "LON",
+        "to": "ROT",
+        "distance": 220
+    },
+    {
+        "from": "LON",
+        "to": "MID",
+        "distance": 271
+    },
+    {
+        "from": "LON",
+        "to": "ANT",
+        "distance": 399
+    },
+    {
+        "from": "LON",
+        "to": "ROU",
+        "distance": 97
+    },
+    {
+        "from": "LON",
+        "to": "LRO",
+        "distance": 289
+    },
+    {
+        "from": "LON",
+        "to": "BOR",
+        "distance": 414
+    },
+    {
+        "from": "LON",
+        "to": "MRS",
+        "distance": 376
+    },
+    {
+        "from": "LON",
+        "to": "SEV",
+        "distance": 870
+    },
+    {
+        "from": "LON",
+        "to": "CAD",
+        "distance": 870
+    },
+    {
+        "from": "LON",
+        "to": "BAR",
+        "distance": 592
+    },
+    {
+        "from": "LON",
+        "to": "LIS",
+        "distance": 1085
+    },
+    {
+        "from": "LON",
+        "to": "POR",
+        "distance": 1085
+    },
+    {
+        "from": "LON",
+        "to": "VEN",
+        "distance": 1202
+    },
+    {
+        "from": "LON",
+        "to": "GEN",
+        "distance": 1293
+    },
+    {
+        "from": "LON",
+        "to": "NAP",
+        "distance": 1468
+    },
+    {
+        "from": "LON",
+        "to": "LVO",
+        "distance": 1287
+    },
+    {
+        "from": "LON",
+        "to": "ANC",
+        "distance": 1311
+    },
+    {
+        "from": "LON",
+        "to": "VAL",
+        "distance": 1758
+    },
+    {
+        "from": "LON",
+        "to": "CON",
+        "distance": 2436
+    },
+    {
+        "from": "LON",
+        "to": "SMI",
+        "distance": 2058
+    },
+    {
+        "from": "LON",
+        "to": "SAL",
+        "distance": 1857
+    },
+    {
+        "from": "LON",
+        "to": "CPH",
+        "distance": 904
+    },
+    {
+        "from": "LON",
+        "to": "STO",
+        "distance": 1367
+    },
+    {
+        "from": "LON",
+        "to": "BER",
+        "distance": 704
+    },
+    {
+        "from": "LON",
+        "to": "HAM",
+        "distance": 740
+    },
+    {
+        "from": "LON",
+        "to": "LUB",
+        "distance": 740
+    },
+    {
+        "from": "LON",
+        "to": "BRE",
+        "distance": 659
+    },
+    {
+        "from": "LON",
+        "to": "GDN",
+        "distance": 1112
+    },
+    {
+        "from": "LON",
+        "to": "ARG",
+        "distance": 5065
+    },
+    {
+        "from": "BRS",
+        "to": "LON",
+        "distance": 198
+    },
+    {
+        "from": "BRS",
+        "to": "PLY",
+        "distance": 405
+    },
+    {
+        "from": "BRS",
+        "to": "LIV",
+        "distance": 80
+    },
+    {
+        "from": "BRS",
+        "to": "EDI",
+        "distance": 247
+    },
+    {
+        "from": "BRS",
+        "to": "GLA",
+        "distance": 210
+    },
+    {
+        "from": "BRS",
+        "to": "DUB",
+        "distance": 292
+    },
+    {
+        "from": "BRS",
+        "to": "AMS",
+        "distance": 419
+    },
+    {
+        "from": "BRS",
+        "to": "ROT",
+        "distance": 419
+    },
+    {
+        "from": "BRS",
+        "to": "MID",
+        "distance": 422
+    },
+    {
+        "from": "BRS",
+        "to": "ANT",
+        "distance": 512
+    },
+    {
+        "from": "BRS",
+        "to": "ROU",
+        "distance": 210
+    },
+    {
+        "from": "BRS",
+        "to": "LRO",
+        "distance": 403
+    },
+    {
+        "from": "BRS",
+        "to": "BOR",
+        "distance": 527
+    },
+    {
+        "from": "BRS",
+        "to": "MRS",
+        "distance": 489
+    },
+    {
+        "from": "BRS",
+        "to": "SEV",
+        "distance": 983
+    },
+    {
+        "from": "BRS",
+        "to": "CAD",
+        "distance": 983
+    },
+    {
+        "from": "BRS",
+        "to": "BAR",
+        "distance": 706
+    },
+    {
+        "from": "BRS",
+        "to": "LIS",
+        "distance": 1155
+    },
+    {
+        "from": "BRS",
+        "to": "POR",
+        "distance": 1155
+    },
+    {
+        "from": "BRS",
+        "to": "VEN",
+        "distance": 1400
+    },
+    {
+        "from": "BRS",
+        "to": "GEN",
+        "distance": 1491
+    },
+    {
+        "from": "BRS",
+        "to": "NAP",
+        "distance": 1667
+    },
+    {
+        "from": "BRS",
+        "to": "LVO",
+        "distance": 1486
+    },
+    {
+        "from": "BRS",
+        "to": "ANC",
+        "distance": 1509
+    },
+    {
+        "from": "BRS",
+        "to": "VAL",
+        "distance": 1957
+    },
+    {
+        "from": "BRS",
+        "to": "CON",
+        "distance": 2635
+    },
+    {
+        "from": "BRS",
+        "to": "SMI",
+        "distance": 2256
+    },
+    {
+        "from": "BRS",
+        "to": "SAL",
+        "distance": 2055
+    },
+    {
+        "from": "BRS",
+        "to": "CPH",
+        "distance": 1102
+    },
+    {
+        "from": "BRS",
+        "to": "STO",
+        "distance": 1565
+    },
+    {
+        "from": "BRS",
+        "to": "BER",
+        "distance": 799
+    },
+    {
+        "from": "BRS",
+        "to": "HAM",
+        "distance": 939
+    },
+    {
+        "from": "BRS",
+        "to": "LUB",
+        "distance": 939
+    },
+    {
+        "from": "BRS",
+        "to": "BRE",
+        "distance": 858
+    },
+    {
+        "from": "BRS",
+        "to": "GDN",
+        "distance": 1311
+    },
+    {
+        "from": "BRS",
+        "to": "ARG",
+        "distance": 5264
+    },
+    {
+        "from": "PLY",
+        "to": "LON",
+        "distance": 334
+    },
+    {
+        "from": "PLY",
+        "to": "BRS",
+        "distance": 405
+    },
+    {
+        "from": "PLY",
+        "to": "LIV",
+        "distance": 485
+    },
+    {
+        "from": "PLY",
+        "to": "EDI",
+        "distance": 652
+    },
+    {
+        "from": "PLY",
+        "to": "GLA",
+        "distance": 615
+    },
+    {
+        "from": "PLY",
+        "to": "DUB",
+        "distance": 573
+    },
+    {
+        "from": "PLY",
+        "to": "AMS",
+        "distance": 555
+    },
+    {
+        "from": "PLY",
+        "to": "ROT",
+        "distance": 555
+    },
+    {
+        "from": "PLY",
+        "to": "MID",
+        "distance": 511
+    },
+    {
+        "from": "PLY",
+        "to": "ANT",
+        "distance": 602
+    },
+    {
+        "from": "PLY",
+        "to": "ROU",
+        "distance": 300
+    },
+    {
+        "from": "PLY",
+        "to": "LRO",
+        "distance": 492
+    },
+    {
+        "from": "PLY",
+        "to": "BOR",
+        "distance": 617
+    },
+    {
+        "from": "PLY",
+        "to": "MRS",
+        "distance": 579
+    },
+    {
+        "from": "PLY",
+        "to": "SEV",
+        "distance": 930
+    },
+    {
+        "from": "PLY",
+        "to": "CAD",
+        "distance": 930
+    },
+    {
+        "from": "PLY",
+        "to": "BAR",
+        "distance": 795
+    },
+    {
+        "from": "PLY",
+        "to": "LIS",
+        "distance": 898
+    },
+    {
+        "from": "PLY",
+        "to": "POR",
+        "distance": 898
+    },
+    {
+        "from": "PLY",
+        "to": "VEN",
+        "distance": 1504
+    },
+    {
+        "from": "PLY",
+        "to": "GEN",
+        "distance": 1595
+    },
+    {
+        "from": "PLY",
+        "to": "NAP",
+        "distance": 1771
+    },
+    {
+        "from": "PLY",
+        "to": "LVO",
+        "distance": 1590
+    },
+    {
+        "from": "PLY",
+        "to": "ANC",
+        "distance": 1613
+    },
+    {
+        "from": "PLY",
+        "to": "VAL",
+        "distance": 2061
+    },
+    {
+        "from": "PLY",
+        "to": "CON",
+        "distance": 2739
+    },
+    {
+        "from": "PLY",
+        "to": "SMI",
+        "distance": 2360
+    },
+    {
+        "from": "PLY",
+        "to": "SAL",
+        "distance": 2159
+    },
+    {
+        "from": "PLY",
+        "to": "CPH",
+        "distance": 1207
+    },
+    {
+        "from": "PLY",
+        "to": "STO",
+        "distance": 1670
+    },
+    {
+        "from": "PLY",
+        "to": "BER",
+        "distance": 1039
+    },
+    {
+        "from": "PLY",
+        "to": "HAM",
+        "distance": 1075
+    },
+    {
+        "from": "PLY",
+        "to": "LUB",
+        "distance": 1075
+    },
+    {
+        "from": "PLY",
+        "to": "BRE",
+        "distance": 994
+    },
+    {
+        "from": "PLY",
+        "to": "GDN",
+        "distance": 1415
+    },
+    {
+        "from": "PLY",
+        "to": "ARG",
+        "distance": 5368
+    },
+    {
+        "from": "LIV",
+        "to": "LON",
+        "distance": 278
+    },
+    {
+        "from": "LIV",
+        "to": "BRS",
+        "distance": 80
+    },
+    {
+        "from": "LIV",
+        "to": "PLY",
+        "distance": 485
+    },
+    {
+        "from": "LIV",
+        "to": "EDI",
+        "distance": 167
+    },
+    {
+        "from": "LIV",
+        "to": "GLA",
+        "distance": 130
+    },
+    {
+        "from": "LIV",
+        "to": "DUB",
+        "distance": 212
+    },
+    {
+        "from": "LIV",
+        "to": "AMS",
+        "distance": 379
+    },
+    {
+        "from": "LIV",
+        "to": "ROT",
+        "distance": 379
+    },
+    {
+        "from": "LIV",
+        "to": "MID",
+        "distance": 430
+    },
+    {
+        "from": "LIV",
+        "to": "ANT",
+        "distance": 592
+    },
+    {
+        "from": "LIV",
+        "to": "ROU",
+        "distance": 290
+    },
+    {
+        "from": "LIV",
+        "to": "LRO",
+        "distance": 483
+    },
+    {
+        "from": "LIV",
+        "to": "BOR",
+        "distance": 607
+    },
+    {
+        "from": "LIV",
+        "to": "MRS",
+        "distance": 569
+    },
+    {
+        "from": "LIV",
+        "to": "SEV",
+        "distance": 1064
+    },
+    {
+        "from": "LIV",
+        "to": "CAD",
+        "distance": 1064
+    },
+    {
+        "from": "LIV",
+        "to": "BAR",
+        "distance": 786
+    },
+    {
+        "from": "LIV",
+        "to": "LIS",
+        "distance": 1084
+    },
+    {
+        "from": "LIV",
+        "to": "POR",
+        "distance": 1084
+    },
+    {
+        "from": "LIV",
+        "to": "VEN",
+        "distance": 1360
+    },
+    {
+        "from": "LIV",
+        "to": "GEN",
+        "distance": 1451
+    },
+    {
+        "from": "LIV",
+        "to": "NAP",
+        "distance": 1627
+    },
+    {
+        "from": "LIV",
+        "to": "LVO",
+        "distance": 1446
+    },
+    {
+        "from": "LIV",
+        "to": "ANC",
+        "distance": 1470
+    },
+    {
+        "from": "LIV",
+        "to": "VAL",
+        "distance": 1917
+    },
+    {
+        "from": "LIV",
+        "to": "CON",
+        "distance": 2595
+    },
+    {
+        "from": "LIV",
+        "to": "SMI",
+        "distance": 2216
+    },
+    {
+        "from": "LIV",
+        "to": "SAL",
+        "distance": 2015
+    },
+    {
+        "from": "LIV",
+        "to": "CPH",
+        "distance": 1063
+    },
+    {
+        "from": "LIV",
+        "to": "STO",
+        "distance": 1526
+    },
+    {
+        "from": "LIV",
+        "to": "BER",
+        "distance": 719
+    },
+    {
+        "from": "LIV",
+        "to": "HAM",
+        "distance": 899
+    },
+    {
+        "from": "LIV",
+        "to": "LUB",
+        "distance": 899
+    },
+    {
+        "from": "LIV",
+        "to": "BRE",
+        "distance": 818
+    },
+    {
+        "from": "LIV",
+        "to": "GDN",
+        "distance": 1271
+    },
+    {
+        "from": "LIV",
+        "to": "ARG",
+        "distance": 5224
+    },
+    {
+        "from": "EDI",
+        "to": "LON",
+        "distance": 445
+    },
+    {
+        "from": "EDI",
+        "to": "BRS",
+        "distance": 247
+    },
+    {
+        "from": "EDI",
+        "to": "PLY",
+        "distance": 652
+    },
+    {
+        "from": "EDI",
+        "to": "LIV",
+        "distance": 167
+    },
+    {
+        "from": "EDI",
+        "to": "GLA",
+        "distance": 151
+    },
+    {
+        "from": "EDI",
+        "to": "DUB",
+        "distance": 273
+    },
+    {
+        "from": "EDI",
+        "to": "AMS",
+        "distance": 546
+    },
+    {
+        "from": "EDI",
+        "to": "ROT",
+        "distance": 546
+    },
+    {
+        "from": "EDI",
+        "to": "MID",
+        "distance": 597
+    },
+    {
+        "from": "EDI",
+        "to": "ANT",
+        "distance": 760
+    },
+    {
+        "from": "EDI",
+        "to": "ROU",
+        "distance": 457
+    },
+    {
+        "from": "EDI",
+        "to": "LRO",
+        "distance": 650
+    },
+    {
+        "from": "EDI",
+        "to": "BOR",
+        "distance": 774
+    },
+    {
+        "from": "EDI",
+        "to": "MRS",
+        "distance": 736
+    },
+    {
+        "from": "EDI",
+        "to": "SEV",
+        "distance": 1177
+    },
+    {
+        "from": "EDI",
+        "to": "CAD",
+        "distance": 1177
+    },
+    {
+        "from": "EDI",
+        "to": "BAR",
+        "distance": 953
+    },
+    {
+        "from": "EDI",
+        "to": "LIS",
+        "distance": 1145
+    },
+    {
+        "from": "EDI",
+        "to": "POR",
+        "distance": 1145
+    },
+    {
+        "from": "EDI",
+        "to": "VEN",
+        "distance": 1518
+    },
+    {
+        "from": "EDI",
+        "to": "GEN",
+        "distance": 1609
+    },
+    {
+        "from": "EDI",
+        "to": "NAP",
+        "distance": 1784
+    },
+    {
+        "from": "EDI",
+        "to": "LVO",
+        "distance": 1604
+    },
+    {
+        "from": "EDI",
+        "to": "ANC",
+        "distance": 1627
+    },
+    {
+        "from": "EDI",
+        "to": "VAL",
+        "distance": 2074
+    },
+    {
+        "from": "EDI",
+        "to": "CON",
+        "distance": 2753
+    },
+    {
+        "from": "EDI",
+        "to": "SMI",
+        "distance": 2374
+    },
+    {
+        "from": "EDI",
+        "to": "SAL",
+        "distance": 2173
+    },
+    {
+        "from": "EDI",
+        "to": "CPH",
+        "distance": 1220
+    },
+    {
+        "from": "EDI",
+        "to": "STO",
+        "distance": 1456
+    },
+    {
+        "from": "EDI",
+        "to": "BER",
+        "distance": 552
+    },
+    {
+        "from": "EDI",
+        "to": "HAM",
+        "distance": 914
+    },
+    {
+        "from": "EDI",
+        "to": "LUB",
+        "distance": 914
+    },
+    {
+        "from": "EDI",
+        "to": "BRE",
+        "distance": 833
+    },
+    {
+        "from": "EDI",
+        "to": "GDN",
+        "distance": 1428
+    },
+    {
+        "from": "EDI",
+        "to": "ARG",
+        "distance": 5381
+    },
+    {
+        "from": "GLA",
+        "to": "LON",
+        "distance": 408
+    },
+    {
+        "from": "GLA",
+        "to": "BRS",
+        "distance": 210
+    },
+    {
+        "from": "GLA",
+        "to": "PLY",
+        "distance": 615
+    },
+    {
+        "from": "GLA",
+        "to": "LIV",
+        "distance": 130
+    },
+    {
+        "from": "GLA",
+        "to": "EDI",
+        "distance": 151
+    },
+    {
+        "from": "GLA",
+        "to": "DUB",
+        "distance": 236
+    },
+    {
+        "from": "GLA",
+        "to": "AMS",
+        "distance": 509
+    },
+    {
+        "from": "GLA",
+        "to": "ROT",
+        "distance": 509
+    },
+    {
+        "from": "GLA",
+        "to": "MID",
+        "distance": 561
+    },
+    {
+        "from": "GLA",
+        "to": "ANT",
+        "distance": 723
+    },
+    {
+        "from": "GLA",
+        "to": "ROU",
+        "distance": 421
+    },
+    {
+        "from": "GLA",
+        "to": "LRO",
+        "distance": 613
+    },
+    {
+        "from": "GLA",
+        "to": "BOR",
+        "distance": 738
+    },
+    {
+        "from": "GLA",
+        "to": "MRS",
+        "distance": 700
+    },
+    {
+        "from": "GLA",
+        "to": "SEV",
+        "distance": 1082
+    },
+    {
+        "from": "GLA",
+        "to": "CAD",
+        "distance": 1082
+    },
+    {
+        "from": "GLA",
+        "to": "BAR",
+        "distance": 916
+    },
+    {
+        "from": "GLA",
+        "to": "LIS",
+        "distance": 1050
+    },
+    {
+        "from": "GLA",
+        "to": "POR",
+        "distance": 1050
+    },
+    {
+        "from": "GLA",
+        "to": "VEN",
+        "distance": 1491
+    },
+    {
+        "from": "GLA",
+        "to": "GEN",
+        "distance": 1582
+    },
+    {
+        "from": "GLA",
+        "to": "NAP",
+        "distance": 1758
+    },
+    {
+        "from": "GLA",
+        "to": "LVO",
+        "distance": 1577
+    },
+    {
+        "from": "GLA",
+        "to": "ANC",
+        "distance": 1600
+    },
+    {
+        "from": "GLA",
+        "to": "VAL",
+        "distance": 2048
+    },
+    {
+        "from": "GLA",
+        "to": "CON",
+        "distance": 2726
+    },
+    {
+        "from": "GLA",
+        "to": "SMI",
+        "distance": 2347
+    },
+    {
+        "from": "GLA",
+        "to": "SAL",
+        "distance": 2146
+    },
+    {
+        "from": "GLA",
+        "to": "CPH",
+        "distance": 1193
+    },
+    {
+        "from": "GLA",
+        "to": "STO",
+        "distance": 1598
+    },
+    {
+        "from": "GLA",
+        "to": "BER",
+        "distance": 694
+    },
+    {
+        "from": "GLA",
+        "to": "HAM",
+        "distance": 1030
+    },
+    {
+        "from": "GLA",
+        "to": "LUB",
+        "distance": 1030
+    },
+    {
+        "from": "GLA",
+        "to": "BRE",
+        "distance": 949
+    },
+    {
+        "from": "GLA",
+        "to": "GDN",
+        "distance": 1402
+    },
+    {
+        "from": "GLA",
+        "to": "ARG",
+        "distance": 5355
+    },
+    {
+        "from": "DUB",
+        "to": "LON",
+        "distance": 491
+    },
+    {
+        "from": "DUB",
+        "to": "BRS",
+        "distance": 292
+    },
+    {
+        "from": "DUB",
+        "to": "PLY",
+        "distance": 573
+    },
+    {
+        "from": "DUB",
+        "to": "LIV",
+        "distance": 212
+    },
+    {
+        "from": "DUB",
+        "to": "EDI",
+        "distance": 273
+    },
+    {
+        "from": "DUB",
+        "to": "GLA",
+        "distance": 236
+    },
+    {
+        "from": "DUB",
+        "to": "AMS",
+        "distance": 592
+    },
+    {
+        "from": "DUB",
+        "to": "ROT",
+        "distance": 592
+    },
+    {
+        "from": "DUB",
+        "to": "MID",
+        "distance": 643
+    },
+    {
+        "from": "DUB",
+        "to": "ANT",
+        "distance": 805
+    },
+    {
+        "from": "DUB",
+        "to": "ROU",
+        "distance": 503
+    },
+    {
+        "from": "DUB",
+        "to": "LRO",
+        "distance": 696
+    },
+    {
+        "from": "DUB",
+        "to": "BOR",
+        "distance": 820
+    },
+    {
+        "from": "DUB",
+        "to": "MRS",
+        "distance": 782
+    },
+    {
+        "from": "DUB",
+        "to": "SEV",
+        "distance": 903
+    },
+    {
+        "from": "DUB",
+        "to": "CAD",
+        "distance": 903
+    },
+    {
+        "from": "DUB",
+        "to": "BAR",
+        "distance": 999
+    },
+    {
+        "from": "DUB",
+        "to": "LIS",
+        "distance": 871
+    },
+    {
+        "from": "DUB",
+        "to": "POR",
+        "distance": 871
+    },
+    {
+        "from": "DUB",
+        "to": "VEN",
+        "distance": 1573
+    },
+    {
+        "from": "DUB",
+        "to": "GEN",
+        "distance": 1664
+    },
+    {
+        "from": "DUB",
+        "to": "NAP",
+        "distance": 1840
+    },
+    {
+        "from": "DUB",
+        "to": "LVO",
+        "distance": 1659
+    },
+    {
+        "from": "DUB",
+        "to": "ANC",
+        "distance": 1682
+    },
+    {
+        "from": "DUB",
+        "to": "VAL",
+        "distance": 2130
+    },
+    {
+        "from": "DUB",
+        "to": "CON",
+        "distance": 2808
+    },
+    {
+        "from": "DUB",
+        "to": "SMI",
+        "distance": 2429
+    },
+    {
+        "from": "DUB",
+        "to": "SAL",
+        "distance": 2228
+    },
+    {
+        "from": "DUB",
+        "to": "CPH",
+        "distance": 1276
+    },
+    {
+        "from": "DUB",
+        "to": "STO",
+        "distance": 1729
+    },
+    {
+        "from": "DUB",
+        "to": "BER",
+        "distance": 826
+    },
+    {
+        "from": "DUB",
+        "to": "HAM",
+        "distance": 1112
+    },
+    {
+        "from": "DUB",
+        "to": "LUB",
+        "distance": 1112
+    },
+    {
+        "from": "DUB",
+        "to": "BRE",
+        "distance": 1031
+    },
+    {
+        "from": "DUB",
+        "to": "GDN",
+        "distance": 1484
+    },
+    {
+        "from": "DUB",
+        "to": "ARG",
+        "distance": 5437
+    },
+    {
+        "from": "AMS",
+        "to": "LON",
+        "distance": 220
+    },
+    {
+        "from": "AMS",
+        "to": "BRS",
+        "distance": 419
+    },
+    {
+        "from": "AMS",
+        "to": "PLY",
+        "distance": 555
+    },
+    {
+        "from": "AMS",
+        "to": "LIV",
+        "distance": 379
+    },
+    {
+        "from": "AMS",
+        "to": "EDI",
+        "distance": 546
+    },
+    {
+        "from": "AMS",
+        "to": "GLA",
+        "distance": 509
+    },
+    {
+        "from": "AMS",
+        "to": "DUB",
+        "distance": 592
+    },
+    {
+        "from": "AMS",
+        "to": "MID",
+        "distance": 51
+    },
+    {
+        "from": "AMS",
+        "to": "ANT",
+        "distance": 565
+    },
+    {
+        "from": "AMS",
+        "to": "ROU",
+        "distance": 263
+    },
+    {
+        "from": "AMS",
+        "to": "LRO",
+        "distance": 455
+    },
+    {
+        "from": "AMS",
+        "to": "BOR",
+        "distance": 580
+    },
+    {
+        "from": "AMS",
+        "to": "MRS",
+        "distance": 542
+    },
+    {
+        "from": "AMS",
+        "to": "SEV",
+        "distance": 1036
+    },
+    {
+        "from": "AMS",
+        "to": "CAD",
+        "distance": 1036
+    },
+    {
+        "from": "AMS",
+        "to": "BAR",
+        "distance": 758
+    },
+    {
+        "from": "AMS",
+        "to": "LIS",
+        "distance": 1254
+    },
+    {
+        "from": "AMS",
+        "to": "POR",
+        "distance": 1254
+    },
+    {
+        "from": "AMS",
+        "to": "VEN",
+        "distance": 981
+    },
+    {
+        "from": "AMS",
+        "to": "GEN",
+        "distance": 1072
+    },
+    {
+        "from": "AMS",
+        "to": "NAP",
+        "distance": 1248
+    },
+    {
+        "from": "AMS",
+        "to": "LVO",
+        "distance": 1067
+    },
+    {
+        "from": "AMS",
+        "to": "ANC",
+        "distance": 1090
+    },
+    {
+        "from": "AMS",
+        "to": "VAL",
+        "distance": 1538
+    },
+    {
+        "from": "AMS",
+        "to": "CON",
+        "distance": 2216
+    },
+    {
+        "from": "AMS",
+        "to": "SMI",
+        "distance": 1837
+    },
+    {
+        "from": "AMS",
+        "to": "SAL",
+        "distance": 1636
+    },
+    {
+        "from": "AMS",
+        "to": "CPH",
+        "distance": 683
+    },
+    {
+        "from": "AMS",
+        "to": "STO",
+        "distance": 1146
+    },
+    {
+        "from": "AMS",
+        "to": "BER",
+        "distance": 609
+    },
+    {
+        "from": "AMS",
+        "to": "HAM",
+        "distance": 527
+    },
+    {
+        "from": "AMS",
+        "to": "LUB",
+        "distance": 527
+    },
+    {
+        "from": "AMS",
+        "to": "BRE",
+        "distance": 446
+    },
+    {
+        "from": "AMS",
+        "to": "GDN",
+        "distance": 892
+    },
+    {
+        "from": "AMS",
+        "to": "ARG",
+        "distance": 4845
+    },
+    {
+        "from": "ROT",
+        "to": "LON",
+        "distance": 220
+    },
+    {
+        "from": "ROT",
+        "to": "BRS",
+        "distance": 419
+    },
+    {
+        "from": "ROT",
+        "to": "PLY",
+        "distance": 555
+    },
+    {
+        "from": "ROT",
+        "to": "LIV",
+        "distance": 379
+    },
+    {
+        "from": "ROT",
+        "to": "EDI",
+        "distance": 546
+    },
+    {
+        "from": "ROT",
+        "to": "GLA",
+        "distance": 509
+    },
+    {
+        "from": "ROT",
+        "to": "DUB",
+        "distance": 592
+    },
+    {
+        "from": "ROT",
+        "to": "MID",
+        "distance": 51
+    },
+    {
+        "from": "ROT",
+        "to": "ANT",
+        "distance": 565
+    },
+    {
+        "from": "ROT",
+        "to": "ROU",
+        "distance": 263
+    },
+    {
+        "from": "ROT",
+        "to": "LRO",
+        "distance": 455
+    },
+    {
+        "from": "ROT",
+        "to": "BOR",
+        "distance": 580
+    },
+    {
+        "from": "ROT",
+        "to": "MRS",
+        "distance": 542
+    },
+    {
+        "from": "ROT",
+        "to": "SEV",
+        "distance": 1036
+    },
+    {
+        "from": "ROT",
+        "to": "CAD",
+        "distance": 1036
+    },
+    {
+        "from": "ROT",
+        "to": "BAR",
+        "distance": 758
+    },
+    {
+        "from": "ROT",
+        "to": "LIS",
+        "distance": 1254
+    },
+    {
+        "from": "ROT",
+        "to": "POR",
+        "distance": 1254
+    },
+    {
+        "from": "ROT",
+        "to": "VEN",
+        "distance": 981
+    },
+    {
+        "from": "ROT",
+        "to": "GEN",
+        "distance": 1072
+    },
+    {
+        "from": "ROT",
+        "to": "NAP",
+        "distance": 1248
+    },
+    {
+        "from": "ROT",
+        "to": "LVO",
+        "distance": 1067
+    },
+    {
+        "from": "ROT",
+        "to": "ANC",
+        "distance": 1090
+    },
+    {
+        "from": "ROT",
+        "to": "VAL",
+        "distance": 1538
+    },
+    {
+        "from": "ROT",
+        "to": "CON",
+        "distance": 2216
+    },
+    {
+        "from": "ROT",
+        "to": "SMI",
+        "distance": 1837
+    },
+    {
+        "from": "ROT",
+        "to": "SAL",
+        "distance": 1636
+    },
+    {
+        "from": "ROT",
+        "to": "CPH",
+        "distance": 683
+    },
+    {
+        "from": "ROT",
+        "to": "STO",
+        "distance": 1146
+    },
+    {
+        "from": "ROT",
+        "to": "BER",
+        "distance": 609
+    },
+    {
+        "from": "ROT",
+        "to": "HAM",
+        "distance": 527
+    },
+    {
+        "from": "ROT",
+        "to": "LUB",
+        "distance": 527
+    },
+    {
+        "from": "ROT",
+        "to": "BRE",
+        "distance": 446
+    },
+    {
+        "from": "ROT",
+        "to": "GDN",
+        "distance": 892
+    },
+    {
+        "from": "ROT",
+        "to": "ARG",
+        "distance": 4845
+    },
+    {
+        "from": "MID",
+        "to": "LON",
+        "distance": 271
+    },
+    {
+        "from": "MID",
+        "to": "BRS",
+        "distance": 422
+    },
+    {
+        "from": "MID",
+        "to": "PLY",
+        "distance": 511
+    },
+    {
+        "from": "MID",
+        "to": "LIV",
+        "distance": 430
+    },
+    {
+        "from": "MID",
+        "to": "EDI",
+        "distance": 597
+    },
+    {
+        "from": "MID",
+        "to": "GLA",
+        "distance": 561
+    },
+    {
+        "from": "MID",
+        "to": "DUB",
+        "distance": 643
+    },
+    {
+        "from": "MID",
+        "to": "AMS",
+        "distance": 51
+    },
+    {
+        "from": "MID",
+        "to": "ROT",
+        "distance": 51
+    },
+    {
+        "from": "MID",
+        "to": "ANT",
+        "distance": 514
+    },
+    {
+        "from": "MID",
+        "to": "ROU",
+        "distance": 211
+    },
+    {
+        "from": "MID",
+        "to": "LRO",
+        "distance": 404
+    },
+    {
+        "from": "MID",
+        "to": "BOR",
+        "distance": 528
+    },
+    {
+        "from": "MID",
+        "to": "MRS",
+        "distance": 490
+    },
+    {
+        "from": "MID",
+        "to": "SEV",
+        "distance": 985
+    },
+    {
+        "from": "MID",
+        "to": "CAD",
+        "distance": 985
+    },
+    {
+        "from": "MID",
+        "to": "BAR",
+        "distance": 707
+    },
+    {
+        "from": "MID",
+        "to": "LIS",
+        "distance": 1203
+    },
+    {
+        "from": "MID",
+        "to": "POR",
+        "distance": 1203
+    },
+    {
+        "from": "MID",
+        "to": "VEN",
+        "distance": 1032
+    },
+    {
+        "from": "MID",
+        "to": "GEN",
+        "distance": 1123
+    },
+    {
+        "from": "MID",
+        "to": "NAP",
+        "distance": 1299
+    },
+    {
+        "from": "MID",
+        "to": "LVO",
+        "distance": 1118
+    },
+    {
+        "from": "MID",
+        "to": "ANC",
+        "distance": 1141
+    },
+    {
+        "from": "MID",
+        "to": "VAL",
+        "distance": 1589
+    },
+    {
+        "from": "MID",
+        "to": "CON",
+        "distance": 2267
+    },
+    {
+        "from": "MID",
+        "to": "SMI",
+        "distance": 1888
+    },
+    {
+        "from": "MID",
+        "to": "SAL",
+        "distance": 1687
+    },
+    {
+        "from": "MID",
+        "to": "CPH",
+        "distance": 735
+    },
+    {
+        "from": "MID",
+        "to": "STO",
+        "distance": 1198
+    },
+    {
+        "from": "MID",
+        "to": "BER",
+        "distance": 660
+    },
+    {
+        "from": "MID",
+        "to": "HAM",
+        "distance": 578
+    },
+    {
+        "from": "MID",
+        "to": "LUB",
+        "distance": 578
+    },
+    {
+        "from": "MID",
+        "to": "BRE",
+        "distance": 497
+    },
+    {
+        "from": "MID",
+        "to": "GDN",
+        "distance": 943
+    },
+    {
+        "from": "MID",
+        "to": "ARG",
+        "distance": 4896
+    },
+    {
+        "from": "ANT",
+        "to": "LON",
+        "distance": 399
+    },
+    {
+        "from": "ANT",
+        "to": "BRS",
+        "distance": 512
+    },
+    {
+        "from": "ANT",
+        "to": "PLY",
+        "distance": 602
+    },
+    {
+        "from": "ANT",
+        "to": "LIV",
+        "distance": 592
+    },
+    {
+        "from": "ANT",
+        "to": "EDI",
+        "distance": 760
+    },
+    {
+        "from": "ANT",
+        "to": "GLA",
+        "distance": 723
+    },
+    {
+        "from": "ANT",
+        "to": "DUB",
+        "distance": 805
+    },
+    {
+        "from": "ANT",
+        "to": "AMS",
+        "distance": 565
+    },
+    {
+        "from": "ANT",
+        "to": "ROT",
+        "distance": 565
+    },
+    {
+        "from": "ANT",
+        "to": "MID",
+        "distance": 514
+    },
+    {
+        "from": "ANT",
+        "to": "ROU",
+        "distance": 302
+    },
+    {
+        "from": "ANT",
+        "to": "LRO",
+        "distance": 402
+    },
+    {
+        "from": "ANT",
+        "to": "BOR",
+        "distance": 526
+    },
+    {
+        "from": "ANT",
+        "to": "MRS",
+        "distance": 309
+    },
+    {
+        "from": "ANT",
+        "to": "SEV",
+        "distance": 916
+    },
+    {
+        "from": "ANT",
+        "to": "CAD",
+        "distance": 916
+    },
+    {
+        "from": "ANT",
+        "to": "BAR",
+        "distance": 526
+    },
+    {
+        "from": "ANT",
+        "to": "LIS",
+        "distance": 1135
+    },
+    {
+        "from": "ANT",
+        "to": "POR",
+        "distance": 1135
+    },
+    {
+        "from": "ANT",
+        "to": "VEN",
+        "distance": 902
+    },
+    {
+        "from": "ANT",
+        "to": "GEN",
+        "distance": 993
+    },
+    {
+        "from": "ANT",
+        "to": "NAP",
+        "distance": 1168
+    },
+    {
+        "from": "ANT",
+        "to": "LVO",
+        "distance": 988
+    },
+    {
+        "from": "ANT",
+        "to": "ANC",
+        "distance": 1011
+    },
+    {
+        "from": "ANT",
+        "to": "VAL",
+        "distance": 1459
+    },
+    {
+        "from": "ANT",
+        "to": "CON",
+        "distance": 2137
+    },
+    {
+        "from": "ANT",
+        "to": "SMI",
+        "distance": 1758
+    },
+    {
+        "from": "ANT",
+        "to": "SAL",
+        "distance": 1557
+    },
+    {
+        "from": "ANT",
+        "to": "CPH",
+        "distance": 604
+    },
+    {
+        "from": "ANT",
+        "to": "STO",
+        "distance": 1067
+    },
+    {
+        "from": "ANT",
+        "to": "BER",
+        "distance": 1087
+    },
+    {
+        "from": "ANT",
+        "to": "HAM",
+        "distance": 638
+    },
+    {
+        "from": "ANT",
+        "to": "LUB",
+        "distance": 638
+    },
+    {
+        "from": "ANT",
+        "to": "BRE",
+        "distance": 646
+    },
+    {
+        "from": "ANT",
+        "to": "GDN",
+        "distance": 812
+    },
+    {
+        "from": "ANT",
+        "to": "ARG",
+        "distance": 4765
+    },
+    {
+        "from": "ROU",
+        "to": "LON",
+        "distance": 97
+    },
+    {
+        "from": "ROU",
+        "to": "BRS",
+        "distance": 210
+    },
+    {
+        "from": "ROU",
+        "to": "PLY",
+        "distance": 300
+    },
+    {
+        "from": "ROU",
+        "to": "LIV",
+        "distance": 290
+    },
+    {
+        "from": "ROU",
+        "to": "EDI",
+        "distance": 457
+    },
+    {
+        "from": "ROU",
+        "to": "GLA",
+        "distance": 421
+    },
+    {
+        "from": "ROU",
+        "to": "DUB",
+        "distance": 503
+    },
+    {
+        "from": "ROU",
+        "to": "AMS",
+        "distance": 263
+    },
+    {
+        "from": "ROU",
+        "to": "ROT",
+        "distance": 263
+    },
+    {
+        "from": "ROU",
+        "to": "MID",
+        "distance": 211
+    },
+    {
+        "from": "ROU",
+        "to": "ANT",
+        "distance": 302
+    },
+    {
+        "from": "ROU",
+        "to": "LRO",
+        "distance": 192
+    },
+    {
+        "from": "ROU",
+        "to": "BOR",
+        "distance": 317
+    },
+    {
+        "from": "ROU",
+        "to": "MRS",
+        "distance": 279
+    },
+    {
+        "from": "ROU",
+        "to": "SEV",
+        "distance": 773
+    },
+    {
+        "from": "ROU",
+        "to": "CAD",
+        "distance": 773
+    },
+    {
+        "from": "ROU",
+        "to": "BAR",
+        "distance": 495
+    },
+    {
+        "from": "ROU",
+        "to": "LIS",
+        "distance": 991
+    },
+    {
+        "from": "ROU",
+        "to": "POR",
+        "distance": 991
+    },
+    {
+        "from": "ROU",
+        "to": "VEN",
+        "distance": 1204
+    },
+    {
+        "from": "ROU",
+        "to": "GEN",
+        "distance": 1295
+    },
+    {
+        "from": "ROU",
+        "to": "NAP",
+        "distance": 1471
+    },
+    {
+        "from": "ROU",
+        "to": "LVO",
+        "distance": 1290
+    },
+    {
+        "from": "ROU",
+        "to": "ANC",
+        "distance": 1313
+    },
+    {
+        "from": "ROU",
+        "to": "VAL",
+        "distance": 1761
+    },
+    {
+        "from": "ROU",
+        "to": "CON",
+        "distance": 2439
+    },
+    {
+        "from": "ROU",
+        "to": "SMI",
+        "distance": 2060
+    },
+    {
+        "from": "ROU",
+        "to": "SAL",
+        "distance": 1859
+    },
+    {
+        "from": "ROU",
+        "to": "CPH",
+        "distance": 906
+    },
+    {
+        "from": "ROU",
+        "to": "STO",
+        "distance": 1369
+    },
+    {
+        "from": "ROU",
+        "to": "BER",
+        "distance": 802
+    },
+    {
+        "from": "ROU",
+        "to": "HAM",
+        "distance": 790
+    },
+    {
+        "from": "ROU",
+        "to": "LUB",
+        "distance": 790
+    },
+    {
+        "from": "ROU",
+        "to": "BRE",
+        "distance": 709
+    },
+    {
+        "from": "ROU",
+        "to": "GDN",
+        "distance": 1115
+    },
+    {
+        "from": "ROU",
+        "to": "ARG",
+        "distance": 5068
+    },
+    {
+        "from": "LRO",
+        "to": "LON",
+        "distance": 289
+    },
+    {
+        "from": "LRO",
+        "to": "BRS",
+        "distance": 403
+    },
+    {
+        "from": "LRO",
+        "to": "PLY",
+        "distance": 492
+    },
+    {
+        "from": "LRO",
+        "to": "LIV",
+        "distance": 483
+    },
+    {
+        "from": "LRO",
+        "to": "EDI",
+        "distance": 650
+    },
+    {
+        "from": "LRO",
+        "to": "GLA",
+        "distance": 613
+    },
+    {
+        "from": "LRO",
+        "to": "DUB",
+        "distance": 696
+    },
+    {
+        "from": "LRO",
+        "to": "AMS",
+        "distance": 455
+    },
+    {
+        "from": "LRO",
+        "to": "ROT",
+        "distance": 455
+    },
+    {
+        "from": "LRO",
+        "to": "MID",
+        "distance": 404
+    },
+    {
+        "from": "LRO",
+        "to": "ANT",
+        "distance": 402
+    },
+    {
+        "from": "LRO",
+        "to": "ROU",
+        "distance": 192
+    },
+    {
+        "from": "LRO",
+        "to": "BOR",
+        "distance": 124
+    },
+    {
+        "from": "LRO",
+        "to": "MRS",
+        "distance": 270
+    },
+    {
+        "from": "LRO",
+        "to": "SEV",
+        "distance": 580
+    },
+    {
+        "from": "LRO",
+        "to": "CAD",
+        "distance": 580
+    },
+    {
+        "from": "LRO",
+        "to": "BAR",
+        "distance": 486
+    },
+    {
+        "from": "LRO",
+        "to": "LIS",
+        "distance": 799
+    },
+    {
+        "from": "LRO",
+        "to": "POR",
+        "distance": 799
+    },
+    {
+        "from": "LRO",
+        "to": "VEN",
+        "distance": 1304
+    },
+    {
+        "from": "LRO",
+        "to": "GEN",
+        "distance": 1395
+    },
+    {
+        "from": "LRO",
+        "to": "NAP",
+        "distance": 1571
+    },
+    {
+        "from": "LRO",
+        "to": "LVO",
+        "distance": 1390
+    },
+    {
+        "from": "LRO",
+        "to": "ANC",
+        "distance": 1413
+    },
+    {
+        "from": "LRO",
+        "to": "VAL",
+        "distance": 1861
+    },
+    {
+        "from": "LRO",
+        "to": "CON",
+        "distance": 2539
+    },
+    {
+        "from": "LRO",
+        "to": "SMI",
+        "distance": 2160
+    },
+    {
+        "from": "LRO",
+        "to": "SAL",
+        "distance": 1959
+    },
+    {
+        "from": "LRO",
+        "to": "CPH",
+        "distance": 1006
+    },
+    {
+        "from": "LRO",
+        "to": "STO",
+        "distance": 1469
+    },
+    {
+        "from": "LRO",
+        "to": "BER",
+        "distance": 994
+    },
+    {
+        "from": "LRO",
+        "to": "HAM",
+        "distance": 982
+    },
+    {
+        "from": "LRO",
+        "to": "LUB",
+        "distance": 982
+    },
+    {
+        "from": "LRO",
+        "to": "BRE",
+        "distance": 902
+    },
+    {
+        "from": "LRO",
+        "to": "GDN",
+        "distance": 1215
+    },
+    {
+        "from": "LRO",
+        "to": "ARG",
+        "distance": 5168
+    },
+    {
+        "from": "BOR",
+        "to": "LON",
+        "distance": 414
+    },
+    {
+        "from": "BOR",
+        "to": "BRS",
+        "distance": 527
+    },
+    {
+        "from": "BOR",
+        "to": "PLY",
+        "distance": 617
+    },
+    {
+        "from": "BOR",
+        "to": "LIV",
+        "distance": 607
+    },
+    {
+        "from": "BOR",
+        "to": "EDI",
+        "distance": 774
+    },
+    {
+        "from": "BOR",
+        "to": "GLA",
+        "distance": 738
+    },
+    {
+        "from": "BOR",
+        "to": "DUB",
+        "distance": 820
+    },
+    {
+        "from": "BOR",
+        "to": "AMS",
+        "distance": 580
+    },
+    {
+        "from": "BOR",
+        "to": "ROT",
+        "distance": 580
+    },
+    {
+        "from": "BOR",
+        "to": "MID",
+        "distance": 528
+    },
+    {
+        "from": "BOR",
+        "to": "ANT",
+        "distance": 526
+    },
+    {
+        "from": "BOR",
+        "to": "ROU",
+        "distance": 317
+    },
+    {
+        "from": "BOR",
+        "to": "LRO",
+        "distance": 124
+    },
+    {
+        "from": "BOR",
+        "to": "MRS",
+        "distance": 394
+    },
+    {
+        "from": "BOR",
+        "to": "SEV",
+        "distance": 456
+    },
+    {
+        "from": "BOR",
+        "to": "CAD",
+        "distance": 456
+    },
+    {
+        "from": "BOR",
+        "to": "BAR",
+        "distance": 568
+    },
+    {
+        "from": "BOR",
+        "to": "LIS",
+        "distance": 674
+    },
+    {
+        "from": "BOR",
+        "to": "POR",
+        "distance": 674
+    },
+    {
+        "from": "BOR",
+        "to": "VEN",
+        "distance": 1429
+    },
+    {
+        "from": "BOR",
+        "to": "GEN",
+        "distance": 1520
+    },
+    {
+        "from": "BOR",
+        "to": "NAP",
+        "distance": 1695
+    },
+    {
+        "from": "BOR",
+        "to": "LVO",
+        "distance": 1514
+    },
+    {
+        "from": "BOR",
+        "to": "ANC",
+        "distance": 1538
+    },
+    {
+        "from": "BOR",
+        "to": "VAL",
+        "distance": 1985
+    },
+    {
+        "from": "BOR",
+        "to": "CON",
+        "distance": 2664
+    },
+    {
+        "from": "BOR",
+        "to": "SMI",
+        "distance": 2285
+    },
+    {
+        "from": "BOR",
+        "to": "SAL",
+        "distance": 2084
+    },
+    {
+        "from": "BOR",
+        "to": "CPH",
+        "distance": 1131
+    },
+    {
+        "from": "BOR",
+        "to": "STO",
+        "distance": 1594
+    },
+    {
+        "from": "BOR",
+        "to": "BER",
+        "distance": 1119
+    },
+    {
+        "from": "BOR",
+        "to": "HAM",
+        "distance": 1107
+    },
+    {
+        "from": "BOR",
+        "to": "LUB",
+        "distance": 1107
+    },
+    {
+        "from": "BOR",
+        "to": "BRE",
+        "distance": 1026
+    },
+    {
+        "from": "BOR",
+        "to": "GDN",
+        "distance": 1339
+    },
+    {
+        "from": "BOR",
+        "to": "ARG",
+        "distance": 5292
+    },
+    {
+        "from": "MRS",
+        "to": "LON",
+        "distance": 376
+    },
+    {
+        "from": "MRS",
+        "to": "BRS",
+        "distance": 489
+    },
+    {
+        "from": "MRS",
+        "to": "PLY",
+        "distance": 579
+    },
+    {
+        "from": "MRS",
+        "to": "LIV",
+        "distance": 569
+    },
+    {
+        "from": "MRS",
+        "to": "EDI",
+        "distance": 736
+    },
+    {
+        "from": "MRS",
+        "to": "GLA",
+        "distance": 700
+    },
+    {
+        "from": "MRS",
+        "to": "DUB",
+        "distance": 782
+    },
+    {
+        "from": "MRS",
+        "to": "AMS",
+        "distance": 542
+    },
+    {
+        "from": "MRS",
+        "to": "ROT",
+        "distance": 542
+    },
+    {
+        "from": "MRS",
+        "to": "MID",
+        "distance": 490
+    },
+    {
+        "from": "MRS",
+        "to": "ANT",
+        "distance": 309
+    },
+    {
+        "from": "MRS",
+        "to": "ROU",
+        "distance": 279
+    },
+    {
+        "from": "MRS",
+        "to": "LRO",
+        "distance": 270
+    },
+    {
+        "from": "MRS",
+        "to": "BOR",
+        "distance": 394
+    },
+    {
+        "from": "MRS",
+        "to": "SEV",
+        "distance": 607
+    },
+    {
+        "from": "MRS",
+        "to": "CAD",
+        "distance": 607
+    },
+    {
+        "from": "MRS",
+        "to": "BAR",
+        "distance": 216
+    },
+    {
+        "from": "MRS",
+        "to": "LIS",
+        "distance": 825
+    },
+    {
+        "from": "MRS",
+        "to": "POR",
+        "distance": 825
+    },
+    {
+        "from": "MRS",
+        "to": "VEN",
+        "distance": 1212
+    },
+    {
+        "from": "MRS",
+        "to": "GEN",
+        "distance": 1303
+    },
+    {
+        "from": "MRS",
+        "to": "NAP",
+        "distance": 1478
+    },
+    {
+        "from": "MRS",
+        "to": "LVO",
+        "distance": 1298
+    },
+    {
+        "from": "MRS",
+        "to": "ANC",
+        "distance": 1321
+    },
+    {
+        "from": "MRS",
+        "to": "VAL",
+        "distance": 1768
+    },
+    {
+        "from": "MRS",
+        "to": "CON",
+        "distance": 2447
+    },
+    {
+        "from": "MRS",
+        "to": "SMI",
+        "distance": 2068
+    },
+    {
+        "from": "MRS",
+        "to": "SAL",
+        "distance": 1867
+    },
+    {
+        "from": "MRS",
+        "to": "CPH",
+        "distance": 914
+    },
+    {
+        "from": "MRS",
+        "to": "STO",
+        "distance": 1377
+    },
+    {
+        "from": "MRS",
+        "to": "BER",
+        "distance": 1081
+    },
+    {
+        "from": "MRS",
+        "to": "HAM",
+        "distance": 948
+    },
+    {
+        "from": "MRS",
+        "to": "LUB",
+        "distance": 948
+    },
+    {
+        "from": "MRS",
+        "to": "BRE",
+        "distance": 956
+    },
+    {
+        "from": "MRS",
+        "to": "GDN",
+        "distance": 1122
+    },
+    {
+        "from": "MRS",
+        "to": "ARG",
+        "distance": 5075
+    },
+    {
+        "from": "SEV",
+        "to": "LON",
+        "distance": 870
+    },
+    {
+        "from": "SEV",
+        "to": "BRS",
+        "distance": 983
+    },
+    {
+        "from": "SEV",
+        "to": "PLY",
+        "distance": 930
+    },
+    {
+        "from": "SEV",
+        "to": "LIV",
+        "distance": 1064
+    },
+    {
+        "from": "SEV",
+        "to": "EDI",
+        "distance": 1177
+    },
+    {
+        "from": "SEV",
+        "to": "GLA",
+        "distance": 1082
+    },
+    {
+        "from": "SEV",
+        "to": "DUB",
+        "distance": 903
+    },
+    {
+        "from": "SEV",
+        "to": "AMS",
+        "distance": 1036
+    },
+    {
+        "from": "SEV",
+        "to": "ROT",
+        "distance": 1036
+    },
+    {
+        "from": "SEV",
+        "to": "MID",
+        "distance": 985
+    },
+    {
+        "from": "SEV",
+        "to": "ANT",
+        "distance": 916
+    },
+    {
+        "from": "SEV",
+        "to": "ROU",
+        "distance": 773
+    },
+    {
+        "from": "SEV",
+        "to": "LRO",
+        "distance": 580
+    },
+    {
+        "from": "SEV",
+        "to": "BOR",
+        "distance": 456
+    },
+    {
+        "from": "SEV",
+        "to": "MRS",
+        "distance": 607
+    },
+    {
+        "from": "SEV",
+        "to": "BAR",
+        "distance": 390
+    },
+    {
+        "from": "SEV",
+        "to": "LIS",
+        "distance": 218
+    },
+    {
+        "from": "SEV",
+        "to": "POR",
+        "distance": 218
+    },
+    {
+        "from": "SEV",
+        "to": "VEN",
+        "distance": 1819
+    },
+    {
+        "from": "SEV",
+        "to": "GEN",
+        "distance": 1910
+    },
+    {
+        "from": "SEV",
+        "to": "NAP",
+        "distance": 2085
+    },
+    {
+        "from": "SEV",
+        "to": "LVO",
+        "distance": 1905
+    },
+    {
+        "from": "SEV",
+        "to": "ANC",
+        "distance": 1928
+    },
+    {
+        "from": "SEV",
+        "to": "VAL",
+        "distance": 2376
+    },
+    {
+        "from": "SEV",
+        "to": "CON",
+        "distance": 3054
+    },
+    {
+        "from": "SEV",
+        "to": "SMI",
+        "distance": 2675
+    },
+    {
+        "from": "SEV",
+        "to": "SAL",
+        "distance": 2474
+    },
+    {
+        "from": "SEV",
+        "to": "CPH",
+        "distance": 1521
+    },
+    {
+        "from": "SEV",
+        "to": "STO",
+        "distance": 1984
+    },
+    {
+        "from": "SEV",
+        "to": "BER",
+        "distance": 1575
+    },
+    {
+        "from": "SEV",
+        "to": "HAM",
+        "distance": 1555
+    },
+    {
+        "from": "SEV",
+        "to": "LUB",
+        "distance": 1555
+    },
+    {
+        "from": "SEV",
+        "to": "BRE",
+        "distance": 1482
+    },
+    {
+        "from": "SEV",
+        "to": "GDN",
+        "distance": 1729
+    },
+    {
+        "from": "SEV",
+        "to": "ARG",
+        "distance": 5682
+    },
+    {
+        "from": "CAD",
+        "to": "LON",
+        "distance": 870
+    },
+    {
+        "from": "CAD",
+        "to": "BRS",
+        "distance": 983
+    },
+    {
+        "from": "CAD",
+        "to": "PLY",
+        "distance": 930
+    },
+    {
+        "from": "CAD",
+        "to": "LIV",
+        "distance": 1064
+    },
+    {
+        "from": "CAD",
+        "to": "EDI",
+        "distance": 1177
+    },
+    {
+        "from": "CAD",
+        "to": "GLA",
+        "distance": 1082
+    },
+    {
+        "from": "CAD",
+        "to": "DUB",
+        "distance": 903
+    },
+    {
+        "from": "CAD",
+        "to": "AMS",
+        "distance": 1036
+    },
+    {
+        "from": "CAD",
+        "to": "ROT",
+        "distance": 1036
+    },
+    {
+        "from": "CAD",
+        "to": "MID",
+        "distance": 985
+    },
+    {
+        "from": "CAD",
+        "to": "ANT",
+        "distance": 916
+    },
+    {
+        "from": "CAD",
+        "to": "ROU",
+        "distance": 773
+    },
+    {
+        "from": "CAD",
+        "to": "LRO",
+        "distance": 580
+    },
+    {
+        "from": "CAD",
+        "to": "BOR",
+        "distance": 456
+    },
+    {
+        "from": "CAD",
+        "to": "MRS",
+        "distance": 607
+    },
+    {
+        "from": "CAD",
+        "to": "BAR",
+        "distance": 390
+    },
+    {
+        "from": "CAD",
+        "to": "LIS",
+        "distance": 218
+    },
+    {
+        "from": "CAD",
+        "to": "POR",
+        "distance": 218
+    },
+    {
+        "from": "CAD",
+        "to": "VEN",
+        "distance": 1819
+    },
+    {
+        "from": "CAD",
+        "to": "GEN",
+        "distance": 1910
+    },
+    {
+        "from": "CAD",
+        "to": "NAP",
+        "distance": 2085
+    },
+    {
+        "from": "CAD",
+        "to": "LVO",
+        "distance": 1905
+    },
+    {
+        "from": "CAD",
+        "to": "ANC",
+        "distance": 1928
+    },
+    {
+        "from": "CAD",
+        "to": "VAL",
+        "distance": 2376
+    },
+    {
+        "from": "CAD",
+        "to": "CON",
+        "distance": 3054
+    },
+    {
+        "from": "CAD",
+        "to": "SMI",
+        "distance": 2675
+    },
+    {
+        "from": "CAD",
+        "to": "SAL",
+        "distance": 2474
+    },
+    {
+        "from": "CAD",
+        "to": "CPH",
+        "distance": 1521
+    },
+    {
+        "from": "CAD",
+        "to": "STO",
+        "distance": 1984
+    },
+    {
+        "from": "CAD",
+        "to": "BER",
+        "distance": 1575
+    },
+    {
+        "from": "CAD",
+        "to": "HAM",
+        "distance": 1555
+    },
+    {
+        "from": "CAD",
+        "to": "LUB",
+        "distance": 1555
+    },
+    {
+        "from": "CAD",
+        "to": "BRE",
+        "distance": 1482
+    },
+    {
+        "from": "CAD",
+        "to": "GDN",
+        "distance": 1729
+    },
+    {
+        "from": "CAD",
+        "to": "ARG",
+        "distance": 5682
+    },
+    {
+        "from": "BAR",
+        "to": "LON",
+        "distance": 592
+    },
+    {
+        "from": "BAR",
+        "to": "BRS",
+        "distance": 706
+    },
+    {
+        "from": "BAR",
+        "to": "PLY",
+        "distance": 795
+    },
+    {
+        "from": "BAR",
+        "to": "LIV",
+        "distance": 786
+    },
+    {
+        "from": "BAR",
+        "to": "EDI",
+        "distance": 953
+    },
+    {
+        "from": "BAR",
+        "to": "GLA",
+        "distance": 916
+    },
+    {
+        "from": "BAR",
+        "to": "DUB",
+        "distance": 999
+    },
+    {
+        "from": "BAR",
+        "to": "AMS",
+        "distance": 758
+    },
+    {
+        "from": "BAR",
+        "to": "ROT",
+        "distance": 758
+    },
+    {
+        "from": "BAR",
+        "to": "MID",
+        "distance": 707
+    },
+    {
+        "from": "BAR",
+        "to": "ANT",
+        "distance": 526
+    },
+    {
+        "from": "BAR",
+        "to": "ROU",
+        "distance": 495
+    },
+    {
+        "from": "BAR",
+        "to": "LRO",
+        "distance": 486
+    },
+    {
+        "from": "BAR",
+        "to": "BOR",
+        "distance": 568
+    },
+    {
+        "from": "BAR",
+        "to": "MRS",
+        "distance": 216
+    },
+    {
+        "from": "BAR",
+        "to": "SEV",
+        "distance": 390
+    },
+    {
+        "from": "BAR",
+        "to": "CAD",
+        "distance": 390
+    },
+    {
+        "from": "BAR",
+        "to": "LIS",
+        "distance": 608
+    },
+    {
+        "from": "BAR",
+        "to": "POR",
+        "distance": 608
+    },
+    {
+        "from": "BAR",
+        "to": "VEN",
+        "distance": 1428
+    },
+    {
+        "from": "BAR",
+        "to": "GEN",
+        "distance": 1519
+    },
+    {
+        "from": "BAR",
+        "to": "NAP",
+        "distance": 1695
+    },
+    {
+        "from": "BAR",
+        "to": "LVO",
+        "distance": 1514
+    },
+    {
+        "from": "BAR",
+        "to": "ANC",
+        "distance": 1537
+    },
+    {
+        "from": "BAR",
+        "to": "VAL",
+        "distance": 1985
+    },
+    {
+        "from": "BAR",
+        "to": "CON",
+        "distance": 2663
+    },
+    {
+        "from": "BAR",
+        "to": "SMI",
+        "distance": 2284
+    },
+    {
+        "from": "BAR",
+        "to": "SAL",
+        "distance": 2083
+    },
+    {
+        "from": "BAR",
+        "to": "CPH",
+        "distance": 1131
+    },
+    {
+        "from": "BAR",
+        "to": "STO",
+        "distance": 1593
+    },
+    {
+        "from": "BAR",
+        "to": "BER",
+        "distance": 1297
+    },
+    {
+        "from": "BAR",
+        "to": "HAM",
+        "distance": 1165
+    },
+    {
+        "from": "BAR",
+        "to": "LUB",
+        "distance": 1165
+    },
+    {
+        "from": "BAR",
+        "to": "BRE",
+        "distance": 1172
+    },
+    {
+        "from": "BAR",
+        "to": "GDN",
+        "distance": 1339
+    },
+    {
+        "from": "BAR",
+        "to": "ARG",
+        "distance": 5292
+    },
+    {
+        "from": "LIS",
+        "to": "LON",
+        "distance": 1085
+    },
+    {
+        "from": "LIS",
+        "to": "BRS",
+        "distance": 1155
+    },
+    {
+        "from": "LIS",
+        "to": "PLY",
+        "distance": 898
+    },
+    {
+        "from": "LIS",
+        "to": "LIV",
+        "distance": 1084
+    },
+    {
+        "from": "LIS",
+        "to": "EDI",
+        "distance": 1145
+    },
+    {
+        "from": "LIS",
+        "to": "GLA",
+        "distance": 1050
+    },
+    {
+        "from": "LIS",
+        "to": "DUB",
+        "distance": 871
+    },
+    {
+        "from": "LIS",
+        "to": "AMS",
+        "distance": 1254
+    },
+    {
+        "from": "LIS",
+        "to": "ROT",
+        "distance": 1254
+    },
+    {
+        "from": "LIS",
+        "to": "MID",
+        "distance": 1203
+    },
+    {
+        "from": "LIS",
+        "to": "ANT",
+        "distance": 1135
+    },
+    {
+        "from": "LIS",
+        "to": "ROU",
+        "distance": 991
+    },
+    {
+        "from": "LIS",
+        "to": "LRO",
+        "distance": 799
+    },
+    {
+        "from": "LIS",
+        "to": "BOR",
+        "distance": 674
+    },
+    {
+        "from": "LIS",
+        "to": "MRS",
+        "distance": 825
+    },
+    {
+        "from": "LIS",
+        "to": "SEV",
+        "distance": 218
+    },
+    {
+        "from": "LIS",
+        "to": "CAD",
+        "distance": 218
+    },
+    {
+        "from": "LIS",
+        "to": "BAR",
+        "distance": 608
+    },
+    {
+        "from": "LIS",
+        "to": "VEN",
+        "distance": 2037
+    },
+    {
+        "from": "LIS",
+        "to": "GEN",
+        "distance": 2128
+    },
+    {
+        "from": "LIS",
+        "to": "NAP",
+        "distance": 2304
+    },
+    {
+        "from": "LIS",
+        "to": "LVO",
+        "distance": 2123
+    },
+    {
+        "from": "LIS",
+        "to": "ANC",
+        "distance": 2146
+    },
+    {
+        "from": "LIS",
+        "to": "VAL",
+        "distance": 2594
+    },
+    {
+        "from": "LIS",
+        "to": "CON",
+        "distance": 3272
+    },
+    {
+        "from": "LIS",
+        "to": "SMI",
+        "distance": 2893
+    },
+    {
+        "from": "LIS",
+        "to": "SAL",
+        "distance": 2692
+    },
+    {
+        "from": "LIS",
+        "to": "CPH",
+        "distance": 1739
+    },
+    {
+        "from": "LIS",
+        "to": "STO",
+        "distance": 2202
+    },
+    {
+        "from": "LIS",
+        "to": "BER",
+        "distance": 1697
+    },
+    {
+        "from": "LIS",
+        "to": "HAM",
+        "distance": 1774
+    },
+    {
+        "from": "LIS",
+        "to": "LUB",
+        "distance": 1774
+    },
+    {
+        "from": "LIS",
+        "to": "BRE",
+        "distance": 1701
+    },
+    {
+        "from": "LIS",
+        "to": "GDN",
+        "distance": 1948
+    },
+    {
+        "from": "LIS",
+        "to": "ARG",
+        "distance": 5901
+    },
+    {
+        "from": "POR",
+        "to": "LON",
+        "distance": 1085
+    },
+    {
+        "from": "POR",
+        "to": "BRS",
+        "distance": 1155
+    },
+    {
+        "from": "POR",
+        "to": "PLY",
+        "distance": 898
+    },
+    {
+        "from": "POR",
+        "to": "LIV",
+        "distance": 1084
+    },
+    {
+        "from": "POR",
+        "to": "EDI",
+        "distance": 1145
+    },
+    {
+        "from": "POR",
+        "to": "GLA",
+        "distance": 1050
+    },
+    {
+        "from": "POR",
+        "to": "DUB",
+        "distance": 871
+    },
+    {
+        "from": "POR",
+        "to": "AMS",
+        "distance": 1254
+    },
+    {
+        "from": "POR",
+        "to": "ROT",
+        "distance": 1254
+    },
+    {
+        "from": "POR",
+        "to": "MID",
+        "distance": 1203
+    },
+    {
+        "from": "POR",
+        "to": "ANT",
+        "distance": 1135
+    },
+    {
+        "from": "POR",
+        "to": "ROU",
+        "distance": 991
+    },
+    {
+        "from": "POR",
+        "to": "LRO",
+        "distance": 799
+    },
+    {
+        "from": "POR",
+        "to": "BOR",
+        "distance": 674
+    },
+    {
+        "from": "POR",
+        "to": "MRS",
+        "distance": 825
+    },
+    {
+        "from": "POR",
+        "to": "SEV",
+        "distance": 218
+    },
+    {
+        "from": "POR",
+        "to": "CAD",
+        "distance": 218
+    },
+    {
+        "from": "POR",
+        "to": "BAR",
+        "distance": 608
+    },
+    {
+        "from": "POR",
+        "to": "VEN",
+        "distance": 2037
+    },
+    {
+        "from": "POR",
+        "to": "GEN",
+        "distance": 2128
+    },
+    {
+        "from": "POR",
+        "to": "NAP",
+        "distance": 2304
+    },
+    {
+        "from": "POR",
+        "to": "LVO",
+        "distance": 2123
+    },
+    {
+        "from": "POR",
+        "to": "ANC",
+        "distance": 2146
+    },
+    {
+        "from": "POR",
+        "to": "VAL",
+        "distance": 2594
+    },
+    {
+        "from": "POR",
+        "to": "CON",
+        "distance": 3272
+    },
+    {
+        "from": "POR",
+        "to": "SMI",
+        "distance": 2893
+    },
+    {
+        "from": "POR",
+        "to": "SAL",
+        "distance": 2692
+    },
+    {
+        "from": "POR",
+        "to": "CPH",
+        "distance": 1739
+    },
+    {
+        "from": "POR",
+        "to": "STO",
+        "distance": 2202
+    },
+    {
+        "from": "POR",
+        "to": "BER",
+        "distance": 1697
+    },
+    {
+        "from": "POR",
+        "to": "HAM",
+        "distance": 1774
+    },
+    {
+        "from": "POR",
+        "to": "LUB",
+        "distance": 1774
+    },
+    {
+        "from": "POR",
+        "to": "BRE",
+        "distance": 1701
+    },
+    {
+        "from": "POR",
+        "to": "GDN",
+        "distance": 1948
+    },
+    {
+        "from": "POR",
+        "to": "ARG",
+        "distance": 5901
+    },
+    {
+        "from": "VEN",
+        "to": "LON",
+        "distance": 1202
+    },
+    {
+        "from": "VEN",
+        "to": "BRS",
+        "distance": 1400
+    },
+    {
+        "from": "VEN",
+        "to": "PLY",
+        "distance": 1504
+    },
+    {
+        "from": "VEN",
+        "to": "LIV",
+        "distance": 1360
+    },
+    {
+        "from": "VEN",
+        "to": "EDI",
+        "distance": 1518
+    },
+    {
+        "from": "VEN",
+        "to": "GLA",
+        "distance": 1491
+    },
+    {
+        "from": "VEN",
+        "to": "DUB",
+        "distance": 1573
+    },
+    {
+        "from": "VEN",
+        "to": "AMS",
+        "distance": 981
+    },
+    {
+        "from": "VEN",
+        "to": "ROT",
+        "distance": 981
+    },
+    {
+        "from": "VEN",
+        "to": "MID",
+        "distance": 1032
+    },
+    {
+        "from": "VEN",
+        "to": "ANT",
+        "distance": 902
+    },
+    {
+        "from": "VEN",
+        "to": "ROU",
+        "distance": 1204
+    },
+    {
+        "from": "VEN",
+        "to": "LRO",
+        "distance": 1304
+    },
+    {
+        "from": "VEN",
+        "to": "BOR",
+        "distance": 1429
+    },
+    {
+        "from": "VEN",
+        "to": "MRS",
+        "distance": 1212
+    },
+    {
+        "from": "VEN",
+        "to": "SEV",
+        "distance": 1819
+    },
+    {
+        "from": "VEN",
+        "to": "CAD",
+        "distance": 1819
+    },
+    {
+        "from": "VEN",
+        "to": "BAR",
+        "distance": 1428
+    },
+    {
+        "from": "VEN",
+        "to": "LIS",
+        "distance": 2037
+    },
+    {
+        "from": "VEN",
+        "to": "POR",
+        "distance": 2037
+    },
+    {
+        "from": "VEN",
+        "to": "GEN",
+        "distance": 90
+    },
+    {
+        "from": "VEN",
+        "to": "NAP",
+        "distance": 266
+    },
+    {
+        "from": "VEN",
+        "to": "LVO",
+        "distance": 85
+    },
+    {
+        "from": "VEN",
+        "to": "ANC",
+        "distance": 109
+    },
+    {
+        "from": "VEN",
+        "to": "VAL",
+        "distance": 556
+    },
+    {
+        "from": "VEN",
+        "to": "CON",
+        "distance": 1234
+    },
+    {
+        "from": "VEN",
+        "to": "SMI",
+        "distance": 855
+    },
+    {
+        "from": "VEN",
+        "to": "SAL",
+        "distance": 654
+    },
+    {
+        "from": "VEN",
+        "to": "CPH",
+        "distance": 578
+    },
+    {
+        "from": "VEN",
+        "to": "STO",
+        "distance": 948
+    },
+    {
+        "from": "VEN",
+        "to": "BER",
+        "distance": 1125
+    },
+    {
+        "from": "VEN",
+        "to": "HAM",
+        "distance": 677
+    },
+    {
+        "from": "VEN",
+        "to": "LUB",
+        "distance": 677
+    },
+    {
+        "from": "VEN",
+        "to": "BRE",
+        "distance": 684
+    },
+    {
+        "from": "VEN",
+        "to": "GDN",
+        "distance": 591
+    },
+    {
+        "from": "VEN",
+        "to": "ARG",
+        "distance": 3863
+    },
+    {
+        "from": "GEN",
+        "to": "LON",
+        "distance": 1293
+    },
+    {
+        "from": "GEN",
+        "to": "BRS",
+        "distance": 1491
+    },
+    {
+        "from": "GEN",
+        "to": "PLY",
+        "distance": 1595
+    },
+    {
+        "from": "GEN",
+        "to": "LIV",
+        "distance": 1451
+    },
+    {
+        "from": "GEN",
+        "to": "EDI",
+        "distance": 1609
+    },
+    {
+        "from": "GEN",
+        "to": "GLA",
+        "distance": 1582
+    },
+    {
+        "from": "GEN",
+        "to": "DUB",
+        "distance": 1664
+    },
+    {
+        "from": "GEN",
+        "to": "AMS",
+        "distance": 1072
+    },
+    {
+        "from": "GEN",
+        "to": "ROT",
+        "distance": 1072
+    },
+    {
+        "from": "GEN",
+        "to": "MID",
+        "distance": 1123
+    },
+    {
+        "from": "GEN",
+        "to": "ANT",
+        "distance": 993
+    },
+    {
+        "from": "GEN",
+        "to": "ROU",
+        "distance": 1295
+    },
+    {
+        "from": "GEN",
+        "to": "LRO",
+        "distance": 1395
+    },
+    {
+        "from": "GEN",
+        "to": "BOR",
+        "distance": 1520
+    },
+    {
+        "from": "GEN",
+        "to": "MRS",
+        "distance": 1303
+    },
+    {
+        "from": "GEN",
+        "to": "SEV",
+        "distance": 1910
+    },
+    {
+        "from": "GEN",
+        "to": "CAD",
+        "distance": 1910
+    },
+    {
+        "from": "GEN",
+        "to": "BAR",
+        "distance": 1519
+    },
+    {
+        "from": "GEN",
+        "to": "LIS",
+        "distance": 2128
+    },
+    {
+        "from": "GEN",
+        "to": "POR",
+        "distance": 2128
+    },
+    {
+        "from": "GEN",
+        "to": "VEN",
+        "distance": 90
+    },
+    {
+        "from": "GEN",
+        "to": "NAP",
+        "distance": 357
+    },
+    {
+        "from": "GEN",
+        "to": "LVO",
+        "distance": 176
+    },
+    {
+        "from": "GEN",
+        "to": "ANC",
+        "distance": 199
+    },
+    {
+        "from": "GEN",
+        "to": "VAL",
+        "distance": 647
+    },
+    {
+        "from": "GEN",
+        "to": "CON",
+        "distance": 1325
+    },
+    {
+        "from": "GEN",
+        "to": "SMI",
+        "distance": 946
+    },
+    {
+        "from": "GEN",
+        "to": "SAL",
+        "distance": 745
+    },
+    {
+        "from": "GEN",
+        "to": "CPH",
+        "distance": 669
+    },
+    {
+        "from": "GEN",
+        "to": "STO",
+        "distance": 1039
+    },
+    {
+        "from": "GEN",
+        "to": "BER",
+        "distance": 1216
+    },
+    {
+        "from": "GEN",
+        "to": "HAM",
+        "distance": 768
+    },
+    {
+        "from": "GEN",
+        "to": "LUB",
+        "distance": 768
+    },
+    {
+        "from": "GEN",
+        "to": "BRE",
+        "distance": 775
+    },
+    {
+        "from": "GEN",
+        "to": "GDN",
+        "distance": 682
+    },
+    {
+        "from": "GEN",
+        "to": "ARG",
+        "distance": 3954
+    },
+    {
+        "from": "NAP",
+        "to": "LON",
+        "distance": 1468
+    },
+    {
+        "from": "NAP",
+        "to": "BRS",
+        "distance": 1667
+    },
+    {
+        "from": "NAP",
+        "to": "PLY",
+        "distance": 1771
+    },
+    {
+        "from": "NAP",
+        "to": "LIV",
+        "distance": 1627
+    },
+    {
+        "from": "NAP",
+        "to": "EDI",
+        "distance": 1784
+    },
+    {
+        "from": "NAP",
+        "to": "GLA",
+        "distance": 1758
+    },
+    {
+        "from": "NAP",
+        "to": "DUB",
+        "distance": 1840
+    },
+    {
+        "from": "NAP",
+        "to": "AMS",
+        "distance": 1248
+    },
+    {
+        "from": "NAP",
+        "to": "ROT",
+        "distance": 1248
+    },
+    {
+        "from": "NAP",
+        "to": "MID",
+        "distance": 1299
+    },
+    {
+        "from": "NAP",
+        "to": "ANT",
+        "distance": 1168
+    },
+    {
+        "from": "NAP",
+        "to": "ROU",
+        "distance": 1471
+    },
+    {
+        "from": "NAP",
+        "to": "LRO",
+        "distance": 1571
+    },
+    {
+        "from": "NAP",
+        "to": "BOR",
+        "distance": 1695
+    },
+    {
+        "from": "NAP",
+        "to": "MRS",
+        "distance": 1478
+    },
+    {
+        "from": "NAP",
+        "to": "SEV",
+        "distance": 2085
+    },
+    {
+        "from": "NAP",
+        "to": "CAD",
+        "distance": 2085
+    },
+    {
+        "from": "NAP",
+        "to": "BAR",
+        "distance": 1695
+    },
+    {
+        "from": "NAP",
+        "to": "LIS",
+        "distance": 2304
+    },
+    {
+        "from": "NAP",
+        "to": "POR",
+        "distance": 2304
+    },
+    {
+        "from": "NAP",
+        "to": "VEN",
+        "distance": 266
+    },
+    {
+        "from": "NAP",
+        "to": "GEN",
+        "distance": 357
+    },
+    {
+        "from": "NAP",
+        "to": "LVO",
+        "distance": 352
+    },
+    {
+        "from": "NAP",
+        "to": "ANC",
+        "distance": 157
+    },
+    {
+        "from": "NAP",
+        "to": "VAL",
+        "distance": 605
+    },
+    {
+        "from": "NAP",
+        "to": "CON",
+        "distance": 968
+    },
+    {
+        "from": "NAP",
+        "to": "SMI",
+        "distance": 589
+    },
+    {
+        "from": "NAP",
+        "to": "SAL",
+        "distance": 388
+    },
+    {
+        "from": "NAP",
+        "to": "CPH",
+        "distance": 845
+    },
+    {
+        "from": "NAP",
+        "to": "STO",
+        "distance": 1214
+    },
+    {
+        "from": "NAP",
+        "to": "BER",
+        "distance": 1392
+    },
+    {
+        "from": "NAP",
+        "to": "HAM",
+        "distance": 943
+    },
+    {
+        "from": "NAP",
+        "to": "LUB",
+        "distance": 943
+    },
+    {
+        "from": "NAP",
+        "to": "BRE",
+        "distance": 951
+    },
+    {
+        "from": "NAP",
+        "to": "GDN",
+        "distance": 858
+    },
+    {
+        "from": "NAP",
+        "to": "ARG",
+        "distance": 3596
+    },
+    {
+        "from": "LVO",
+        "to": "LON",
+        "distance": 1287
+    },
+    {
+        "from": "LVO",
+        "to": "BRS",
+        "distance": 1486
+    },
+    {
+        "from": "LVO",
+        "to": "PLY",
+        "distance": 1590
+    },
+    {
+        "from": "LVO",
+        "to": "LIV",
+        "distance": 1446
+    },
+    {
+        "from": "LVO",
+        "to": "EDI",
+        "distance": 1604
+    },
+    {
+        "from": "LVO",
+        "to": "GLA",
+        "distance": 1577
+    },
+    {
+        "from": "LVO",
+        "to": "DUB",
+        "distance": 1659
+    },
+    {
+        "from": "LVO",
+        "to": "AMS",
+        "distance": 1067
+    },
+    {
+        "from": "LVO",
+        "to": "ROT",
+        "distance": 1067
+    },
+    {
+        "from": "LVO",
+        "to": "MID",
+        "distance": 1118
+    },
+    {
+        "from": "LVO",
+        "to": "ANT",
+        "distance": 988
+    },
+    {
+        "from": "LVO",
+        "to": "ROU",
+        "distance": 1290
+    },
+    {
+        "from": "LVO",
+        "to": "LRO",
+        "distance": 1390
+    },
+    {
+        "from": "LVO",
+        "to": "BOR",
+        "distance": 1514
+    },
+    {
+        "from": "LVO",
+        "to": "MRS",
+        "distance": 1298
+    },
+    {
+        "from": "LVO",
+        "to": "SEV",
+        "distance": 1905
+    },
+    {
+        "from": "LVO",
+        "to": "CAD",
+        "distance": 1905
+    },
+    {
+        "from": "LVO",
+        "to": "BAR",
+        "distance": 1514
+    },
+    {
+        "from": "LVO",
+        "to": "LIS",
+        "distance": 2123
+    },
+    {
+        "from": "LVO",
+        "to": "POR",
+        "distance": 2123
+    },
+    {
+        "from": "LVO",
+        "to": "VEN",
+        "distance": 85
+    },
+    {
+        "from": "LVO",
+        "to": "GEN",
+        "distance": 176
+    },
+    {
+        "from": "LVO",
+        "to": "NAP",
+        "distance": 352
+    },
+    {
+        "from": "LVO",
+        "to": "ANC",
+        "distance": 194
+    },
+    {
+        "from": "LVO",
+        "to": "VAL",
+        "distance": 642
+    },
+    {
+        "from": "LVO",
+        "to": "CON",
+        "distance": 1320
+    },
+    {
+        "from": "LVO",
+        "to": "SMI",
+        "distance": 941
+    },
+    {
+        "from": "LVO",
+        "to": "SAL",
+        "distance": 740
+    },
+    {
+        "from": "LVO",
+        "to": "CPH",
+        "distance": 664
+    },
+    {
+        "from": "LVO",
+        "to": "STO",
+        "distance": 1034
+    },
+    {
+        "from": "LVO",
+        "to": "BER",
+        "distance": 1211
+    },
+    {
+        "from": "LVO",
+        "to": "HAM",
+        "distance": 762
+    },
+    {
+        "from": "LVO",
+        "to": "LUB",
+        "distance": 762
+    },
+    {
+        "from": "LVO",
+        "to": "BRE",
+        "distance": 770
+    },
+    {
+        "from": "LVO",
+        "to": "GDN",
+        "distance": 677
+    },
+    {
+        "from": "LVO",
+        "to": "ARG",
+        "distance": 3949
+    },
+    {
+        "from": "ANC",
+        "to": "LON",
+        "distance": 1311
+    },
+    {
+        "from": "ANC",
+        "to": "BRS",
+        "distance": 1509
+    },
+    {
+        "from": "ANC",
+        "to": "PLY",
+        "distance": 1613
+    },
+    {
+        "from": "ANC",
+        "to": "LIV",
+        "distance": 1470
+    },
+    {
+        "from": "ANC",
+        "to": "EDI",
+        "distance": 1627
+    },
+    {
+        "from": "ANC",
+        "to": "GLA",
+        "distance": 1600
+    },
+    {
+        "from": "ANC",
+        "to": "DUB",
+        "distance": 1682
+    },
+    {
+        "from": "ANC",
+        "to": "AMS",
+        "distance": 1090
+    },
+    {
+        "from": "ANC",
+        "to": "ROT",
+        "distance": 1090
+    },
+    {
+        "from": "ANC",
+        "to": "MID",
+        "distance": 1141
+    },
+    {
+        "from": "ANC",
+        "to": "ANT",
+        "distance": 1011
+    },
+    {
+        "from": "ANC",
+        "to": "ROU",
+        "distance": 1313
+    },
+    {
+        "from": "ANC",
+        "to": "LRO",
+        "distance": 1413
+    },
+    {
+        "from": "ANC",
+        "to": "BOR",
+        "distance": 1538
+    },
+    {
+        "from": "ANC",
+        "to": "MRS",
+        "distance": 1321
+    },
+    {
+        "from": "ANC",
+        "to": "SEV",
+        "distance": 1928
+    },
+    {
+        "from": "ANC",
+        "to": "CAD",
+        "distance": 1928
+    },
+    {
+        "from": "ANC",
+        "to": "BAR",
+        "distance": 1537
+    },
+    {
+        "from": "ANC",
+        "to": "LIS",
+        "distance": 2146
+    },
+    {
+        "from": "ANC",
+        "to": "POR",
+        "distance": 2146
+    },
+    {
+        "from": "ANC",
+        "to": "VEN",
+        "distance": 109
+    },
+    {
+        "from": "ANC",
+        "to": "GEN",
+        "distance": 199
+    },
+    {
+        "from": "ANC",
+        "to": "NAP",
+        "distance": 157
+    },
+    {
+        "from": "ANC",
+        "to": "LVO",
+        "distance": 194
+    },
+    {
+        "from": "ANC",
+        "to": "VAL",
+        "distance": 447
+    },
+    {
+        "from": "ANC",
+        "to": "CON",
+        "distance": 1125
+    },
+    {
+        "from": "ANC",
+        "to": "SMI",
+        "distance": 746
+    },
+    {
+        "from": "ANC",
+        "to": "SAL",
+        "distance": 545
+    },
+    {
+        "from": "ANC",
+        "to": "CPH",
+        "distance": 687
+    },
+    {
+        "from": "ANC",
+        "to": "STO",
+        "distance": 1057
+    },
+    {
+        "from": "ANC",
+        "to": "BER",
+        "distance": 1234
+    },
+    {
+        "from": "ANC",
+        "to": "HAM",
+        "distance": 786
+    },
+    {
+        "from": "ANC",
+        "to": "LUB",
+        "distance": 786
+    },
+    {
+        "from": "ANC",
+        "to": "BRE",
+        "distance": 793
+    },
+    {
+        "from": "ANC",
+        "to": "GDN",
+        "distance": 701
+    },
+    {
+        "from": "ANC",
+        "to": "ARG",
+        "distance": 3754
+    },
+    {
+        "from": "VAL",
+        "to": "LON",
+        "distance": 1758
+    },
+    {
+        "from": "VAL",
+        "to": "BRS",
+        "distance": 1957
+    },
+    {
+        "from": "VAL",
+        "to": "PLY",
+        "distance": 2061
+    },
+    {
+        "from": "VAL",
+        "to": "LIV",
+        "distance": 1917
+    },
+    {
+        "from": "VAL",
+        "to": "EDI",
+        "distance": 2074
+    },
+    {
+        "from": "VAL",
+        "to": "GLA",
+        "distance": 2048
+    },
+    {
+        "from": "VAL",
+        "to": "DUB",
+        "distance": 2130
+    },
+    {
+        "from": "VAL",
+        "to": "AMS",
+        "distance": 1538
+    },
+    {
+        "from": "VAL",
+        "to": "ROT",
+        "distance": 1538
+    },
+    {
+        "from": "VAL",
+        "to": "MID",
+        "distance": 1589
+    },
+    {
+        "from": "VAL",
+        "to": "ANT",
+        "distance": 1459
+    },
+    {
+        "from": "VAL",
+        "to": "ROU",
+        "distance": 1761
+    },
+    {
+        "from": "VAL",
+        "to": "LRO",
+        "distance": 1861
+    },
+    {
+        "from": "VAL",
+        "to": "BOR",
+        "distance": 1985
+    },
+    {
+        "from": "VAL",
+        "to": "MRS",
+        "distance": 1768
+    },
+    {
+        "from": "VAL",
+        "to": "SEV",
+        "distance": 2376
+    },
+    {
+        "from": "VAL",
+        "to": "CAD",
+        "distance": 2376
+    },
+    {
+        "from": "VAL",
+        "to": "BAR",
+        "distance": 1985
+    },
+    {
+        "from": "VAL",
+        "to": "LIS",
+        "distance": 2594
+    },
+    {
+        "from": "VAL",
+        "to": "POR",
+        "distance": 2594
+    },
+    {
+        "from": "VAL",
+        "to": "VEN",
+        "distance": 556
+    },
+    {
+        "from": "VAL",
+        "to": "GEN",
+        "distance": 647
+    },
+    {
+        "from": "VAL",
+        "to": "NAP",
+        "distance": 605
+    },
+    {
+        "from": "VAL",
+        "to": "LVO",
+        "distance": 642
+    },
+    {
+        "from": "VAL",
+        "to": "ANC",
+        "distance": 447
+    },
+    {
+        "from": "VAL",
+        "to": "CON",
+        "distance": 684
+    },
+    {
+        "from": "VAL",
+        "to": "SMI",
+        "distance": 796
+    },
+    {
+        "from": "VAL",
+        "to": "SAL",
+        "distance": 993
+    },
+    {
+        "from": "VAL",
+        "to": "CPH",
+        "distance": 1135
+    },
+    {
+        "from": "VAL",
+        "to": "STO",
+        "distance": 1505
+    },
+    {
+        "from": "VAL",
+        "to": "BER",
+        "distance": 1682
+    },
+    {
+        "from": "VAL",
+        "to": "HAM",
+        "distance": 1233
+    },
+    {
+        "from": "VAL",
+        "to": "LUB",
+        "distance": 1233
+    },
+    {
+        "from": "VAL",
+        "to": "BRE",
+        "distance": 1241
+    },
+    {
+        "from": "VAL",
+        "to": "GDN",
+        "distance": 1148
+    },
+    {
+        "from": "VAL",
+        "to": "ARG",
+        "distance": 3313
+    },
+    {
+        "from": "CON",
+        "to": "LON",
+        "distance": 2436
+    },
+    {
+        "from": "CON",
+        "to": "BRS",
+        "distance": 2635
+    },
+    {
+        "from": "CON",
+        "to": "PLY",
+        "distance": 2739
+    },
+    {
+        "from": "CON",
+        "to": "LIV",
+        "distance": 2595
+    },
+    {
+        "from": "CON",
+        "to": "EDI",
+        "distance": 2753
+    },
+    {
+        "from": "CON",
+        "to": "GLA",
+        "distance": 2726
+    },
+    {
+        "from": "CON",
+        "to": "DUB",
+        "distance": 2808
+    },
+    {
+        "from": "CON",
+        "to": "AMS",
+        "distance": 2216
+    },
+    {
+        "from": "CON",
+        "to": "ROT",
+        "distance": 2216
+    },
+    {
+        "from": "CON",
+        "to": "MID",
+        "distance": 2267
+    },
+    {
+        "from": "CON",
+        "to": "ANT",
+        "distance": 2137
+    },
+    {
+        "from": "CON",
+        "to": "ROU",
+        "distance": 2439
+    },
+    {
+        "from": "CON",
+        "to": "LRO",
+        "distance": 2539
+    },
+    {
+        "from": "CON",
+        "to": "BOR",
+        "distance": 2664
+    },
+    {
+        "from": "CON",
+        "to": "MRS",
+        "distance": 2447
+    },
+    {
+        "from": "CON",
+        "to": "SEV",
+        "distance": 3054
+    },
+    {
+        "from": "CON",
+        "to": "CAD",
+        "distance": 3054
+    },
+    {
+        "from": "CON",
+        "to": "BAR",
+        "distance": 2663
+    },
+    {
+        "from": "CON",
+        "to": "LIS",
+        "distance": 3272
+    },
+    {
+        "from": "CON",
+        "to": "POR",
+        "distance": 3272
+    },
+    {
+        "from": "CON",
+        "to": "VEN",
+        "distance": 1234
+    },
+    {
+        "from": "CON",
+        "to": "GEN",
+        "distance": 1325
+    },
+    {
+        "from": "CON",
+        "to": "NAP",
+        "distance": 968
+    },
+    {
+        "from": "CON",
+        "to": "LVO",
+        "distance": 1320
+    },
+    {
+        "from": "CON",
+        "to": "ANC",
+        "distance": 1125
+    },
+    {
+        "from": "CON",
+        "to": "VAL",
+        "distance": 684
+    },
+    {
+        "from": "CON",
+        "to": "SMI",
+        "distance": 378
+    },
+    {
+        "from": "CON",
+        "to": "SAL",
+        "distance": 579
+    },
+    {
+        "from": "CON",
+        "to": "CPH",
+        "distance": 1813
+    },
+    {
+        "from": "CON",
+        "to": "STO",
+        "distance": 2183
+    },
+    {
+        "from": "CON",
+        "to": "BER",
+        "distance": 2360
+    },
+    {
+        "from": "CON",
+        "to": "HAM",
+        "distance": 1912
+    },
+    {
+        "from": "CON",
+        "to": "LUB",
+        "distance": 1912
+    },
+    {
+        "from": "CON",
+        "to": "BRE",
+        "distance": 1919
+    },
+    {
+        "from": "CON",
+        "to": "GDN",
+        "distance": 1826
+    },
+    {
+        "from": "CON",
+        "to": "ARG",
+        "distance": 2896
+    },
+    {
+        "from": "SMI",
+        "to": "LON",
+        "distance": 2058
+    },
+    {
+        "from": "SMI",
+        "to": "BRS",
+        "distance": 2256
+    },
+    {
+        "from": "SMI",
+        "to": "PLY",
+        "distance": 2360
+    },
+    {
+        "from": "SMI",
+        "to": "LIV",
+        "distance": 2216
+    },
+    {
+        "from": "SMI",
+        "to": "EDI",
+        "distance": 2374
+    },
+    {
+        "from": "SMI",
+        "to": "GLA",
+        "distance": 2347
+    },
+    {
+        "from": "SMI",
+        "to": "DUB",
+        "distance": 2429
+    },
+    {
+        "from": "SMI",
+        "to": "AMS",
+        "distance": 1837
+    },
+    {
+        "from": "SMI",
+        "to": "ROT",
+        "distance": 1837
+    },
+    {
+        "from": "SMI",
+        "to": "MID",
+        "distance": 1888
+    },
+    {
+        "from": "SMI",
+        "to": "ANT",
+        "distance": 1758
+    },
+    {
+        "from": "SMI",
+        "to": "ROU",
+        "distance": 2060
+    },
+    {
+        "from": "SMI",
+        "to": "LRO",
+        "distance": 2160
+    },
+    {
+        "from": "SMI",
+        "to": "BOR",
+        "distance": 2285
+    },
+    {
+        "from": "SMI",
+        "to": "MRS",
+        "distance": 2068
+    },
+    {
+        "from": "SMI",
+        "to": "SEV",
+        "distance": 2675
+    },
+    {
+        "from": "SMI",
+        "to": "CAD",
+        "distance": 2675
+    },
+    {
+        "from": "SMI",
+        "to": "BAR",
+        "distance": 2284
+    },
+    {
+        "from": "SMI",
+        "to": "LIS",
+        "distance": 2893
+    },
+    {
+        "from": "SMI",
+        "to": "POR",
+        "distance": 2893
+    },
+    {
+        "from": "SMI",
+        "to": "VEN",
+        "distance": 855
+    },
+    {
+        "from": "SMI",
+        "to": "GEN",
+        "distance": 946
+    },
+    {
+        "from": "SMI",
+        "to": "NAP",
+        "distance": 589
+    },
+    {
+        "from": "SMI",
+        "to": "LVO",
+        "distance": 941
+    },
+    {
+        "from": "SMI",
+        "to": "ANC",
+        "distance": 746
+    },
+    {
+        "from": "SMI",
+        "to": "VAL",
+        "distance": 796
+    },
+    {
+        "from": "SMI",
+        "to": "CON",
+        "distance": 378
+    },
+    {
+        "from": "SMI",
+        "to": "SAL",
+        "distance": 201
+    },
+    {
+        "from": "SMI",
+        "to": "CPH",
+        "distance": 1434
+    },
+    {
+        "from": "SMI",
+        "to": "STO",
+        "distance": 1804
+    },
+    {
+        "from": "SMI",
+        "to": "BER",
+        "distance": 1981
+    },
+    {
+        "from": "SMI",
+        "to": "HAM",
+        "distance": 1533
+    },
+    {
+        "from": "SMI",
+        "to": "LUB",
+        "distance": 1533
+    },
+    {
+        "from": "SMI",
+        "to": "BRE",
+        "distance": 1540
+    },
+    {
+        "from": "SMI",
+        "to": "GDN",
+        "distance": 1447
+    },
+    {
+        "from": "SMI",
+        "to": "ARG",
+        "distance": 3007
+    },
+    {
+        "from": "SAL",
+        "to": "LON",
+        "distance": 1857
+    },
+    {
+        "from": "SAL",
+        "to": "BRS",
+        "distance": 2055
+    },
+    {
+        "from": "SAL",
+        "to": "PLY",
+        "distance": 2159
+    },
+    {
+        "from": "SAL",
+        "to": "LIV",
+        "distance": 2015
+    },
+    {
+        "from": "SAL",
+        "to": "EDI",
+        "distance": 2173
+    },
+    {
+        "from": "SAL",
+        "to": "GLA",
+        "distance": 2146
+    },
+    {
+        "from": "SAL",
+        "to": "DUB",
+        "distance": 2228
+    },
+    {
+        "from": "SAL",
+        "to": "AMS",
+        "distance": 1636
+    },
+    {
+        "from": "SAL",
+        "to": "ROT",
+        "distance": 1636
+    },
+    {
+        "from": "SAL",
+        "to": "MID",
+        "distance": 1687
+    },
+    {
+        "from": "SAL",
+        "to": "ANT",
+        "distance": 1557
+    },
+    {
+        "from": "SAL",
+        "to": "ROU",
+        "distance": 1859
+    },
+    {
+        "from": "SAL",
+        "to": "LRO",
+        "distance": 1959
+    },
+    {
+        "from": "SAL",
+        "to": "BOR",
+        "distance": 2084
+    },
+    {
+        "from": "SAL",
+        "to": "MRS",
+        "distance": 1867
+    },
+    {
+        "from": "SAL",
+        "to": "SEV",
+        "distance": 2474
+    },
+    {
+        "from": "SAL",
+        "to": "CAD",
+        "distance": 2474
+    },
+    {
+        "from": "SAL",
+        "to": "BAR",
+        "distance": 2083
+    },
+    {
+        "from": "SAL",
+        "to": "LIS",
+        "distance": 2692
+    },
+    {
+        "from": "SAL",
+        "to": "POR",
+        "distance": 2692
+    },
+    {
+        "from": "SAL",
+        "to": "VEN",
+        "distance": 654
+    },
+    {
+        "from": "SAL",
+        "to": "GEN",
+        "distance": 745
+    },
+    {
+        "from": "SAL",
+        "to": "NAP",
+        "distance": 388
+    },
+    {
+        "from": "SAL",
+        "to": "LVO",
+        "distance": 740
+    },
+    {
+        "from": "SAL",
+        "to": "ANC",
+        "distance": 545
+    },
+    {
+        "from": "SAL",
+        "to": "VAL",
+        "distance": 993
+    },
+    {
+        "from": "SAL",
+        "to": "CON",
+        "distance": 579
+    },
+    {
+        "from": "SAL",
+        "to": "SMI",
+        "distance": 201
+    },
+    {
+        "from": "SAL",
+        "to": "CPH",
+        "distance": 1233
+    },
+    {
+        "from": "SAL",
+        "to": "STO",
+        "distance": 1603
+    },
+    {
+        "from": "SAL",
+        "to": "BER",
+        "distance": 1780
+    },
+    {
+        "from": "SAL",
+        "to": "HAM",
+        "distance": 1332
+    },
+    {
+        "from": "SAL",
+        "to": "LUB",
+        "distance": 1332
+    },
+    {
+        "from": "SAL",
+        "to": "BRE",
+        "distance": 1339
+    },
+    {
+        "from": "SAL",
+        "to": "GDN",
+        "distance": 1246
+    },
+    {
+        "from": "SAL",
+        "to": "ARG",
+        "distance": 3208
+    },
+    {
+        "from": "CPH",
+        "to": "LON",
+        "distance": 904
+    },
+    {
+        "from": "CPH",
+        "to": "BRS",
+        "distance": 1102
+    },
+    {
+        "from": "CPH",
+        "to": "PLY",
+        "distance": 1207
+    },
+    {
+        "from": "CPH",
+        "to": "LIV",
+        "distance": 1063
+    },
+    {
+        "from": "CPH",
+        "to": "EDI",
+        "distance": 1220
+    },
+    {
+        "from": "CPH",
+        "to": "GLA",
+        "distance": 1193
+    },
+    {
+        "from": "CPH",
+        "to": "DUB",
+        "distance": 1276
+    },
+    {
+        "from": "CPH",
+        "to": "AMS",
+        "distance": 683
+    },
+    {
+        "from": "CPH",
+        "to": "ROT",
+        "distance": 683
+    },
+    {
+        "from": "CPH",
+        "to": "MID",
+        "distance": 735
+    },
+    {
+        "from": "CPH",
+        "to": "ANT",
+        "distance": 604
+    },
+    {
+        "from": "CPH",
+        "to": "ROU",
+        "distance": 906
+    },
+    {
+        "from": "CPH",
+        "to": "LRO",
+        "distance": 1006
+    },
+    {
+        "from": "CPH",
+        "to": "BOR",
+        "distance": 1131
+    },
+    {
+        "from": "CPH",
+        "to": "MRS",
+        "distance": 914
+    },
+    {
+        "from": "CPH",
+        "to": "SEV",
+        "distance": 1521
+    },
+    {
+        "from": "CPH",
+        "to": "CAD",
+        "distance": 1521
+    },
+    {
+        "from": "CPH",
+        "to": "BAR",
+        "distance": 1131
+    },
+    {
+        "from": "CPH",
+        "to": "LIS",
+        "distance": 1739
+    },
+    {
+        "from": "CPH",
+        "to": "POR",
+        "distance": 1739
+    },
+    {
+        "from": "CPH",
+        "to": "VEN",
+        "distance": 578
+    },
+    {
+        "from": "CPH",
+        "to": "GEN",
+        "distance": 669
+    },
+    {
+        "from": "CPH",
+        "to": "NAP",
+        "distance": 845
+    },
+    {
+        "from": "CPH",
+        "to": "LVO",
+        "distance": 664
+    },
+    {
+        "from": "CPH",
+        "to": "ANC",
+        "distance": 687
+    },
+    {
+        "from": "CPH",
+        "to": "VAL",
+        "distance": 1135
+    },
+    {
+        "from": "CPH",
+        "to": "CON",
+        "distance": 1813
+    },
+    {
+        "from": "CPH",
+        "to": "SMI",
+        "distance": 1434
+    },
+    {
+        "from": "CPH",
+        "to": "SAL",
+        "distance": 1233
+    },
+    {
+        "from": "CPH",
+        "to": "STO",
+        "distance": 660
+    },
+    {
+        "from": "CPH",
+        "to": "BER",
+        "distance": 678
+    },
+    {
+        "from": "CPH",
+        "to": "HAM",
+        "distance": 379
+    },
+    {
+        "from": "CPH",
+        "to": "LUB",
+        "distance": 379
+    },
+    {
+        "from": "CPH",
+        "to": "BRE",
+        "distance": 386
+    },
+    {
+        "from": "CPH",
+        "to": "GDN",
+        "distance": 489
+    },
+    {
+        "from": "CPH",
+        "to": "ARG",
+        "distance": 4442
+    },
+    {
+        "from": "STO",
+        "to": "LON",
+        "distance": 1367
+    },
+    {
+        "from": "STO",
+        "to": "BRS",
+        "distance": 1565
+    },
+    {
+        "from": "STO",
+        "to": "PLY",
+        "distance": 1670
+    },
+    {
+        "from": "STO",
+        "to": "LIV",
+        "distance": 1526
+    },
+    {
+        "from": "STO",
+        "to": "EDI",
+        "distance": 1456
+    },
+    {
+        "from": "STO",
+        "to": "GLA",
+        "distance": 1598
+    },
+    {
+        "from": "STO",
+        "to": "DUB",
+        "distance": 1729
+    },
+    {
+        "from": "STO",
+        "to": "AMS",
+        "distance": 1146
+    },
+    {
+        "from": "STO",
+        "to": "ROT",
+        "distance": 1146
+    },
+    {
+        "from": "STO",
+        "to": "MID",
+        "distance": 1198
+    },
+    {
+        "from": "STO",
+        "to": "ANT",
+        "distance": 1067
+    },
+    {
+        "from": "STO",
+        "to": "ROU",
+        "distance": 1369
+    },
+    {
+        "from": "STO",
+        "to": "LRO",
+        "distance": 1469
+    },
+    {
+        "from": "STO",
+        "to": "BOR",
+        "distance": 1594
+    },
+    {
+        "from": "STO",
+        "to": "MRS",
+        "distance": 1377
+    },
+    {
+        "from": "STO",
+        "to": "SEV",
+        "distance": 1984
+    },
+    {
+        "from": "STO",
+        "to": "CAD",
+        "distance": 1984
+    },
+    {
+        "from": "STO",
+        "to": "BAR",
+        "distance": 1593
+    },
+    {
+        "from": "STO",
+        "to": "LIS",
+        "distance": 2202
+    },
+    {
+        "from": "STO",
+        "to": "POR",
+        "distance": 2202
+    },
+    {
+        "from": "STO",
+        "to": "VEN",
+        "distance": 948
+    },
+    {
+        "from": "STO",
+        "to": "GEN",
+        "distance": 1039
+    },
+    {
+        "from": "STO",
+        "to": "NAP",
+        "distance": 1214
+    },
+    {
+        "from": "STO",
+        "to": "LVO",
+        "distance": 1034
+    },
+    {
+        "from": "STO",
+        "to": "ANC",
+        "distance": 1057
+    },
+    {
+        "from": "STO",
+        "to": "VAL",
+        "distance": 1505
+    },
+    {
+        "from": "STO",
+        "to": "CON",
+        "distance": 2183
+    },
+    {
+        "from": "STO",
+        "to": "SMI",
+        "distance": 1804
+    },
+    {
+        "from": "STO",
+        "to": "SAL",
+        "distance": 1603
+    },
+    {
+        "from": "STO",
+        "to": "CPH",
+        "distance": 660
+    },
+    {
+        "from": "STO",
+        "to": "BER",
+        "distance": 903
+    },
+    {
+        "from": "STO",
+        "to": "HAM",
+        "distance": 842
+    },
+    {
+        "from": "STO",
+        "to": "LUB",
+        "distance": 842
+    },
+    {
+        "from": "STO",
+        "to": "BRE",
+        "distance": 849
+    },
+    {
+        "from": "STO",
+        "to": "GDN",
+        "distance": 356
+    },
+    {
+        "from": "STO",
+        "to": "ARG",
+        "distance": 4811
+    },
+    {
+        "from": "BER",
+        "to": "LON",
+        "distance": 704
+    },
+    {
+        "from": "BER",
+        "to": "BRS",
+        "distance": 799
+    },
+    {
+        "from": "BER",
+        "to": "PLY",
+        "distance": 1039
+    },
+    {
+        "from": "BER",
+        "to": "LIV",
+        "distance": 719
+    },
+    {
+        "from": "BER",
+        "to": "EDI",
+        "distance": 552
+    },
+    {
+        "from": "BER",
+        "to": "GLA",
+        "distance": 694
+    },
+    {
+        "from": "BER",
+        "to": "DUB",
+        "distance": 826
+    },
+    {
+        "from": "BER",
+        "to": "AMS",
+        "distance": 609
+    },
+    {
+        "from": "BER",
+        "to": "ROT",
+        "distance": 609
+    },
+    {
+        "from": "BER",
+        "to": "MID",
+        "distance": 660
+    },
+    {
+        "from": "BER",
+        "to": "ANT",
+        "distance": 1087
+    },
+    {
+        "from": "BER",
+        "to": "ROU",
+        "distance": 802
+    },
+    {
+        "from": "BER",
+        "to": "LRO",
+        "distance": 994
+    },
+    {
+        "from": "BER",
+        "to": "BOR",
+        "distance": 1119
+    },
+    {
+        "from": "BER",
+        "to": "MRS",
+        "distance": 1081
+    },
+    {
+        "from": "BER",
+        "to": "SEV",
+        "distance": 1575
+    },
+    {
+        "from": "BER",
+        "to": "CAD",
+        "distance": 1575
+    },
+    {
+        "from": "BER",
+        "to": "BAR",
+        "distance": 1297
+    },
+    {
+        "from": "BER",
+        "to": "LIS",
+        "distance": 1697
+    },
+    {
+        "from": "BER",
+        "to": "POR",
+        "distance": 1697
+    },
+    {
+        "from": "BER",
+        "to": "VEN",
+        "distance": 1125
+    },
+    {
+        "from": "BER",
+        "to": "GEN",
+        "distance": 1216
+    },
+    {
+        "from": "BER",
+        "to": "NAP",
+        "distance": 1392
+    },
+    {
+        "from": "BER",
+        "to": "LVO",
+        "distance": 1211
+    },
+    {
+        "from": "BER",
+        "to": "ANC",
+        "distance": 1234
+    },
+    {
+        "from": "BER",
+        "to": "VAL",
+        "distance": 1682
+    },
+    {
+        "from": "BER",
+        "to": "CON",
+        "distance": 2360
+    },
+    {
+        "from": "BER",
+        "to": "SMI",
+        "distance": 1981
+    },
+    {
+        "from": "BER",
+        "to": "SAL",
+        "distance": 1780
+    },
+    {
+        "from": "BER",
+        "to": "CPH",
+        "distance": 678
+    },
+    {
+        "from": "BER",
+        "to": "STO",
+        "distance": 903
+    },
+    {
+        "from": "BER",
+        "to": "HAM",
+        "distance": 448
+    },
+    {
+        "from": "BER",
+        "to": "LUB",
+        "distance": 448
+    },
+    {
+        "from": "BER",
+        "to": "BRE",
+        "distance": 530
+    },
+    {
+        "from": "BER",
+        "to": "GDN",
+        "distance": 1036
+    },
+    {
+        "from": "BER",
+        "to": "ARG",
+        "distance": 4989
+    },
+    {
+        "from": "HAM",
+        "to": "LON",
+        "distance": 740
+    },
+    {
+        "from": "HAM",
+        "to": "BRS",
+        "distance": 939
+    },
+    {
+        "from": "HAM",
+        "to": "PLY",
+        "distance": 1075
+    },
+    {
+        "from": "HAM",
+        "to": "LIV",
+        "distance": 899
+    },
+    {
+        "from": "HAM",
+        "to": "EDI",
+        "distance": 914
+    },
+    {
+        "from": "HAM",
+        "to": "GLA",
+        "distance": 1030
+    },
+    {
+        "from": "HAM",
+        "to": "DUB",
+        "distance": 1112
+    },
+    {
+        "from": "HAM",
+        "to": "AMS",
+        "distance": 527
+    },
+    {
+        "from": "HAM",
+        "to": "ROT",
+        "distance": 527
+    },
+    {
+        "from": "HAM",
+        "to": "MID",
+        "distance": 578
+    },
+    {
+        "from": "HAM",
+        "to": "ANT",
+        "distance": 638
+    },
+    {
+        "from": "HAM",
+        "to": "ROU",
+        "distance": 790
+    },
+    {
+        "from": "HAM",
+        "to": "LRO",
+        "distance": 982
+    },
+    {
+        "from": "HAM",
+        "to": "BOR",
+        "distance": 1107
+    },
+    {
+        "from": "HAM",
+        "to": "MRS",
+        "distance": 948
+    },
+    {
+        "from": "HAM",
+        "to": "SEV",
+        "distance": 1555
+    },
+    {
+        "from": "HAM",
+        "to": "CAD",
+        "distance": 1555
+    },
+    {
+        "from": "HAM",
+        "to": "BAR",
+        "distance": 1165
+    },
+    {
+        "from": "HAM",
+        "to": "LIS",
+        "distance": 1774
+    },
+    {
+        "from": "HAM",
+        "to": "POR",
+        "distance": 1774
+    },
+    {
+        "from": "HAM",
+        "to": "VEN",
+        "distance": 677
+    },
+    {
+        "from": "HAM",
+        "to": "GEN",
+        "distance": 768
+    },
+    {
+        "from": "HAM",
+        "to": "NAP",
+        "distance": 943
+    },
+    {
+        "from": "HAM",
+        "to": "LVO",
+        "distance": 762
+    },
+    {
+        "from": "HAM",
+        "to": "ANC",
+        "distance": 786
+    },
+    {
+        "from": "HAM",
+        "to": "VAL",
+        "distance": 1233
+    },
+    {
+        "from": "HAM",
+        "to": "CON",
+        "distance": 1912
+    },
+    {
+        "from": "HAM",
+        "to": "SMI",
+        "distance": 1533
+    },
+    {
+        "from": "HAM",
+        "to": "SAL",
+        "distance": 1332
+    },
+    {
+        "from": "HAM",
+        "to": "CPH",
+        "distance": 379
+    },
+    {
+        "from": "HAM",
+        "to": "STO",
+        "distance": 842
+    },
+    {
+        "from": "HAM",
+        "to": "BER",
+        "distance": 448
+    },
+    {
+        "from": "HAM",
+        "to": "BRE",
+        "distance": 421
+    },
+    {
+        "from": "HAM",
+        "to": "GDN",
+        "distance": 587
+    },
+    {
+        "from": "HAM",
+        "to": "ARG",
+        "distance": 4540
+    },
+    {
+        "from": "LUB",
+        "to": "LON",
+        "distance": 740
+    },
+    {
+        "from": "LUB",
+        "to": "BRS",
+        "distance": 939
+    },
+    {
+        "from": "LUB",
+        "to": "PLY",
+        "distance": 1075
+    },
+    {
+        "from": "LUB",
+        "to": "LIV",
+        "distance": 899
+    },
+    {
+        "from": "LUB",
+        "to": "EDI",
+        "distance": 914
+    },
+    {
+        "from": "LUB",
+        "to": "GLA",
+        "distance": 1030
+    },
+    {
+        "from": "LUB",
+        "to": "DUB",
+        "distance": 1112
+    },
+    {
+        "from": "LUB",
+        "to": "AMS",
+        "distance": 527
+    },
+    {
+        "from": "LUB",
+        "to": "ROT",
+        "distance": 527
+    },
+    {
+        "from": "LUB",
+        "to": "MID",
+        "distance": 578
+    },
+    {
+        "from": "LUB",
+        "to": "ANT",
+        "distance": 638
+    },
+    {
+        "from": "LUB",
+        "to": "ROU",
+        "distance": 790
+    },
+    {
+        "from": "LUB",
+        "to": "LRO",
+        "distance": 982
+    },
+    {
+        "from": "LUB",
+        "to": "BOR",
+        "distance": 1107
+    },
+    {
+        "from": "LUB",
+        "to": "MRS",
+        "distance": 948
+    },
+    {
+        "from": "LUB",
+        "to": "SEV",
+        "distance": 1555
+    },
+    {
+        "from": "LUB",
+        "to": "CAD",
+        "distance": 1555
+    },
+    {
+        "from": "LUB",
+        "to": "BAR",
+        "distance": 1165
+    },
+    {
+        "from": "LUB",
+        "to": "LIS",
+        "distance": 1774
+    },
+    {
+        "from": "LUB",
+        "to": "POR",
+        "distance": 1774
+    },
+    {
+        "from": "LUB",
+        "to": "VEN",
+        "distance": 677
+    },
+    {
+        "from": "LUB",
+        "to": "GEN",
+        "distance": 768
+    },
+    {
+        "from": "LUB",
+        "to": "NAP",
+        "distance": 943
+    },
+    {
+        "from": "LUB",
+        "to": "LVO",
+        "distance": 762
+    },
+    {
+        "from": "LUB",
+        "to": "ANC",
+        "distance": 786
+    },
+    {
+        "from": "LUB",
+        "to": "VAL",
+        "distance": 1233
+    },
+    {
+        "from": "LUB",
+        "to": "CON",
+        "distance": 1912
+    },
+    {
+        "from": "LUB",
+        "to": "SMI",
+        "distance": 1533
+    },
+    {
+        "from": "LUB",
+        "to": "SAL",
+        "distance": 1332
+    },
+    {
+        "from": "LUB",
+        "to": "CPH",
+        "distance": 379
+    },
+    {
+        "from": "LUB",
+        "to": "STO",
+        "distance": 842
+    },
+    {
+        "from": "LUB",
+        "to": "BER",
+        "distance": 448
+    },
+    {
+        "from": "LUB",
+        "to": "BRE",
+        "distance": 421
+    },
+    {
+        "from": "LUB",
+        "to": "GDN",
+        "distance": 587
+    },
+    {
+        "from": "LUB",
+        "to": "ARG",
+        "distance": 4540
+    },
+    {
+        "from": "BRE",
+        "to": "LON",
+        "distance": 659
+    },
+    {
+        "from": "BRE",
+        "to": "BRS",
+        "distance": 858
+    },
+    {
+        "from": "BRE",
+        "to": "PLY",
+        "distance": 994
+    },
+    {
+        "from": "BRE",
+        "to": "LIV",
+        "distance": 818
+    },
+    {
+        "from": "BRE",
+        "to": "EDI",
+        "distance": 833
+    },
+    {
+        "from": "BRE",
+        "to": "GLA",
+        "distance": 949
+    },
+    {
+        "from": "BRE",
+        "to": "DUB",
+        "distance": 1031
+    },
+    {
+        "from": "BRE",
+        "to": "AMS",
+        "distance": 446
+    },
+    {
+        "from": "BRE",
+        "to": "ROT",
+        "distance": 446
+    },
+    {
+        "from": "BRE",
+        "to": "MID",
+        "distance": 497
+    },
+    {
+        "from": "BRE",
+        "to": "ANT",
+        "distance": 646
+    },
+    {
+        "from": "BRE",
+        "to": "ROU",
+        "distance": 709
+    },
+    {
+        "from": "BRE",
+        "to": "LRO",
+        "distance": 902
+    },
+    {
+        "from": "BRE",
+        "to": "BOR",
+        "distance": 1026
+    },
+    {
+        "from": "BRE",
+        "to": "MRS",
+        "distance": 956
+    },
+    {
+        "from": "BRE",
+        "to": "SEV",
+        "distance": 1482
+    },
+    {
+        "from": "BRE",
+        "to": "CAD",
+        "distance": 1482
+    },
+    {
+        "from": "BRE",
+        "to": "BAR",
+        "distance": 1172
+    },
+    {
+        "from": "BRE",
+        "to": "LIS",
+        "distance": 1701
+    },
+    {
+        "from": "BRE",
+        "to": "POR",
+        "distance": 1701
+    },
+    {
+        "from": "BRE",
+        "to": "VEN",
+        "distance": 684
+    },
+    {
+        "from": "BRE",
+        "to": "GEN",
+        "distance": 775
+    },
+    {
+        "from": "BRE",
+        "to": "NAP",
+        "distance": 951
+    },
+    {
+        "from": "BRE",
+        "to": "LVO",
+        "distance": 770
+    },
+    {
+        "from": "BRE",
+        "to": "ANC",
+        "distance": 793
+    },
+    {
+        "from": "BRE",
+        "to": "VAL",
+        "distance": 1241
+    },
+    {
+        "from": "BRE",
+        "to": "CON",
+        "distance": 1919
+    },
+    {
+        "from": "BRE",
+        "to": "SMI",
+        "distance": 1540
+    },
+    {
+        "from": "BRE",
+        "to": "SAL",
+        "distance": 1339
+    },
+    {
+        "from": "BRE",
+        "to": "CPH",
+        "distance": 386
+    },
+    {
+        "from": "BRE",
+        "to": "STO",
+        "distance": 849
+    },
+    {
+        "from": "BRE",
+        "to": "BER",
+        "distance": 530
+    },
+    {
+        "from": "BRE",
+        "to": "HAM",
+        "distance": 421
+    },
+    {
+        "from": "BRE",
+        "to": "LUB",
+        "distance": 421
+    },
+    {
+        "from": "BRE",
+        "to": "GDN",
+        "distance": 594
+    },
+    {
+        "from": "BRE",
+        "to": "ARG",
+        "distance": 4548
+    },
+    {
+        "from": "GDN",
+        "to": "LON",
+        "distance": 1112
+    },
+    {
+        "from": "GDN",
+        "to": "BRS",
+        "distance": 1311
+    },
+    {
+        "from": "GDN",
+        "to": "PLY",
+        "distance": 1415
+    },
+    {
+        "from": "GDN",
+        "to": "LIV",
+        "distance": 1271
+    },
+    {
+        "from": "GDN",
+        "to": "EDI",
+        "distance": 1428
+    },
+    {
+        "from": "GDN",
+        "to": "GLA",
+        "distance": 1402
+    },
+    {
+        "from": "GDN",
+        "to": "DUB",
+        "distance": 1484
+    },
+    {
+        "from": "GDN",
+        "to": "AMS",
+        "distance": 892
+    },
+    {
+        "from": "GDN",
+        "to": "ROT",
+        "distance": 892
+    },
+    {
+        "from": "GDN",
+        "to": "MID",
+        "distance": 943
+    },
+    {
+        "from": "GDN",
+        "to": "ANT",
+        "distance": 812
+    },
+    {
+        "from": "GDN",
+        "to": "ROU",
+        "distance": 1115
+    },
+    {
+        "from": "GDN",
+        "to": "LRO",
+        "distance": 1215
+    },
+    {
+        "from": "GDN",
+        "to": "BOR",
+        "distance": 1339
+    },
+    {
+        "from": "GDN",
+        "to": "MRS",
+        "distance": 1122
+    },
+    {
+        "from": "GDN",
+        "to": "SEV",
+        "distance": 1729
+    },
+    {
+        "from": "GDN",
+        "to": "CAD",
+        "distance": 1729
+    },
+    {
+        "from": "GDN",
+        "to": "BAR",
+        "distance": 1339
+    },
+    {
+        "from": "GDN",
+        "to": "LIS",
+        "distance": 1948
+    },
+    {
+        "from": "GDN",
+        "to": "POR",
+        "distance": 1948
+    },
+    {
+        "from": "GDN",
+        "to": "VEN",
+        "distance": 591
+    },
+    {
+        "from": "GDN",
+        "to": "GEN",
+        "distance": 682
+    },
+    {
+        "from": "GDN",
+        "to": "NAP",
+        "distance": 858
+    },
+    {
+        "from": "GDN",
+        "to": "LVO",
+        "distance": 677
+    },
+    {
+        "from": "GDN",
+        "to": "ANC",
+        "distance": 701
+    },
+    {
+        "from": "GDN",
+        "to": "VAL",
+        "distance": 1148
+    },
+    {
+        "from": "GDN",
+        "to": "CON",
+        "distance": 1826
+    },
+    {
+        "from": "GDN",
+        "to": "SMI",
+        "distance": 1447
+    },
+    {
+        "from": "GDN",
+        "to": "SAL",
+        "distance": 1246
+    },
+    {
+        "from": "GDN",
+        "to": "CPH",
+        "distance": 489
+    },
+    {
+        "from": "GDN",
+        "to": "STO",
+        "distance": 356
+    },
+    {
+        "from": "GDN",
+        "to": "BER",
+        "distance": 1036
+    },
+    {
+        "from": "GDN",
+        "to": "HAM",
+        "distance": 587
+    },
+    {
+        "from": "GDN",
+        "to": "LUB",
+        "distance": 587
+    },
+    {
+        "from": "GDN",
+        "to": "BRE",
+        "distance": 594
+    },
+    {
+        "from": "GDN",
+        "to": "ARG",
+        "distance": 4455
+    },
+    {
+        "from": "ARG",
+        "to": "LON",
+        "distance": 5065
+    },
+    {
+        "from": "ARG",
+        "to": "BRS",
+        "distance": 5264
+    },
+    {
+        "from": "ARG",
+        "to": "PLY",
+        "distance": 5368
+    },
+    {
+        "from": "ARG",
+        "to": "LIV",
+        "distance": 5224
+    },
+    {
+        "from": "ARG",
+        "to": "EDI",
+        "distance": 5381
+    },
+    {
+        "from": "ARG",
+        "to": "GLA",
+        "distance": 5355
+    },
+    {
+        "from": "ARG",
+        "to": "DUB",
+        "distance": 5437
+    },
+    {
+        "from": "ARG",
+        "to": "AMS",
+        "distance": 4845
+    },
+    {
+        "from": "ARG",
+        "to": "ROT",
+        "distance": 4845
+    },
+    {
+        "from": "ARG",
+        "to": "MID",
+        "distance": 4896
+    },
+    {
+        "from": "ARG",
+        "to": "ANT",
+        "distance": 4765
+    },
+    {
+        "from": "ARG",
+        "to": "ROU",
+        "distance": 5068
+    },
+    {
+        "from": "ARG",
+        "to": "LRO",
+        "distance": 5168
+    },
+    {
+        "from": "ARG",
+        "to": "BOR",
+        "distance": 5292
+    },
+    {
+        "from": "ARG",
+        "to": "MRS",
+        "distance": 5075
+    },
+    {
+        "from": "ARG",
+        "to": "SEV",
+        "distance": 5682
+    },
+    {
+        "from": "ARG",
+        "to": "CAD",
+        "distance": 5682
+    },
+    {
+        "from": "ARG",
+        "to": "BAR",
+        "distance": 5292
+    },
+    {
+        "from": "ARG",
+        "to": "LIS",
+        "distance": 5901
+    },
+    {
+        "from": "ARG",
+        "to": "POR",
+        "distance": 5901
+    },
+    {
+        "from": "ARG",
+        "to": "VEN",
+        "distance": 3863
+    },
+    {
+        "from": "ARG",
+        "to": "GEN",
+        "distance": 3954
+    },
+    {
+        "from": "ARG",
+        "to": "NAP",
+        "distance": 3596
+    },
+    {
+        "from": "ARG",
+        "to": "LVO",
+        "distance": 3949
+    },
+    {
+        "from": "ARG",
+        "to": "ANC",
+        "distance": 3754
+    },
+    {
+        "from": "ARG",
+        "to": "VAL",
+        "distance": 3313
+    },
+    {
+        "from": "ARG",
+        "to": "CON",
+        "distance": 2896
+    },
+    {
+        "from": "ARG",
+        "to": "SMI",
+        "distance": 3007
+    },
+    {
+        "from": "ARG",
+        "to": "SAL",
+        "distance": 3208
+    },
+    {
+        "from": "ARG",
+        "to": "CPH",
+        "distance": 4442
+    },
+    {
+        "from": "ARG",
+        "to": "STO",
+        "distance": 4811
+    },
+    {
+        "from": "ARG",
+        "to": "BER",
+        "distance": 4989
+    },
+    {
+        "from": "ARG",
+        "to": "HAM",
+        "distance": 4540
+    },
+    {
+        "from": "ARG",
+        "to": "LUB",
+        "distance": 4540
+    },
+    {
+        "from": "ARG",
+        "to": "BRE",
+        "distance": 4548
+    },
+    {
+        "from": "ARG",
+        "to": "GDN",
+        "distance": 4455
+    }
+]

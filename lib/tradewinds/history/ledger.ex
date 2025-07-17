@@ -3,9 +3,9 @@ defmodule Tradewinds.Ledger do
   The Ledger context, responsible for logging events.
   """
   alias Tradewinds.Repo
-  alias Tradewinds.Ledger.Trade
+  alias Tradewinds.Ledger.NpcTrade
 
-  def log_trade(
+  def log_npc_trade(
         player,
         company,
         item,
@@ -15,8 +15,8 @@ defmodule Tradewinds.Ledger do
         action,
         game_tick
       ) do
-    %Trade{}
-    |> Trade.changeset(%{
+    %NpcTrade{}
+    |> NpcTrade.changeset(%{
       player_id: player.id,
       company_id: company.id,
       item_id: item.id,

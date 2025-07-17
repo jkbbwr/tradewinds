@@ -20,6 +20,12 @@ if System.get_env("PHX_SERVER") do
   config :tradewinds, TradewindsWeb.Endpoint, server: true
 end
 
+if config_env() == :dev do
+  config :tradewinds,
+         :game_loop_enabled,
+         System.get_env("GAME_LOOP_ENABLED", "no") == "yes"
+end
+
 if config_env() == :prod do
   database_url =
     System.get_env("DATABASE_URL") ||

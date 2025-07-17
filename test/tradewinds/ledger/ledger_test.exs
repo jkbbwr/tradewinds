@@ -12,7 +12,7 @@ defmodule Tradewinds.LedgerTest do
       trader = Factory.insert(:trader)
 
       assert {:ok, trade} =
-               Ledger.log_trade(player, company, item, trader, 10, 100, :buy, 1)
+               Ledger.log_npc_trade(player, company, item, trader, 10, 100, :buy, 1)
 
       assert trade.player_id == player.id
       assert trade.company_id == company.id

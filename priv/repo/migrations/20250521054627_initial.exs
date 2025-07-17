@@ -271,7 +271,7 @@ defmodule Tradewinds.Repo.Migrations.Initial do
       timestamps()
     end
 
-    create table(:trade) do
+    create table(:npc_trade) do
       add :item_id, references(:item), null: false
       add :trader_id, references(:trader), null: false
       add :company_id, references(:company), null: false
@@ -295,11 +295,11 @@ defmodule Tradewinds.Repo.Migrations.Initial do
       timestamps()
     end
 
-    create index(:trade, [:item_id])
-    create index(:trade, [:trader_id])
-    create index(:trade, [:company_id])
-    create index(:trade, [:player_id])
-    create index(:trade, [:game_tick])
-    create index(:trade, [:item_id, :game_tick])
+    create index(:npc_trade, [:item_id])
+    create index(:npc_trade, [:trader_id])
+    create index(:npc_trade, [:company_id])
+    create index(:npc_trade, [:player_id])
+    create index(:npc_trade, [:game_tick])
+    create index(:npc_trade, [:item_id, :game_tick])
   end
 end

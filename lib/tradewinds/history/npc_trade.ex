@@ -1,4 +1,4 @@
-defmodule Tradewinds.Ledger.Trade do
+defmodule Tradewinds.Ledger.NpcTrade do
   use Tradewinds.Schema
   import Ecto.Changeset
 
@@ -7,11 +7,14 @@ defmodule Tradewinds.Ledger.Trade do
   alias Tradewinds.Companies.Company
   alias Tradewinds.Accounts.Player
 
-  schema "trade" do
+  schema "npc_trade" do
     field :amount, :integer
     field :price, :integer
     field :game_tick, :integer
-    field :action, Ecto.Enum, values: [:sell, :buy]
+
+    field :action, Ecto.Enum,
+      values: [:sell, :buy],
+      comment: "from the players perspective always."
 
     belongs_to :item, Item
     belongs_to :trader, Trader

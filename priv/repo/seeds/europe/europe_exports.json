@@ -1,0 +1,234 @@
+{
+  "London": [
+    "Cloth",
+    "Ships",
+    "Tobacco",
+    "Sugar",
+    "Tea",
+    "Spices",
+    "Dyes",
+    "Hardwood",
+    "Porcelain",
+    "Hops",
+    "Instruments",
+    "Ivory"
+  ],
+  "Bristol": [
+    "Cloth",
+    "Fish",
+    "Tobacco",
+    "Rum"
+  ],
+  "Plymouth": [
+    "Fish",
+    "Cloth",
+    "Ships"
+  ],
+  "Liverpool": [
+    "Cloth",
+    "Coal",
+    "Metalwares",
+    "Hardwood",
+    "Ivory",
+    "Rum"
+  ],
+  "Leith": [
+    "Linen",
+    "Fish",
+    "Furs"
+  ],
+  "Glasgow": [
+    "Fish",
+    "Linen",
+    "Coal"
+  ],
+  "Dublin": [
+    "Wool",
+    "Linen",
+    "Furs"
+  ],
+  "Amsterdam": [
+    "Fish",
+    "Spices",
+    "Sugar",
+    "Tobacco",
+    "Weapons",
+    "Glassware",
+    "Pottery",
+    "Books",
+    "Ships",
+    "Jewelry",
+    "Porcelain",
+    "Tea",
+    "Coffee",
+    "Dyes",
+    "Cloth",
+    "Hops",
+    "Paper",
+    "Instruments"
+  ],
+  "Rotterdam": [
+    "Fish",
+    "Pottery",
+    "Spirits",
+    "Weapons"
+  ],
+  "Middelburg": [
+    "Wine",
+    "Salt"
+  ],
+  "Antwerp": [
+    "Luxury Fabrics",
+    "Books",
+    "Glassware",
+    "Instruments"
+  ],
+  "Rouen": [
+    "Linen",
+    "Wine",
+    "Grain",
+    "Paper"
+  ],
+  "La Rochelle": [
+    "Wine",
+    "Spirits",
+    "Salt",
+    "Rum"
+  ],
+  "Bordeaux": [
+    "Wine",
+    "Spirits",
+    "Rum"
+  ],
+  "Marseille": [
+    "Olive Oil",
+    "Wine",
+    "Luxury Fabrics",
+    "Marble"
+  ],
+  "Seville": [
+    "Gold",
+    "Silver",
+    "Olive Oil",
+    "Wine",
+    "Wool",
+    "Dyes"
+  ],
+  "Cadiz": [
+    "Gold",
+    "Silver",
+    "Olive Oil",
+    "Wine",
+    "Salt"
+  ],
+  "Barcelona": [
+    "Wine",
+    "Spirits",
+    "Metalwares"
+  ],
+  "Lisbon": [
+    "Sugar",
+    "Spices",
+    "Wine",
+    "Salt",
+    "Olive Oil",
+    "Jewelry",
+    "Hardwood",
+    "Ivory"
+  ],
+  "Porto": [
+    "Wine"
+  ],
+  "Venice": [
+    "Glassware",
+    "Luxury Fabrics",
+    "Books",
+    "Rice"
+  ],
+  "Genoa": [
+    "Luxury Fabrics",
+    "Olive Oil",
+    "Gold",
+    "Silver",
+    "Paper"
+  ],
+  "Naples": [
+    "Grain",
+    "Wine",
+    "Silk"
+  ],
+  "Livorno": [
+    "Olive Oil",
+    "Wine",
+    "Luxury Fabrics",
+    "Marble"
+  ],
+  "Ancona": [
+    "Grain",
+    "Wine",
+    "Textile Fibers"
+  ],
+  "Valletta": [
+    "Cotton"
+  ],
+  "Constantinople": [
+    "Coffee",
+    "Cotton",
+    "Silk",
+    "Spices"
+  ],
+  "Izmir": [
+    "Cotton",
+    "Silk",
+    "Dyes"
+  ],
+  "Thessaloniki": [
+    "Grain",
+    "Cotton",
+    "Tobacco"
+  ],
+  "Copenhagen": [
+    "Grain",
+    "Fish"
+  ],
+  "Stockholm": [
+    "Iron",
+    "Copper",
+    "Timber",
+    "Supplies",
+    "Charcoal"
+  ],
+  "Bergen": [
+    "Fish",
+    "Timber",
+    "Charcoal"
+  ],
+  "Hamburg": [
+    "Linen",
+    "Grain",
+    "Beer",
+    "Hops"
+  ],
+  "L\u00fcbeck": [
+    "Grain",
+    "Salt",
+    "Fish"
+  ],
+  "Bremen": [
+    "Linen",
+    "Grain",
+    "Whale Oil"
+  ],
+  "Gda\u0144sk": [
+    "Grain",
+    "Timber",
+    "Textile Fibers"
+  ],
+  "Arkhangelsk": [
+    "Furs",
+    "Grain",
+    "Timber",
+    "Supplies",
+    "Textile Fibers"
+  ]
+}

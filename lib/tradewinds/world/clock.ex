@@ -42,8 +42,9 @@ defmodule Tradewinds.Clock do
         %DateTime{} = gametime_anchor,
         %DateTime{} = now
       ) do
-    elapsed_real_seconds = DateTime.diff(now, real_world_anchor, :second)
-    in_game_seconds_to_add = elapsed_real_seconds * @in_game_seconds_per_real_second
+    elapsed_real_microseconds = DateTime.diff(now, real_world_anchor, :microsecond)
+    elapsed_real_seconds = elapsed_real_microseconds / 1_000_000
+    in_game_seconds_to_add = trunc(elapsed_real_seconds * @in_game_seconds_per_real_second)
     DateTime.add(gametime_anchor, in_game_seconds_to_add, :second)
   end
 end

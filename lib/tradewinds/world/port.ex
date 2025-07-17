@@ -18,13 +18,10 @@ defmodule Tradewinds.World.Port do
     timestamps()
   end
 
-  @doc """
-  Builds a changeset for the port schema.
-  """
-  def changeset(port, attrs) do
+  def create_changeset(port, attrs) do
     port
-    |> cast(attrs, [:name, :shortcode, :country_id, :warehouse_cost])
-    |> validate_required([:name, :shortcode, :country_id, :warehouse_cost])
+    |> cast(attrs, [:name, :shortcode, :country_id])
+    |> validate_required([:name, :shortcode, :country_id])
     |> unique_constraint(:name)
     |> unique_constraint(:shortcode)
   end

@@ -83,7 +83,7 @@ defmodule Tradewinds.ClockTest do
       real_anchor = ~U[2025-07-16 12:00:00Z]
       game_anchor = ~U[1625-01-01 08:00:00Z]
       # 7.5 real seconds = 0.5 ticks = 30 in-game minutes
-      now = DateTime.add(real_anchor, 7.5, :second)
+      now = DateTime.add(real_anchor, 7_500_000, :microsecond)
 
       expected_gametime = DateTime.add(game_anchor, 30, :minute)
       assert Clock.calculate_precise_gametime(real_anchor, game_anchor, now) == expected_gametime

@@ -17,4 +17,10 @@ defmodule Tradewinds.World.Country do
     |> cast(attrs, [:name, :description])
     |> validate_required([:name])
   end
+
+  def create_changeset(country, attrs) do
+    country
+    |> changeset(attrs)
+    |> put_change(:description, attrs[:description] || "no description")
+  end
 end

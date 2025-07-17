@@ -6,10 +6,47 @@ defmodule Tradewinds.Trading do
   alias Tradewinds.Ships
 
   alias Tradewinds.Warehouses
+  alias Tradewinds.Trading.Trader
   alias Tradewinds.Trading.TraderInventory
   alias Tradewinds.Trading.TraderPlan
 
   @quote_age 360
+
+  def create_trader(port) do
+    %Trader{}
+    |> Trader.changeset(%{name: "#{port.name} Trader", port_id: port.id})
+    |> Repo.insert()
+  end
+
+  def create_trader_plan(
+        trader_id,
+        item_id,
+        average_acquisition_cost,
+        ideal_stock_level,
+        target_profit_margin,
+        max_buy_sell_spread,
+        price_elasticity,
+        liquidity_factor,
+        consumption_rate,
+        reversion_rate,
+        regional_cost
+      ) do
+    %TraderPlan{}
+    |> TraderPlan.changeset(%{
+      trader_id: trader_id,
+      item_id: item_id,
+      average_acquisition_cost: average_acquisition_cost,
+      ideal_stock_level: ideal_stock_level,
+      target_profit_margin: target_profit_margin,
+      max_buy_sell_spread: max_buy_sell_spread,
+      price_elasticity: price_elasticity,
+      liquidity_factor: liquidity_factor,
+      consumption_rate: consumption_rate,
+      reversion_rate: reversion_rate,
+      regional_cost: regional_cost
+    })
+    |> Repo.insert()
+  end
 
   def buy_from_trader_quote(trader, item, amount) do
     with {:ok, trader_plan} <- fetch_trader_plan(trader, item),
@@ -43,7 +80,7 @@ defmodule Tradewinds.Trading do
            {:ok, _company} <- Companies.debit_treasury(company, quantity * price),
            {:ok, _inventory} <- debit_trader_stock(inventory, quantity),
            :ok <- fulfill_purchase(company, inventories, item, quantity) do
-        Ledger.log_trade(
+        Ledger.log_npc_trade(
           player,
           company,
           item,
@@ -72,7 +109,7 @@ defmodule Tradewinds.Trading do
            :ok <- credit_trader_stock(trader_plan, inventory, quantity, price),
            :ok <- fulfill_sale(company, inventories, item, quantity),
            {:ok, _company} <- Companies.credit_treasury(company, price * quantity) do
-        Ledger.log_trade(
+        Ledger.log_npc_trade(
           player,
           company,
           item,

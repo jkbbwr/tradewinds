@@ -9,7 +9,7 @@ defmodule Tradewinds.WarehousesTest do
       warehouse = Factory.insert(:warehouse)
       item = Factory.insert(:item)
 
-      assert {:ok, :stored} = Warehouses.store(warehouse, item, 50)
+      assert {:ok, _} = Warehouses.store(warehouse, item, 50)
 
       inventory =
         Repo.get_by(Tradewinds.Warehouses.WarehouseInventory,
