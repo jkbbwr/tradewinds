@@ -20,7 +20,9 @@ defmodule Tradewinds.Application do
         # {Tradewinds.Worker, arg},
         # Start to serve requests, typically the last entry
         TradewindsWeb.Endpoint,
-        {Highlander, {Tradewinds.Ships.TransitManager, []}}
+        {Highlander, {Tradewinds.Ships.TransitManager, []}},
+        {Highlander, {Tradewinds.World.TaxManager, []}},
+        {Highlander, {Tradewinds.Shipyard.ShipyardManager, []}}
       ] ++ game_loop()
 
     # See https://hexdocs.pm/elixir/Supervisor.html
@@ -42,10 +44,10 @@ defmodule Tradewinds.Application do
     if Application.get_env(:tradewinds, :game_loop_enabled) do
       realtime_anchor = Application.fetch_env!(:tradewinds, :realtime_anchor)
       gametime_anchor = Application.fetch_env!(:tradewinds, :gametime_anchor)
+      opts = [realtime_anchor: realtime_anchor, gametime_anchor: gametime_anchor]
 
       [
-        {Highlander,
-         {Tradewinds.GameLoop, realtime_anchor: realtime_anchor, gametime_anchor: gametime_anchor}}
+        {Highlander, {Tradewinds.GameLoop, opts}}
       ]
     else
       []

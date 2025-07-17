@@ -115,6 +115,9 @@ defmodule Tradewinds.Repo.Migrations.Initial do
 
     create table(:shipyard) do
       add :port_id, references(:port), null: false
+      add :max_ships, :integer, null: false
+      add :production_type, :text, null: false
+      add :production_count, :integer, null: false
       timestamps()
     end
 

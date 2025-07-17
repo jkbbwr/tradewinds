@@ -121,6 +121,31 @@ defmodule Tradewinds.Companies do
   end
 
   @doc """
+  Fetches a company agent by their ID.
+  """
+  def get_agent(id) do
+    Repo.get(CompanyAgent, id)
+  end
+
+  @doc """
+  Updates a company agent's location.
+  """
+  def assign_agent_to_port(agent, port_id) do
+    agent
+    |> CompanyAgent.assign_to_port_changeset(port_id)
+    |> Repo.update()
+  end
+
+  @doc """
+  Assigns a company agent to a ship.
+  """
+  def assign_agent_to_ship(agent, ship_id) do
+    agent
+    |> CompanyAgent.assign_to_ship_changeset(ship_id)
+    |> Repo.update()
+  end
+
+  @doc """
   Fetches a ship belonging to a company.
   """
   def fetch_ship(company, id) do

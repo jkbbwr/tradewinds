@@ -21,6 +21,7 @@ defmodule Tradewinds.Ships.Ship do
     belongs_to :port, Port, foreign_key: :port_id
     belongs_to :route, Route, foreign_key: :route_id
     has_many :inventory, ShipInventory, foreign_key: :ship_id
+    has_many :passengers, Tradewinds.Ships.Passenger, foreign_key: :ship_id
     field :arriving_at, :utc_datetime
 
     timestamps()

@@ -3,9 +3,6 @@ defmodule Tradewinds.Schema do
   Provides common schema configuration for the application.
   """
   defmacro __using__(_) do
-    @doc """
-    Injects common schema configuration into the calling module.
-    """
     quote do
       use Ecto.Schema
       import Ecto.Changeset
