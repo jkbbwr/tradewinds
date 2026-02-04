@@ -9,5 +9,7 @@ defmodule Tradewinds.Repo.Migrations.Players do
       add :enabled, :boolean, null: false, default: false
       timestamps()
     end
+
+    create unique_index(:player, [:email])
   end
 end

@@ -1,0 +1,17 @@
+defmodule Tradewinds.Auth.AuthToken do
+  use Tradewinds.Schema
+
+  schema "auth_token" do
+    field :token, :string
+    belongs_to :player, Tradewinds.Players.Player
+
+    timestamps()
+  end
+
+  def create_changeset(auth_token, attrs) do
+    auth_token
+    |> cast(attrs, [:token, :player_id])
+    |> validate_required([:token, :player_id])
+    |> unique_constraint(:token)
+  end
+end

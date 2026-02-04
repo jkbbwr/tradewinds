@@ -5,8 +5,16 @@ defmodule TradewindsWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/api", TradewindsWeb do
+  pipeline :auth do
+    plug TradewindsWeb.Plugs.Auth
+  end
+
+  scope "/api/v1", TradewindsWeb do
     pipe_through :api
+  end
+
+  scope "/api/v1", TradewindsWeb do
+    pipe_through [:api, :auth]
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
