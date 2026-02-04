@@ -7,9 +7,19 @@
 # General application configuration
 import Config
 
+config :tradewinds, Oban,
+  engine: Oban.Engines.Basic,
+  notifier: Oban.Notifiers.Postgres,
+  queues: [default: 10],
+  repo: Tradewinds.Repo
+
 config :tradewinds,
   ecto_repos: [Tradewinds.Repo],
   generators: [timestamp_type: :utc_datetime, binary_id: true]
+
+config :tradewinds, Tradewinds.Repo,
+  migration_primary_key: [type: :uuid],
+  migration_timestamps: [type: :utc_datetime]
 
 # Configure the endpoint
 config :tradewinds, TradewindsWeb.Endpoint,

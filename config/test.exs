@@ -1,4 +1,5 @@
 import Config
+config :tradewinds, Oban, testing: :manual
 
 # Configure your database
 #

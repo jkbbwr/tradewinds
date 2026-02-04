@@ -20,7 +20,7 @@ defmodule Tradewinds.MixProject do
   def application do
     [
       mod: {Tradewinds.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :os_mon]
     ]
   end
 
@@ -43,6 +43,7 @@ defmodule Tradewinds.MixProject do
       {:phoenix_ecto, "~> 4.5"},
       {:ecto_sql, "~> 3.13"},
       {:postgrex, ">= 0.0.0"},
+      {:ecto_psql_extras, "~> 0.8.8"},
       {:phoenix_live_dashboard, "~> 0.8.3"},
       {:swoosh, "~> 1.16"},
       {:req, "~> 0.5"},
@@ -53,7 +54,9 @@ defmodule Tradewinds.MixProject do
       {:bandit, "~> 1.5"},
       {:argon2_elixir, "~> 4.1"},
       {:ecto_cursor, "~> 0.1.5"},
-      {:ex_machina, "~> 2.8", only: :test}
+      {:ex_machina, "~> 2.8", only: :test},
+      {:oban, "~> 2.20"},
+      {:igniter, "~> 0.7.2", only: :dev}
     ]
   end
 
