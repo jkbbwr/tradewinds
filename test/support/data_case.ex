@@ -24,6 +24,7 @@ defmodule Tradewinds.DataCase do
       import Ecto.Changeset
       import Ecto.Query
       import Tradewinds.DataCase
+      import Tradewinds.Factory
     end
   end
 

@@ -21,7 +21,7 @@ defmodule Tradewinds.Auth do
 
   def validate(token) do
     with {:ok, player_id} <- Phoenix.Token.verify(TradewindsWeb.Endpoint, "player auth", token),
-         auth_token <- fetch_auth_token(token, player_id) do
+         {:ok, auth_token} <- fetch_auth_token(token, player_id) do
       {:ok, auth_token}
     end
   end
