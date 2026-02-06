@@ -8,6 +8,9 @@ defmodule Tradewinds.Players.Player do
     field :password_hash, :string
     field :enabled, :boolean, default: false
 
+    has_many :directorships, Tradewinds.Companies.Director
+    many_to_many :companies, Tradewinds.Companies.Company, join_through: Tradewinds.Companies.Director
+
     timestamps()
   end
 

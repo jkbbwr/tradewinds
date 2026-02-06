@@ -2,6 +2,7 @@ defmodule Tradewinds.AuthTest do
   use Tradewinds.DataCase
 
   alias Tradewinds.Auth
+  alias Tradewinds.Players
 
   describe "authentication" do
     test "authenticate/2 succeeds with correct credentials and enabled player" do
@@ -59,6 +60,18 @@ defmodule Tradewinds.AuthTest do
         
         # Should fail at Phoenix.Token.verify
         assert {:error, :invalid} = Auth.validate(tampered_token)
+    end
+
+    test "validate/1 fails if player is disabled after login" do
+      password = "password1234"
+      player = insert(:player, password: password, enabled: true)
+      {:ok, created_token} = Auth.authenticate(player.email, password)
+
+      # Disable the player
+      Players.disable(player)
+
+      # Now validate should fail
+      assert {:error, :player_not_enabled} = Auth.validate(created_token.token)
     end
 
     test "revoke/1 removes the token" do
