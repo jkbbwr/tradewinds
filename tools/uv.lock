@@ -72,15 +72,6 @@ wheels = [
 ]
 
 [[package]]
-name = "pyports"
-version = "0.2"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/41/fb/8232d394af02fbb6270a08181de0cf86134565dd052b2c8f980d651449a0/PyPorts-0.2.tar.gz", hash = "sha256:f8495e7ef78d9df35364ad7d3098eabab954cc776bfdb04a670d3186300a7b20", size = 1602, upload-time = "2021-07-16T21:07:56.558Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/c1/a8/0e1ab83cc0e1ccb360b68bd0eaa19850e741f222cf61ac1b0f9b432d6105/PyPorts-0.2-py3-none-any.whl", hash = "sha256:b9ad9ee31c357bd55e2d9d368f809f95ac29db8e7a7c76dc19aea1bfbb020b37", size = 1792, upload-time = "2021-07-16T21:07:54.589Z" },
-]
-
-[[package]]
 name = "rich"
 version = "14.3.2"
 source = { registry = "https://pypi.org/simple" }
@@ -117,14 +108,12 @@ name = "tradewind-tools"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
-    { name = "pyports" },
     { name = "searoute" },
     { name = "typer" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "pyports", specifier = ">=0.2" },
     { name = "searoute", specifier = ">=1.4.3" },
     { name = "typer", specifier = ">=0.21.1" },
 ]

@@ -1,14 +1,18 @@
+import difflib
+import json
+from pathlib import Path
+
 import searoute
 import typer
-import json
-import difflib
-from pathlib import Path
 
 app = typer.Typer()
 
 
 @app.command()
 def lookup_port(name: str):
+    """
+    Given a port name. Try and find the closest matching port and return its lat/long
+    """
     ports_file = Path(__file__).parent / "ports.json"
     try:
         with open(ports_file, "r") as f:
@@ -25,24 +29,28 @@ def lookup_port(name: str):
         return
 
     best_match_name = matches[0]
-    
+
     # Find the first port with this name
     port = next((p for p in ports_data if p.get("CITY") == best_match_name), None)
 
     if port:
-        country = port.get('COUNTRY', 'Unknown')
-        lat = port.get('LATITUDE')
-        lon = port.get('LONGITUDE')
+        country = port.get("COUNTRY", "Unknown")
+        lat = port.get("LATITUDE")
+        lon = port.get("LONGITUDE")
         if name.lower() != best_match_name.lower():
-            print(f"I couldn't find '{name}', but I found a similar port: '{best_match_name}'")
+            print(
+                f"I couldn't find '{name}', but I found a similar port: '{best_match_name}'"
+            )
         print(f"Port: {best_match_name}, {country}")
         print(f"Latitude: {lat}")
         print(f"Longitude: {lon}")
 
 
-
 @app.command()
 def distance(origin_lat: float, origin_long: float, dest_lat: float, dest_long: float):
+    """
+    Get the naut mile distance between orgin_lat origin_long dest_lat dest_long.
+    """
     route = searoute.searoute(
         [origin_lat, origin_long], [dest_lat, dest_long], units="naut"
     )
