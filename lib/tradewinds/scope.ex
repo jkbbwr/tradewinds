@@ -10,12 +10,23 @@ defmodule Tradewinds.Scope do
   Automatically populates `company_ids` if a `player` is provided but `company_ids` are missing.
   """
   def for(attrs) when is_list(attrs) do
-    attrs = Keyword.put_new_lazy(attrs, :company_ids, fn ->
-      fetch_company_ids(attrs[:player])
-    end)
+    attrs =
+      Keyword.put_new_lazy(attrs, :company_ids, fn ->
+        fetch_company_ids(attrs[:player])
+      end)
 
     struct(__MODULE__, attrs)
   end
+
+  def authorizes?(%__MODULE__{company_ids: company_ids}, company_id) do
+    if company_id in company_ids do
+      :ok
+    else
+      {:error, :unauthorized}
+    end
+  end
+
+  def authorizes?(_scope, _company_id), do: {:error, :unauthorized}
 
   defp fetch_company_ids(%Tradewinds.Accounts.Player{} = player) do
     Tradewinds.Companies.list_player_company_ids(player)

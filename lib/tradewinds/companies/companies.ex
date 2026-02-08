@@ -26,21 +26,9 @@ defmodule Tradewinds.Companies do
   Adds a new director to a company. (Scoped)
   Requires the actor (scope) to be an existing director of the company.
   """
-  def add_director(%Scope{} = scope, %Company{} = company, %Player{} = new_player) do
-    if company.id in scope.company_ids do
-      add_director(company, new_player)
-    else
-      {:error, :unauthorized}
-    end
-  end
-
-  @doc """
-  Adds a new director to a company. (Unscoped)
-  This should only be used by system processes or CLI admins.
-  """
-  def add_director(%Company{} = company, %Player{} = player) do
+  def add_director(%Scope{} = scope, %Company{} = company) do
     %Director{}
-    |> Director.changeset(%{company_id: company.id, player_id: player.id})
+    |> Director.changeset(%{company_id: company.id, player_id: scope.player.id})
     |> Repo.insert()
   end
 
