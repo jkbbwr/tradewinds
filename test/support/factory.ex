@@ -2,7 +2,7 @@ defmodule Tradewinds.Factory do
   use ExMachina.Ecto, repo: Tradewinds.Repo
 
   def player_factory do
-    %Tradewinds.Players.Player{
+    %Tradewinds.Accounts.Player{
       name: sequence(:name, &"Player #{&1}"),
       email: sequence(:email, &"player-#{&1}@example.com"),
       password: "password1234",
@@ -12,7 +12,7 @@ defmodule Tradewinds.Factory do
   end
 
   def auth_token_factory do
-    %Tradewinds.Auth.AuthToken{
+    %Tradewinds.Accounts.AuthToken{
       token: sequence(:token, &"token-#{&1}"),
       player: build(:player)
     }

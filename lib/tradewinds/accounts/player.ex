@@ -1,4 +1,4 @@
-defmodule Tradewinds.Players.Player do
+defmodule Tradewinds.Accounts.Player do
   use Tradewinds.Schema
 
   schema "player" do

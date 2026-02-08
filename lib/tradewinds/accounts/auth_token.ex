@@ -1,9 +1,9 @@
-defmodule Tradewinds.Auth.AuthToken do
+defmodule Tradewinds.Accounts.AuthToken do
   use Tradewinds.Schema
 
   schema "auth_token" do
     field :token, :string
-    belongs_to :player, Tradewinds.Players.Player
+    belongs_to :player, Tradewinds.Accounts.Player
 
     timestamps()
   end

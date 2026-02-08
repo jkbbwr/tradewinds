@@ -7,7 +7,7 @@ defmodule Tradewinds.Companies.Company do
     field :treasury, :integer
 
     has_many :directors, Tradewinds.Companies.Director
-    many_to_many :players, Tradewinds.Players.Player, join_through: Tradewinds.Companies.Director
+    many_to_many :players, Tradewinds.Accounts.Player, join_through: Tradewinds.Companies.Director
 
     timestamps()
   end

@@ -8,7 +8,7 @@ defmodule Tradewinds.Companies do
   alias Tradewinds.Scope
   alias Tradewinds.Companies.Company
   alias Tradewinds.Companies.Director
-  alias Tradewinds.Players.Player
+  alias Tradewinds.Accounts.Player
 
   @doc """
   Creates a company and assigns the current player (from scope) as a director.

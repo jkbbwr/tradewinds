@@ -4,7 +4,7 @@ defmodule Tradewinds.Companies.Director do
 
   schema "director" do
     belongs_to :company, Tradewinds.Companies.Company
-    belongs_to :player, Tradewinds.Players.Player
+    belongs_to :player, Tradewinds.Accounts.Player
   end
 
   @doc false

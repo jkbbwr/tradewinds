@@ -17,7 +17,7 @@ defmodule Tradewinds.Scope do
     struct(__MODULE__, attrs)
   end
 
-  defp fetch_company_ids(%Tradewinds.Players.Player{} = player) do
+  defp fetch_company_ids(%Tradewinds.Accounts.Player{} = player) do
     Tradewinds.Companies.list_player_company_ids(player)
   end
 
