@@ -12,7 +12,7 @@ defmodule Tradewinds.Companies.Company do
     timestamps()
   end
 
-  def changeset(company, attrs) do
+  def create_changeset(company, attrs) do
     company
     |> cast(attrs, [:name, :ticker, :treasury])
     |> validate_required([:name, :ticker, :treasury])
