@@ -6,6 +6,7 @@ defmodule Tradewinds.Repo.Migrations.Route do
       add :from_id, references(:port, on_delete: :delete_all), null: false
       add :to_id, references(:port, on_delete: :delete_all), null: false
       add :distance, :integer
+      timestamps()
     end
 
     create unique_index(:route, [:from_id, :to_id])

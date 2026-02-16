@@ -6,6 +6,7 @@ defmodule Tradewinds.World.Route do
 
     belongs_to :from, Tradewinds.World.Port
     belongs_to :to, Tradewinds.World.Port
+    timestamps()
   end
 
   @doc false

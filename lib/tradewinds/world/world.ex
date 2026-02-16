@@ -30,6 +30,10 @@ defmodule Tradewinds.World do
     Repo.get_by(Port, shortcode: shortcode) |> Repo.ok_or(:port_not_found)
   end
 
+  def fetch_route_by_id(id) do
+    Repo.get(Route, id) |> Repo.ok_or(:route_not_found)
+  end
+
   def fetch_route(from, to) do
     Repo.get_by(Route, from_id: from.id, to_id: to.id)
     |> Repo.ok_or(:route_not_found)
@@ -43,5 +47,13 @@ defmodule Tradewinds.World do
   def fetch_shipyard_for_port(port) do
     Repo.get_by(Shipyard, port_id: port.id)
     |> Repo.ok_or(:shipyard_not_found)
+  end
+
+  def fetch_good(id) do
+    Repo.get(Good, id) |> Repo.ok_or(:good_not_found)
+  end
+
+  def fetch_good_by_name(name) do
+    Repo.get_by(Good, name: name) |> Repo.ok_or(:good_not_found)
   end
 end

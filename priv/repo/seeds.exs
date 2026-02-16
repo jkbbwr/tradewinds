@@ -14,12 +14,16 @@ alias Tradewinds.Repo
 alias Tradewinds.World.Country
 alias Tradewinds.World.Port
 alias Tradewinds.World.Route
+alias Tradewinds.World.Good
+alias Tradewinds.World.ShipType
 
 # United Kingdom
-uk = Repo.insert!(%Country{
-  name: "United Kingdom",
-  description: "A maritime powerhouse with a storied naval history and bustling industrial ports that connect the British Isles to the world."
-})
+uk =
+  Repo.insert!(%Country{
+    name: "United Kingdom",
+    description:
+      "A maritime powerhouse with a storied naval history and bustling industrial ports that connect the British Isles to the world."
+  })
 
 london = Repo.insert!(%Port{name: "London", shortcode: "LON", country_id: uk.id})
 edinburgh = Repo.insert!(%Port{name: "Edinburgh", shortcode: "EDI", country_id: uk.id})
@@ -30,45 +34,55 @@ plymouth = Repo.insert!(%Port{name: "Plymouth", shortcode: "PLH", country_id: uk
 glasgow = Repo.insert!(%Port{name: "Glasgow", shortcode: "GLA", country_id: uk.id})
 
 # Netherlands
-netherlands = Repo.insert!(%Country{
-  name: "Netherlands",
-  description: "The gateway to Europe, a nation defined by its intricate canal systems and some of the world's most advanced deep-water harbors."
-})
+netherlands =
+  Repo.insert!(%Country{
+    name: "Netherlands",
+    description:
+      "The gateway to Europe, a nation defined by its intricate canal systems and some of the world's most advanced deep-water harbors."
+  })
 
 amsterdam = Repo.insert!(%Port{name: "Amsterdam", shortcode: "AMS", country_id: netherlands.id})
 rotterdam = Repo.insert!(%Port{name: "Rotterdam", shortcode: "RTM", country_id: netherlands.id})
 
 # Germany
-germany = Repo.insert!(%Country{
-  name: "Germany",
-  description: "A hub of engineering and trade, where historic Hanseatic cities continue to serve as vital arteries for Central European commerce."
-})
+germany =
+  Repo.insert!(%Country{
+    name: "Germany",
+    description:
+      "A hub of engineering and trade, where historic Hanseatic cities continue to serve as vital arteries for Central European commerce."
+  })
 
 hamburg = Repo.insert!(%Port{name: "Hamburg", shortcode: "HAM", country_id: germany.id})
 bremen = Repo.insert!(%Port{name: "Bremen", shortcode: "BRE", country_id: germany.id})
 
 # Belgium
-belgium = Repo.insert!(%Country{
-  name: "Belgium",
-  description: "A vital crossroads of European trade, home to massive inland ports that bridge the gap between the North Sea and the heart of the continent."
-})
+belgium =
+  Repo.insert!(%Country{
+    name: "Belgium",
+    description:
+      "A vital crossroads of European trade, home to massive inland ports that bridge the gap between the North Sea and the heart of the continent."
+  })
 
 antwerp = Repo.insert!(%Port{name: "Antwerp", shortcode: "ANR", country_id: belgium.id})
 
 # France
-france = Repo.insert!(%Country{
-  name: "France",
-  description: "A nation of diverse coastlines, where strategic northern ports have served as the threshold for cross-channel trade for centuries."
-})
+france =
+  Repo.insert!(%Country{
+    name: "France",
+    description:
+      "A nation of diverse coastlines, where strategic northern ports have served as the threshold for cross-channel trade for centuries."
+  })
 
 dunkirk = Repo.insert!(%Port{name: "Dunkirk", shortcode: "DKK", country_id: france.id})
 calais = Repo.insert!(%Port{name: "Calais", shortcode: "CQF", country_id: france.id})
 
 # Ireland
-ireland = Repo.insert!(%Country{
-  name: "Ireland",
-  description: "The Emerald Isle, whose vibrant coastal cities have long been shaped by their deep connection to the Atlantic and the Irish Sea."
-})
+ireland =
+  Repo.insert!(%Country{
+    name: "Ireland",
+    description:
+      "The Emerald Isle, whose vibrant coastal cities have long been shaped by their deep connection to the Atlantic and the Irish Sea."
+  })
 
 dublin = Repo.insert!(%Port{name: "Dublin", shortcode: "DUB", country_id: ireland.id})
 
@@ -285,3 +299,156 @@ Repo.insert!(%Route{from_id: dublin.id, to_id: bremen.id, distance: 856})
 Repo.insert!(%Route{from_id: dublin.id, to_id: antwerp.id, distance: 625})
 Repo.insert!(%Route{from_id: dublin.id, to_id: dunkirk.id, distance: 555})
 Repo.insert!(%Route{from_id: dublin.id, to_id: calais.id, distance: 526})
+
+Repo.insert!(%Good{
+  name: "Grain",
+  description: "Cereal grains for bread and ale",
+  category: "Staple",
+  base_price: 40,
+  volatility: 0.20,
+  elasticity: 0.35
+})
+
+Repo.insert!(%Good{
+  name: "Salt",
+  description: "Salt for preserving food and curing fish/meat",
+  category: "Staple",
+  base_price: 60,
+  volatility: 0.10,
+  elasticity: 0.30
+})
+
+Repo.insert!(%Good{
+  name: "Coal",
+  description: "Coal for heating and industry",
+  category: "Staple",
+  base_price: 35,
+  volatility: 0.13,
+  elasticity: 0.28
+})
+
+Repo.insert!(%Good{
+  name: "Timber",
+  description: "Timber for shipbuilding and construction",
+  category: "Material",
+  base_price: 50,
+  volatility: 0.16,
+  elasticity: 0.25
+})
+
+Repo.insert!(%Good{
+  name: "Iron",
+  description: "Iron bars and pig iron for tools and hardware",
+  category: "Industrial",
+  base_price: 100,
+  volatility: 0.14,
+  elasticity: 0.22
+})
+
+Repo.insert!(%Good{
+  name: "Copper",
+  description: "Copper for coinage, cookware, and fittings",
+  category: "Industrial",
+  base_price: 110,
+  volatility: 0.17,
+  elasticity: 0.20
+})
+
+Repo.insert!(%Good{
+  name: "Wool",
+  description: "Raw wool for spinning and weaving",
+  category: "Material",
+  base_price: 80,
+  volatility: 0.15,
+  elasticity: 0.27
+})
+
+Repo.insert!(%Good{
+  name: "Cloth",
+  description: "Finished cloth and textiles",
+  category: "Industrial",
+  base_price: 150,
+  volatility: 0.12,
+  elasticity: 0.18
+})
+
+Repo.insert!(%Good{
+  name: "Fish",
+  description: "Salted fish and fresh catch (varies by season)",
+  category: "Staple",
+  base_price: 45,
+  volatility: 0.22,
+  elasticity: 0.33
+})
+
+Repo.insert!(%Good{
+  name: "Wine",
+  description: "Barrelled wine from France and Iberia",
+  category: "Luxury",
+  base_price: 120,
+  volatility: 0.18,
+  elasticity: 0.16
+})
+
+Repo.insert!(%Good{
+  name: "Hemp",
+  description: "Hemp for rope, sails, and rigging",
+  category: "Material",
+  base_price: 65,
+  volatility: 0.18,
+  elasticity: 0.24
+})
+
+Repo.insert!(%Good{
+  name: "Tar/Pitch",
+  description: "Tar and pitch for sealing hulls and rigging",
+  category: "Material",
+  base_price: 75,
+  volatility: 0.19,
+  elasticity: 0.23
+})
+
+Repo.insert!(%Good{
+  name: "Spices",
+  description: "High-value spices from long-distance trade",
+  category: "Luxury",
+  base_price: 300,
+  volatility: 0.25,
+  elasticity: 0.12
+})
+
+Repo.insert!(%Good{
+  name: "Silk",
+  description: "Fine silk cloth from long-distance trade",
+  category: "Luxury",
+  base_price: 400,
+  volatility: 0.30,
+  elasticity: 0.10
+})
+
+Repo.insert!(%ShipType{
+  name: "Cog",
+  description: "Sturdy coastal trader. Cheap, small hold.",
+  capacity: 50,
+  speed: 4,
+  base_price: 3000,
+  upkeep: 1500
+})
+
+Repo.insert!(%ShipType{
+  name: "Caravel",
+  description: "Fast and versatile merchant ship.",
+  capacity: 100,
+  speed: 6,
+  base_price: 6000,
+  upkeep: 3000
+})
+
+Repo.insert!(%ShipType{
+  name: "Galleon",
+  description: "Large ocean-going hauler. Big hold, expensive upkeep.",
+  capacity: 200,
+  speed: 5,
+  base_price: 12000,
+  upkeep: 6000
+})
