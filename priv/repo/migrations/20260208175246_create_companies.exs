@@ -1,4 +1,4 @@
-defmodule Tradewinds.Repo.Migrations.Company do
+defmodule Tradewinds.Repo.Migrations.CreateCompanies do
   use Ecto.Migration
 
   def change do
@@ -6,6 +6,7 @@ defmodule Tradewinds.Repo.Migrations.Company do
       add :name, :text, null: false
       add :ticker, :string, size: 5, null: false
       add :treasury, :integer, null: false
+      add :home_port_id, references(:port), null: false
       timestamps()
     end
 

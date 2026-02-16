@@ -1,4 +1,4 @@
-defmodule Tradewinds.Repo.Migrations.Port do
+defmodule Tradewinds.Repo.Migrations.CreatePorts do
   use Ecto.Migration
 
   def change do
@@ -17,9 +17,5 @@ defmodule Tradewinds.Repo.Migrations.Port do
 
     create unique_index(:port, :name)
     create unique_index(:port, :shortcode)
-
-    alter table(:company) do
-      add :home_port_id, references(:port), null: false
-    end
   end
 end
