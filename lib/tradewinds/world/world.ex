@@ -9,6 +9,8 @@ defmodule Tradewinds.World do
   alias Tradewinds.World.Country
   alias Tradewinds.World.Port
   alias Tradewinds.World.Route
+  alias Tradewinds.World.Good
+  alias Tradewinds.World.ShipType
 
   def fetch_country(id) do
     Repo.get(Country, id) |> Repo.ok_or(:country_not_found)
@@ -55,5 +57,13 @@ defmodule Tradewinds.World do
 
   def fetch_good_by_name(name) do
     Repo.get_by(Good, name: name) |> Repo.ok_or(:good_not_found)
+  end
+
+  def fetch_ship_type(id) do
+    Repo.get(ShipType, id) |> Repo.ok_or(:ship_type_not_found)
+  end
+
+  def fetch_ship_type_by_name(name) do
+    Repo.get_by(ShipType, name: name) |> Repo.ok_or(:ship_type_not_found)
   end
 end

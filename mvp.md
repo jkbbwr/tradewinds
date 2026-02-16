@@ -12,7 +12,7 @@ Rule: **All logic uses ticks**. Real timestamps are UI-only.
 
 ## Milestone 1 — World + identity + scope
 
-- [ ] Implement `World` context API (ports/goods/countries/ship_types/distances; read-only)
+- [x] Implement `World` context API (ports/goods/countries/ship_types/distances; read-only)
   - `World.list_ports/0`, `World.get_port!/1`, `World.list_goods/0`, `World.get_good!/1` - `World.get_distance_days!/2`, `World.ship_type!/1`
 
 - [x] Seed world data: 14 ports + shipyard flags + countries/regions
@@ -21,12 +21,12 @@ Rule: **All logic uses ticks**. Real timestamps are UI-only.
 
 - [x] Seed goods (12) with base params (base_price, volatility, elasticity)
 
-- [ ] Seed ship types (**MVP ships**) as static definitions
+- [x] Seed ship types (**MVP ships**) as static definitions
   - cog: capacity 50, base_price 3000, speed (if used), monthly_upkeep
   - caravel: capacity 100, base_price 6000, speed, monthly_upkeep
   - galleon: capacity 200, base_price 12000, speed, monthly_upkeep
 
-- [ ] Seed distance matrix in game-days (bidirectional)
+- [x] Seed distance matrix in game-days (bidirectional)
 
 - [ ] Implement `Accounts` stubs (player auth) sufficient to obtain a `player_id`
 
