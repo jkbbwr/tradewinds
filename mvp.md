@@ -28,9 +28,9 @@ Rule: **All logic uses ticks**. Real timestamps are UI-only.
 
 - [x] Seed distance matrix in game-days (bidirectional)
 
-- [ ] Implement `Accounts` stubs (player auth) sufficient to obtain a `player_id`
+- [x] Implement `Accounts` stubs (player auth) sufficient to obtain a `player_id`
 
-- [ ] Implement `Scope` module + hydration from player
+- [x] Implement `Scope` module + hydration from player
   - `%Scope{player, company_ids}`
   - `Scope.authorizes?(scope, company_id)`
 
