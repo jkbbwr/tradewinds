@@ -28,6 +28,10 @@ defmodule Tradewinds.Scope do
 
   def authorizes?(_scope, _company_id), do: {:error, :unauthorized}
 
+  def put_company_id(%__MODULE__{} = scope, company_id) do
+    %{scope | company_ids: [company_id | scope.company_ids]}
+  end
+
   defp fetch_company_ids(%Tradewinds.Accounts.Player{} = player) do
     Tradewinds.Companies.list_player_company_ids(player)
   end

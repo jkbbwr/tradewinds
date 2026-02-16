@@ -1,4 +1,4 @@
-defmodule Tradewinds.Fleet do
+defmodule Tradewinds.Ships do
   import Ecto.Query, warn: false
   alias Tradewinds.Scope
 

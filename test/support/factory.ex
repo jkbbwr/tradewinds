@@ -17,4 +17,19 @@ defmodule Tradewinds.Factory do
       player: build(:player)
     }
   end
+
+  def company_factory do
+    %Tradewinds.Companies.Company{
+      name: sequence(:company_name, &"Company #{&1}"),
+      ticker: sequence(:ticker, &"C#{&1}"),
+      treasury: 100_000
+    }
+  end
+
+  def director_factory do
+    %Tradewinds.Companies.Director{
+      company: build(:company),
+      player: build(:player)
+    }
+  end
 end

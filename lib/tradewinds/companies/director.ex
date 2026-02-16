@@ -1,6 +1,5 @@
 defmodule Tradewinds.Companies.Director do
-  use Ecto.Schema
-  import Ecto.Changeset
+  use Tradewinds.Schema
 
   schema "director" do
     belongs_to :company, Tradewinds.Companies.Company
@@ -8,7 +7,7 @@ defmodule Tradewinds.Companies.Director do
   end
 
   @doc false
-  def changeset(director, attrs) do
+  def create_changeset(director, attrs) do
     director
     |> cast(attrs, [:company_id, :player_id])
     |> validate_required([:company_id, :player_id])
