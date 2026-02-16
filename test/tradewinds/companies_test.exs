@@ -5,27 +5,28 @@ defmodule Tradewinds.CompaniesTest do
   alias Tradewinds.Scope
 
   describe "companies" do
-    test "create/2 creates a company and assigns the player as director" do
+    test "create/5 creates a company and assigns the player as director" do
       player = insert(:player)
+      port = insert(:port)
       scope = Scope.for(player: player)
-      attrs = %{name: "East India Company", ticker: "EIC", treasury: 10000}
 
-      assert {:ok, company} = Companies.create(scope, attrs)
+      assert {:ok, company} = Companies.create(scope, "East India Company", "EIC", port.id, 10000)
       assert company.name == "East India Company"
       assert company.ticker == "EIC"
       assert company.treasury == 10000
+      assert company.home_port_id == port.id
 
       # Verify directorship
       company_ids = Companies.list_player_company_ids(player)
       assert company.id in company_ids
     end
 
-    test "create/2 fails with invalid attributes" do
+    test "create/5 fails with invalid attributes" do
       player = insert(:player)
+      port = insert(:port)
       scope = Scope.for(player: player)
-      attrs = %{name: nil}
 
-      assert {:error, changeset} = Companies.create(scope, attrs)
+      assert {:error, changeset} = Companies.create(scope, nil, "EIC", port.id)
       assert "can't be blank" in errors_on(changeset).name
     end
 

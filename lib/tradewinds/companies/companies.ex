@@ -13,9 +13,16 @@ defmodule Tradewinds.Companies do
   @doc """
   Creates a company and assigns the current player (from scope) as a director.
   """
-  def create(%Scope{} = scope, attrs) do
+  def create(%Scope{} = scope, name, ticker, home_port_id, treasury \\ 10000) do
     Repo.transact(fn ->
-      with {:ok, company} <- Repo.insert(Company.create_changeset(%Company{}, attrs)),
+      with changeset <-
+             Company.create_changeset(%Company{}, %{
+               name: name,
+               ticker: ticker,
+               home_port_id: home_port_id,
+               treasury: treasury
+             }),
+           {:ok, company} <- Repo.insert(changeset),
            scope <- Scope.put_company_id(scope, company.id),
            {:ok, _director} <- add_director(scope, company) do
         {:ok, company}

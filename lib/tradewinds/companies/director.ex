@@ -11,6 +11,8 @@ defmodule Tradewinds.Companies.Director do
     director
     |> cast(attrs, [:company_id, :player_id])
     |> validate_required([:company_id, :player_id])
+    |> foreign_key_constraint(:company_id)
+    |> foreign_key_constraint(:player_id)
     |> unique_constraint([:company_id, :player_id])
   end
 end

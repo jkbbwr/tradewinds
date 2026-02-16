@@ -6,6 +6,7 @@ defmodule Tradewinds.Companies.Company do
     field :ticker, :string
     field :treasury, :integer
 
+    belongs_to :home_port, Tradewinds.World.Port
     has_many :directors, Tradewinds.Companies.Director
     many_to_many :players, Tradewinds.Accounts.Player, join_through: Tradewinds.Companies.Director
 
@@ -14,10 +15,11 @@ defmodule Tradewinds.Companies.Company do
 
   def create_changeset(company, attrs) do
     company
-    |> cast(attrs, [:name, :ticker, :treasury])
-    |> validate_required([:name, :ticker, :treasury])
+    |> cast(attrs, [:name, :ticker, :treasury, :home_port_id])
+    |> validate_required([:name, :ticker, :treasury, :home_port_id])
     |> validate_length(:ticker, max: 5)
     |> unique_constraint(:name)
     |> unique_constraint(:ticker)
+    |> foreign_key_constraint(:home_port_id)
   end
 end

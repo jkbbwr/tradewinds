@@ -22,7 +22,8 @@ defmodule Tradewinds.Factory do
     %Tradewinds.Companies.Company{
       name: sequence(:company_name, &"Company #{&1}"),
       ticker: sequence(:ticker, &"C#{&1}"),
-      treasury: 100_000
+      treasury: 100_000,
+      home_port: build(:port)
     }
   end
 
@@ -30,6 +31,21 @@ defmodule Tradewinds.Factory do
     %Tradewinds.Companies.Director{
       company: build(:company),
       player: build(:player)
+    }
+  end
+
+  def country_factory do
+    %Tradewinds.World.Country{
+      name: sequence(:country_name, &"Country #{&1}"),
+      description: "A nice place."
+    }
+  end
+
+  def port_factory do
+    %Tradewinds.World.Port{
+      name: sequence(:port_name, &"Port #{&1}"),
+      shortcode: sequence(:port_code, &"P#{&1}"),
+      country: build(:country)
     }
   end
 end
