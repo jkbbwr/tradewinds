@@ -119,7 +119,7 @@ defmodule Tradewinds.WorldTest do
       p1 = port_fixture(country, %{name: "A", shortcode: "A"})
       p2 = port_fixture(country, %{name: "B", shortcode: "B"})
       {:ok, route} = Tradewinds.Repo.insert(%Route{from_id: p1.id, to_id: p2.id, distance: 100})
-      
+
       # Known bug: fetch_route/2 calls Repo.one() on a struct, causing Protocol.UndefinedError
       assert World.fetch_route(p1, p2) == {:ok, route}
     end

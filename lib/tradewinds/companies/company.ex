@@ -22,4 +22,11 @@ defmodule Tradewinds.Companies.Company do
     |> unique_constraint(:ticker)
     |> foreign_key_constraint(:home_port_id)
   end
+
+  def update_treasury_changeset(company, delta) do
+    company
+    |> change()
+    |> put_change(:treasury, company.treasury + delta)
+    |> validate_number(:treasury, greater_than_or_equal_to: 0)
+  end
 end

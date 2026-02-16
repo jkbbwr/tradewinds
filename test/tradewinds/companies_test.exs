@@ -2,6 +2,7 @@ defmodule Tradewinds.CompaniesTest do
   use Tradewinds.DataCase
 
   alias Tradewinds.Companies
+  alias Tradewinds.Companies.Company
   alias Tradewinds.Scope
 
   describe "companies" do
@@ -65,6 +66,70 @@ defmodule Tradewinds.CompaniesTest do
       assert length(ids) == 2
       assert co1.id in ids
       assert co2.id in ids
+    end
+
+    test "record_transaction/8 updates treasury and creates ledger entry" do
+      player = insert(:player)
+      company = insert(:company, treasury: 1000)
+      scope = Scope.for(player: player, company_ids: [company.id])
+
+      assert {:ok, %Company{treasury: 1500}} =
+               Companies.record_transaction(
+                 scope,
+                 company.id,
+                 500,
+                 :market_trade,
+                 "market",
+                 Ecto.UUID.generate(),
+                 100
+               )
+
+      # Verify ledger entry
+      ledger_entry = Repo.one(Tradewinds.Companies.Ledger)
+      assert ledger_entry.company_id == company.id
+      assert ledger_entry.amount == 500
+      assert ledger_entry.reason == :market_trade
+      assert ledger_entry.tick == 100
+    end
+
+    test "record_transaction/8 fails with invalid reason" do
+      player = insert(:player)
+      company = insert(:company)
+      scope = Scope.for(player: player, company_ids: [company.id])
+
+      assert {:error, changeset} =
+               Companies.record_transaction(
+                 scope,
+                 company.id,
+                 100,
+                 :invalid_reason,
+                 "market",
+                 Ecto.UUID.generate(),
+                 100
+               )
+
+      assert "is invalid" in errors_on(changeset).reason
+    end
+
+    test "record_transaction/8 rolls back if insufficient funds" do
+      player = insert(:player)
+      company = insert(:company, treasury: 100)
+      scope = Scope.for(player: player, company_ids: [company.id])
+
+      assert {:error, :insufficient_funds} =
+               Companies.record_transaction(
+                 scope,
+                 company.id,
+                 -200,
+                 :market_trade,
+                 "market",
+                 Ecto.UUID.generate(),
+                 100
+               )
+
+      # Verify treasury unchanged
+      reloaded_company = Repo.get(Tradewinds.Companies.Company, company.id)
+      assert reloaded_company.treasury == 100
     end
   end
 end

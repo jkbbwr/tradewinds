@@ -19,7 +19,10 @@ defmodule Tradewinds.AccountsTest do
 
     test "register/3 fails with duplicate email" do
       insert(:player, email: "john@example.com")
-      assert {:error, changeset} = Accounts.register("Jane Doe", "john@example.com", "password123")
+
+      assert {:error, changeset} =
+               Accounts.register("Jane Doe", "john@example.com", "password123")
+
       assert "has already been taken" in errors_on(changeset).email
     end
 
@@ -103,18 +106,18 @@ defmodule Tradewinds.AccountsTest do
     test "validate/1 fails with invalid token string" do
       assert {:error, :invalid} = Accounts.validate("invalid_token_string")
     end
-    
-    test "validate/1 fails if token exists but signature is invalid (tampered)" do 
-        # Create a valid token entry in DB but use a tampered string for verification
-        password = "password1234"
-        player = insert(:player, password: password, enabled: true)
-        {:ok, created_token} = Accounts.authenticate(player.email, password)
-        
-        # Tamper the token
-        tampered_token = created_token.token <> "tampered"
-        
-        # Should fail at Phoenix.Token.verify
-        assert {:error, :invalid} = Accounts.validate(tampered_token)
+
+    test "validate/1 fails if token exists but signature is invalid (tampered)" do
+      # Create a valid token entry in DB but use a tampered string for verification
+      password = "password1234"
+      player = insert(:player, password: password, enabled: true)
+      {:ok, created_token} = Accounts.authenticate(player.email, password)
+
+      # Tamper the token
+      tampered_token = created_token.token <> "tampered"
+
+      # Should fail at Phoenix.Token.verify
+      assert {:error, :invalid} = Accounts.validate(tampered_token)
     end
 
     test "validate/1 fails if player is disabled after login" do
@@ -135,14 +138,14 @@ defmodule Tradewinds.AccountsTest do
       {:ok, created_token} = Accounts.authenticate(player.email, password)
 
       assert {1, _} = Accounts.revoke(created_token.token)
-      
+
       # Should fail to validate now because it's deleted from DB
       # Note: Phoenix.Token.verify will still pass if it hasn't expired, 
       # but fetch_auth_token will fail.
-      
+
       # Let's verify exactly what validate returns
       # validate/1 -> Phoenix.Token.verify (ok) -> fetch_auth_token (fail)
-      
+
       assert {:error, :unauthorized} = Accounts.validate(created_token.token)
     end
   end

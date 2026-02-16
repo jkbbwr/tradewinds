@@ -27,11 +27,11 @@ Time model:
 
 - [x] Implement company + director membership model (player can direct many companies)
 - [x] Implement `Companies.create_company(scope, attrs)` (starting port is player choice)
-- [ ] Implement company balance storage (`companies.credits_balance` integer)
-- [ ] Implement append-only `company_ledger_entries`
+- [x] Implement company balance storage (`companies.credits_balance` integer)
+- [x] Implement append-only `company_ledger_entries`
   - Signed `amount` (+ inflow, - outflow), `reason`, `tick`, `ref_type/ref_id`, `meta`
   - Add `idempotency_key` unique per company to prevent double-posting
-- [ ] Implement atomic money movement primitive (spec)
+- [x] Implement atomic money movement primitive (spec)
   - Within one transaction: lock company row, check sufficient funds (no negative),
     insert ledger entry, update cached balance
 
