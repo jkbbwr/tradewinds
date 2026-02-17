@@ -25,20 +25,15 @@ defmodule Tradewinds.Shipyards do
   def has_stock?(shipyard_id, ship_type_id) do
     query =
       from s in Shipyard,
-        as: :shipyard,
         where: s.id == ^shipyard_id,
-        inner_lateral_join:
-          i in subquery(
-            from inv in Inventory,
-              where: inv.shipyard_id == parent_as(:shipyard).id,
-              where: inv.ship_type_id == ^ship_type_id,
-              select: %{has_stock: count(inv.id) > 0}
-          ),
-        select: i.has_stock
+        left_join: inv in Inventory,
+        on: inv.shipyard_id == s.id and inv.ship_type_id == ^ship_type_id,
+        select: not is_nil(inv.id),
+        limit: 1
 
     case Repo.one(query) do
       nil -> {:error, :shipyard_not_found}
-      result -> result
+      has_stock -> has_stock
     end
   end
 
@@ -52,10 +47,9 @@ defmodule Tradewinds.Shipyards do
              Companies.record_transaction(
                company_id,
                -inventory.cost,
-               :ship_purchase,
-               :ship,
-               inventory.ship_id,
-               Tradewinds.get_tick()
+                                         :ship_purchase,
+                                         :ship,
+                                         inventory.ship_id,               Tradewinds.get_tick()
              ) do
         {:ok, ship}
       else
@@ -78,7 +72,8 @@ defmodule Tradewinds.Shipyards do
     |> Inventory.create_changeset(%{
       shipyard_id: shipyard_id,
       ship_type_id: ship_type_id,
-      ship_id: ship_id
+      ship_id: ship_id,
+      cost: cost
     })
     |> Repo.insert()
   end

@@ -27,7 +27,7 @@ defmodule Tradewinds.Fleet do
 
   def rename_ship(%Scope{} = scope, ship_id, new_name) do
     with {:ok, ship} <- fetch_ship(ship_id),
-         true <- Scope.authorizes?(scope, ship.company_id) do
+         :ok <- Scope.authorizes?(scope, ship.company_id) do
       ship |> Ship.change_name_changeset(new_name) |> Repo.update()
     end
   end
@@ -41,7 +41,7 @@ defmodule Tradewinds.Fleet do
 
   def transfer_ship(%Scope{} = scope, ship_id, new_company_id) do
     with {:ok, ship} <- fetch_ship(ship_id),
-         true <- Scope.authorizes?(scope, ship.company_id) do
+         :ok <- Scope.authorizes?(scope, ship.company_id) do
       ship |> Ship.transfer_changeset(new_company_id) |> Repo.update()
     end
   end

@@ -39,8 +39,8 @@ Time model:
 
 ## Milestone 3 — Fleet (ships): buying, cargo, transit time, arrival processing (no Oban yet)
 
-- [ ] Implement ship persistence + ownership + state fields
-- [ ] Implement ship purchase from shipyard port (scope + company_id required)
+- [x] Implement ship persistence + ownership + state fields
+- [x] Implement ship purchase from shipyard port (scope + company_id required)
 - [ ] Implement ship cargo persistence (barrels only) + capacity enforcement
 - [ ] Implement transit time formula with nm + knots + modifiers
   - `travel_ticks = ceil_div(distance_nm, effective_knots)`

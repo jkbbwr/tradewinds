@@ -18,7 +18,7 @@ defmodule Tradewinds.Companies.Ledger do
         :npc_trade
       ]
 
-    field :reference_type, :string
+    field :reference_type, Ecto.Enum, values: [:market, :ship]
     field :reference_id, :binary_id
     field :idempotency_key, :string
     field :meta, :map

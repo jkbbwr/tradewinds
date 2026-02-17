@@ -4,7 +4,7 @@ defmodule Tradewinds.Shipyards.Inventory do
   schema "shipyard_inventory" do
     belongs_to :shipyard, Tradewinds.Shipyards.Shipyard
     belongs_to :ship_type, Tradewinds.World.ShipType
-    has_one :ship, Tradewinds.World.Ship
+    belongs_to :ship, Tradewinds.Fleet.Ship
     field :cost, :integer
     timestamps()
   end

@@ -10,6 +10,6 @@ defmodule Tradewinds.Repo.Migrations.ShipyardInventory do
       timestamps()
     end
 
-    create index(:shipyard_inventory, [:shipyard_id, :shipyard_type_id])
+    create index(:shipyard_inventory, [:shipyard_id, :ship_type_id])
   end
 end

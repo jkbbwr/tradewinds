@@ -48,4 +48,41 @@ defmodule Tradewinds.Factory do
       country: build(:country)
     }
   end
+
+  def ship_type_factory do
+    %Tradewinds.World.ShipType{
+      name: sequence(:ship_type_name, &"ShipType #{&1}"),
+      description: "A sturdy vessel.",
+      capacity: 100,
+      passengers: 10,
+      speed: 10,
+      base_price: 1000,
+      upkeep: 100
+    }
+  end
+
+  def ship_factory do
+    %Tradewinds.Fleet.Ship{
+      name: sequence(:ship_name, &"Ship #{&1}"),
+      status: :docked,
+      company: build(:company),
+      ship_type: build(:ship_type),
+      port: build(:port)
+    }
+  end
+
+  def shipyard_factory do
+    %Tradewinds.Shipyards.Shipyard{
+      port: build(:port)
+    }
+  end
+
+  def inventory_factory do
+    %Tradewinds.Shipyards.Inventory{
+      shipyard: build(:shipyard),
+      ship_type: build(:ship_type),
+      ship: build(:ship),
+      cost: 1000
+    }
+  end
 end

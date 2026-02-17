@@ -49,6 +49,7 @@ defmodule Tradewinds.WorldTest do
       name: "Test Ship",
       description: "Desc",
       capacity: 100,
+      passengers: 10,
       speed: 10,
       base_price: 1000,
       upkeep: 100

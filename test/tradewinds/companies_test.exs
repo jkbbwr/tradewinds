@@ -69,17 +69,14 @@ defmodule Tradewinds.CompaniesTest do
     end
 
     test "record_transaction/8 updates treasury and creates ledger entry" do
-      player = insert(:player)
       company = insert(:company, treasury: 1000)
-      scope = Scope.for(player: player, company_ids: [company.id])
 
       assert {:ok, %Company{treasury: 1500}} =
                Companies.record_transaction(
-                 scope,
                  company.id,
                  500,
                  :market_trade,
-                 "market",
+                 :market,
                  Ecto.UUID.generate(),
                  100
                )
@@ -93,17 +90,14 @@ defmodule Tradewinds.CompaniesTest do
     end
 
     test "record_transaction/8 fails with invalid reason" do
-      player = insert(:player)
       company = insert(:company)
-      scope = Scope.for(player: player, company_ids: [company.id])
 
       assert {:error, changeset} =
                Companies.record_transaction(
-                 scope,
                  company.id,
                  100,
                  :invalid_reason,
-                 "market",
+                 :market,
                  Ecto.UUID.generate(),
                  100
                )
@@ -112,17 +106,14 @@ defmodule Tradewinds.CompaniesTest do
     end
 
     test "record_transaction/8 rolls back if insufficient funds" do
-      player = insert(:player)
       company = insert(:company, treasury: 100)
-      scope = Scope.for(player: player, company_ids: [company.id])
 
       assert {:error, :insufficient_funds} =
                Companies.record_transaction(
-                 scope,
                  company.id,
                  -200,
                  :market_trade,
-                 "market",
+                 :market,
                  Ecto.UUID.generate(),
                  100
                )
