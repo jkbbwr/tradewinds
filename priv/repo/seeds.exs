@@ -16,6 +16,7 @@ alias Tradewinds.World.Port
 alias Tradewinds.World.Route
 alias Tradewinds.World.Good
 alias Tradewinds.World.ShipType
+alias Tradewinds.Shipyards.Shipyard
 
 # United Kingdom
 uk =
@@ -432,7 +433,8 @@ Repo.insert!(%ShipType{
   capacity: 50,
   speed: 4,
   base_price: 3000,
-  upkeep: 1500
+  upkeep: 1500,
+  passengers: 0
 })
 
 Repo.insert!(%ShipType{
@@ -441,7 +443,8 @@ Repo.insert!(%ShipType{
   capacity: 100,
   speed: 6,
   base_price: 6000,
-  upkeep: 3000
+  upkeep: 3000,
+  passengers: 0
 })
 
 Repo.insert!(%ShipType{
@@ -450,5 +453,12 @@ Repo.insert!(%ShipType{
   capacity: 200,
   speed: 5,
   base_price: 12000,
-  upkeep: 6000
+  upkeep: 6000,
+  passengers: 0
 })
+
+# Shipyards
+Repo.insert!(%Shipyard{port_id: london.id})
+Repo.insert!(%Shipyard{port_id: amsterdam.id})
+Repo.insert!(%Shipyard{port_id: hamburg.id})
+Repo.insert!(%Shipyard{port_id: edinburgh.id})

@@ -6,6 +6,7 @@ defmodule Tradewinds.Repo.Migrations.ShipType do
       add :name, :text, null: false
       add :description, :text, null: false
       add :capacity, :integer, null: false
+      add :passengers, :integer, null: false
       add :speed, :integer, null: false
       add :base_price, :integer, null: false
       add :upkeep, :integer, null: false
@@ -18,5 +19,6 @@ defmodule Tradewinds.Repo.Migrations.ShipType do
     create constraint(:ship_type, :speed_pos_integer, check: "speed > 0")
     create constraint(:ship_type, :base_price_pos_integer, check: "base_price > 0")
     create constraint(:ship_type, :upkeep_pos_integer, check: "upkeep > 0")
+    create constraint(:ship_type, :passengers_not_negitive, check: "passengers >= 0")
   end
 end

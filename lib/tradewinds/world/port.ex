@@ -7,6 +7,8 @@ defmodule Tradewinds.World.Port do
 
     belongs_to :country, Tradewinds.World.Country
 
+    has_one :shipyard, Tradewinds.Shipyards.Shipyard
+
     timestamps()
   end
 

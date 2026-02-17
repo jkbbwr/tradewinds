@@ -8,7 +8,7 @@ defmodule Tradewinds.World.ShipType do
     field :speed, :integer
     field :base_price, :integer
     field :upkeep, :integer
-
+    field :passengers, :integer
     timestamps()
   end
 
@@ -21,6 +21,7 @@ defmodule Tradewinds.World.ShipType do
     |> validate_number(:speed, greater_than: 0)
     |> validate_number(:base_price, greater_than: 0)
     |> validate_number(:upkeep, greater_than: 0)
+    |> validate_number(:passengers, greater_than_or_equal: 0)
     |> unique_constraint(:name)
   end
 end

@@ -50,7 +50,6 @@ defmodule Tradewinds.Companies do
   end
 
   def record_transaction(
-        %Scope{} = _scope,
         company_id,
         amount,
         reason,
@@ -75,8 +74,8 @@ defmodule Tradewinds.Companies do
           meta: meta
         })
 
-      with {:ok, _ledger} <- Repo.insert(ledger),
-           {:ok, company} <- fetch_company_for_update(company_id),
+      with {:ok, company} <- fetch_company_for_update(company_id),
+           {:ok, _ledger} <- Repo.insert(ledger),
            :ok <- check_sufficient_funds(company, amount),
            {:ok, updated_company} <- update_company_treasury(company, amount) do
         {:ok, updated_company}
