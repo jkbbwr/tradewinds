@@ -41,19 +41,19 @@ Time model:
 
 - [x] Implement ship persistence + ownership + state fields
 - [x] Implement ship purchase from shipyard port (scope + company_id required)
-- [ ] Implement ship cargo persistence (barrels only) + capacity enforcement
-- [ ] Implement transit time formula with nm + knots + modifiers
+- [x] Implement ship cargo persistence (barrels only) + capacity enforcement
+- [x] Implement transit time formula with nm + knots + modifiers
   - `travel_ticks = ceil_div(distance_nm, effective_knots)`
   - `effective_knots = floor(base_knots * (10_000 + bonus_bps) / 10_000)` clamped to >= 1
-- [ ] Implement `Fleet.sail_ship(scope, ship_id, destination_port_id, current_tick)`
-- [ ] Implement `Fleet.process_arrivals(current_tick)` (idempotent docking)
+- [x] Implement `Fleet.sail_ship(scope, ship_id, destination_port_id, current_tick)`
+- [x] Implement `Fleet.dock_ship/1` (idempotent single-ship docking)
 
 ---
 
 ## Milestone 4 — Shipyards: inventory + construction/restocking (no Oban yet)
 
-- [ ] Implement shipyard inventory per `(port_id, ship_type)` with `inventory_count`
-- [ ] Implement ship purchase consumes shipyard inventory
+- [x] Implement shipyard inventory per `(port_id, ship_type)` with `inventory_count`
+- [x] Implement ship purchase consumes shipyard inventory
 - [ ] Implement ship construction function `Shipyards.produce_ships(current_tick)`
   - Produce at day boundary (every 24 ticks), idempotent via `last_produced_day`
 
@@ -61,7 +61,7 @@ Time model:
 
 ## Milestone 5 — Logistics (warehouses): store/withdraw, grow/shrink, cost curve
 
-- [ ] Implement warehouse persistence unique `(company_id, port_id)` + tier + contents
+- [x] Implement warehouse persistence unique `(company_id, port_id)` + tier + contents
 - [ ] Implement warehouse pricing functions (quote-only)
   - Upgrade cost per tier: `100 * 1.1^(tier-1)` (int)
   - Monthly upkeep rate per 10 bbl: `10 * 1.05^(tier-1)` (int)

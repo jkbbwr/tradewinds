@@ -47,9 +47,10 @@ defmodule Tradewinds.Shipyards do
              Companies.record_transaction(
                company_id,
                -inventory.cost,
-                                         :ship_purchase,
-                                         :ship,
-                                         inventory.ship_id,               Tradewinds.get_tick()
+               :ship_purchase,
+               :ship,
+               inventory.ship_id,
+               Tradewinds.get_tick()
              ) do
         {:ok, ship}
       else
