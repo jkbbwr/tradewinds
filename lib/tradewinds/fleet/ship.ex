@@ -31,6 +31,24 @@ defmodule Tradewinds.Fleet.Ship do
     |> update_change(:name, &String.trim/1)
   end
 
+  def transit_changeset(ship, attrs) do
+    ship
+    |> cast(attrs, [:status, :arriving_at, :port_id, :route_id])
+    |> validate_required([:status, :arriving_at, :route_id])
+    |> validate_inclusion(:status, [:traveling])
+    |> validate_location()
+    |> check_constraint(:port_id, name: :port_xor_route)
+  end
+
+  def dock_changeset(ship, port_id) do
+    ship
+    |> cast(%{status: :docked, port_id: port_id, route_id: nil, arriving_at: nil}, [:status, :port_id, :route_id, :arriving_at])
+    |> validate_required([:status, :port_id])
+    |> validate_inclusion(:status, [:docked])
+    |> validate_location()
+    |> check_constraint(:port_id, name: :port_xor_route)
+  end
+
   def transfer_changeset(ship, new_company_id) do
     ship
     |> cast(%{company_id: new_company_id}, [:company_id])

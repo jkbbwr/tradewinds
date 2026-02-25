@@ -20,10 +20,10 @@ defmodule Tradewinds.FleetTest do
       company = insert(:company)
       insert(:director, company: company, player: player)
       ship = insert(:ship, company: company, name: "Old Name")
-      
+
       # Correctly construct scope
       scope = Scope.for(player: player, company_ids: [company.id])
-      
+
       assert {:ok, updated_ship} = Fleet.rename_ship(scope, ship.id, "New Name")
       assert updated_ship.name == "New Name"
     end
@@ -32,16 +32,17 @@ defmodule Tradewinds.FleetTest do
       player = insert(:player)
       other_company = insert(:company)
       ship = insert(:ship, company: other_company)
-      
-      scope = Scope.for(player: player, company_ids: []) # Not authorized
-      
+
+      # Not authorized
+      scope = Scope.for(player: player, company_ids: [])
+
       assert {:error, :unauthorized} = Fleet.rename_ship(scope, ship.id, "New Name")
     end
-    
+
     test "assign_ship/2 updates the company_id" do
       ship = insert(:ship)
       new_company = insert(:company)
-      
+
       assert {:ok, updated_ship} = Fleet.assign_ship(ship.id, new_company.id)
       assert updated_ship.company_id == new_company.id
     end
@@ -52,9 +53,9 @@ defmodule Tradewinds.FleetTest do
       insert(:director, company: company, player: player)
       ship = insert(:ship, company: company)
       new_company = insert(:company)
-      
+
       scope = Scope.for(player: player, company_ids: [company.id])
-      
+
       assert {:ok, updated_ship} = Fleet.transfer_ship(scope, ship.id, new_company.id)
       assert updated_ship.company_id == new_company.id
     end
@@ -64,9 +65,9 @@ defmodule Tradewinds.FleetTest do
       other_company = insert(:company)
       ship = insert(:ship, company: other_company)
       new_company = insert(:company)
-      
+
       scope = Scope.for(player: player, company_ids: [])
-      
+
       assert {:error, :unauthorized} = Fleet.transfer_ship(scope, ship.id, new_company.id)
     end
   end
