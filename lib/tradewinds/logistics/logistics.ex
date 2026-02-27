@@ -58,7 +58,7 @@ defmodule Tradewinds.Logistics do
     Repo.transact(fn ->
       with {:ok, warehouse} <- fetch_warehouse_for_update(warehouse_id),
            cost <- upgrade_cost(warehouse),
-           current_tick = Tradewinds.get_tick(),
+           current_tick = Tradewinds.Clock.get_tick(),
            {:ok, _company} <-
              Tradewinds.Companies.record_transaction(
                warehouse.company_id,

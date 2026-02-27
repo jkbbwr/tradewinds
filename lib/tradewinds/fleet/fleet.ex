@@ -16,7 +16,7 @@ defmodule Tradewinds.Fleet do
          {:ok, route} <- World.fetch_route_by_id(route_id),
          :ok <- check_ship_at_route_origin(ship, route),
          {:ok, ticks} <- transit_time(ship_id, route_id) do
-      current_tick = Tradewinds.get_tick()
+      current_tick = Tradewinds.Clock.get_tick()
 
       ship
       |> Ship.transit_changeset(%{
@@ -64,7 +64,7 @@ defmodule Tradewinds.Fleet do
   end
 
   defp check_ship_arrived(ship) do
-    current_tick = Tradewinds.get_tick()
+    current_tick = Tradewinds.Clock.get_tick()
 
     if ship.arriving_at && current_tick >= ship.arriving_at do
       :ok

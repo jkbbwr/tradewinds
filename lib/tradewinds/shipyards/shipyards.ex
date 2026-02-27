@@ -56,7 +56,7 @@ defmodule Tradewinds.Shipyards do
                :ship_purchase,
                :ship,
                inventory.ship_id,
-               Tradewinds.get_tick()
+               Tradewinds.Clock.get_tick()
              ) do
         {:ok, ship}
       else
