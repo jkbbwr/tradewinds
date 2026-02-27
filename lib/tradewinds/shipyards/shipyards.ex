@@ -8,7 +8,13 @@ defmodule Tradewinds.Shipyards do
   alias Tradewinds.Scope
 
   def fetch_shipyard(id) do
-    Repo.get(Shipyard, id) |> Repo.ok_or(:shipyard_not_found)
+    Repo.get(Shipyard, id)
+    |> Repo.ok_or(:shipyard_not_found)
+  end
+
+  def fetch_shipyard_for_port(port) do
+    Repo.get_by(Shipyard, port_id: port.id)
+    |> Repo.ok_or(:shipyard_not_found)
   end
 
   def fetch_shipyard_inventory(shipyard_id) do

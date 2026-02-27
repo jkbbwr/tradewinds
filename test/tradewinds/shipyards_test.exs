@@ -5,7 +5,7 @@ defmodule Tradewinds.ShipyardsTest do
   alias Tradewinds.Shipyards.Inventory
   alias Tradewinds.Scope
 
-  describe "shipyards" do
+  describe "shipyard_queries" do
     test "fetch_shipyard/1 returns the shipyard" do
       shipyard = insert(:shipyard)
       assert {:ok, fetched} = Shipyards.fetch_shipyard(shipyard.id)
@@ -14,6 +14,18 @@ defmodule Tradewinds.ShipyardsTest do
 
     test "fetch_shipyard/1 returns error if not found" do
       assert {:error, :shipyard_not_found} = Shipyards.fetch_shipyard(Ecto.UUID.generate())
+    end
+
+    test "fetch_shipyard_for_port/1 returns the shipyard" do
+      port = insert(:port)
+      shipyard = insert(:shipyard, port: port)
+      assert {:ok, fetched} = Shipyards.fetch_shipyard_for_port(port)
+      assert fetched.id == shipyard.id
+    end
+
+    test "fetch_shipyard_for_port/1 returns error if not found" do
+      port = insert(:port)
+      assert {:error, :shipyard_not_found} = Shipyards.fetch_shipyard_for_port(port)
     end
 
     test "fetch_shipyard_inventory/1 returns the inventory list" do

@@ -41,16 +41,6 @@ defmodule Tradewinds.World do
     |> Repo.ok_or(:route_not_found)
   end
 
-  def fetch_shipyard(id) do
-    Repo.get(Shipyard, id)
-    |> Repo.ok_or(:shipyard_not_found)
-  end
-
-  def fetch_shipyard_for_port(port) do
-    Repo.get_by(Shipyard, port_id: port.id)
-    |> Repo.ok_or(:shipyard_not_found)
-  end
-
   def fetch_good(id) do
     Repo.get(Good, id) |> Repo.ok_or(:good_not_found)
   end
