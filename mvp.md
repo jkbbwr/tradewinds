@@ -54,21 +54,19 @@ Time model:
 
 - [x] Implement shipyard inventory per `(port_id, ship_type)` with `inventory_count`
 - [x] Implement ship purchase consumes shipyard inventory
-- [ ] Implement ship construction function `Shipyards.produce_ships(current_tick)`
-  - Produce at day boundary (every 24 ticks), idempotent via `last_produced_day`
 
 ---
 
 ## Milestone 5 — Logistics (warehouses): store/withdraw, grow/shrink, cost curve
 
 - [x] Implement warehouse persistence unique `(company_id, port_id)` + tier + contents
-- [ ] Implement warehouse pricing functions (quote-only)
+- [x] Implement warehouse pricing functions (quote-only)
   - Upgrade cost per tier: `100 * 1.1^(tier-1)` (int)
   - Monthly upkeep rate per 10 bbl: `10 * 1.05^(tier-1)` (int)
-- [ ] Implement grow warehouse tier (scope auth + ledger debit)
-- [ ] Implement shrink warehouse tier (scope auth, cannot shrink below used)
-- [ ] Implement deposit ship→warehouse (scope auth, ship docked at port, atomic)
-- [ ] Implement withdraw warehouse→ship (scope auth, ship docked, atomic)
+- [x] Implement grow warehouse tier (scope auth + ledger debit)
+- [x] Implement shrink warehouse tier (scope auth, cannot shrink below used)
+- [x] Implement deposit ship→warehouse (scope auth, ship docked at port, atomic)
+- [x] Implement withdraw warehouse→ship (scope auth, ship docked, atomic)
 
 ---
 
@@ -113,6 +111,13 @@ Time model:
 - [ ] Implement trade log (unambiguous buyer/seller, qty, price, port, tick, source)
 - [ ] Implement monthly company upkeep calculation (ships + warehouses)
 - [ ] Implement monthly upkeep processing function (delinquency flags, dormant/evict rules)
+
+---
+
+## Milestone 9.5 — Ship Construction
+
+- [ ] Implement ship construction function `Shipyards.produce_ships(current_tick)`
+  - Produce at day boundary (every 24 ticks), idempotent via `last_produced_day`
 
 ---
 
