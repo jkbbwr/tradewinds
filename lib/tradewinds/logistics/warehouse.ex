@@ -26,4 +26,15 @@ defmodule Tradewinds.Logistics.Warehouse do
     |> check_constraint(:level, name: :level_must_be_positive)
     |> check_constraint(:capacity, name: :capacity_must_be_positive)
   end
+
+  @doc false
+  def update_tier_changeset(warehouse, attrs) do
+    warehouse
+    |> cast(attrs, [:level, :capacity])
+    |> validate_required([:level, :capacity])
+    |> validate_number(:level, greater_than: 0)
+    |> validate_number(:capacity, greater_than: 0)
+    |> check_constraint(:level, name: :level_must_be_positive)
+    |> check_constraint(:capacity, name: :capacity_must_be_positive)
+  end
 end

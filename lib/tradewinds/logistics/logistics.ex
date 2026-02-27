@@ -54,6 +54,58 @@ defmodule Tradewinds.Logistics do
     end
   end
 
+  def grow_warehouse(warehouse_id) do
+    Repo.transact(fn ->
+      with {:ok, warehouse} <- fetch_warehouse_for_update(warehouse_id),
+           cost <- upgrade_cost(warehouse),
+           current_tick = Tradewinds.get_tick(),
+           {:ok, _company} <-
+             Tradewinds.Companies.record_transaction(
+               warehouse.company_id,
+               -cost,
+               "warehouse_upgrade",
+               "warehouse",
+               warehouse.id,
+               current_tick
+             ) do
+        warehouse
+        |> Warehouse.update_tier_changeset(%{
+          level: warehouse.level + 1,
+          capacity: warehouse.capacity + 1000
+        })
+        |> Repo.update()
+      end
+    end)
+  end
+
+  def shrink_warehouse(warehouse_id) do
+    Repo.transact(fn ->
+      with {:ok, warehouse} <- fetch_warehouse_for_update(warehouse_id),
+           {:ok, inventory_total} <- current_inventory_total(warehouse_id),
+           :ok <- check_can_shrink(warehouse, inventory_total) do
+        warehouse
+        |> Warehouse.update_tier_changeset(%{
+          level: warehouse.level - 1,
+          capacity: warehouse.capacity - 1000
+        })
+        |> Repo.update()
+      end
+    end)
+  end
+
+  defp check_can_shrink(warehouse, inventory_total) do
+    cond do
+      warehouse.level <= 1 ->
+        {:error, :already_minimum_tier}
+
+      inventory_total > warehouse.capacity - 1000 ->
+        {:error, :capacity_exceeded_if_shrunk}
+
+      true ->
+        :ok
+    end
+  end
+
   def fetch_warehouse(id) do
     Repo.get(Warehouse, id)
     |> Repo.ok_or(:warehouse_not_found)

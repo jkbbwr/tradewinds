@@ -62,6 +62,59 @@ defmodule Tradewinds.LogisticsTest do
     end
   end
 
+  describe "growth and shrinkage" do
+    test "grow_warehouse/1 increases level and capacity and charges treasury" do
+      company = insert(:company, treasury: 5000)
+      warehouse = insert(:warehouse, company: company, level: 1, capacity: 1000)
+
+      # level 1 upgrade cost is 100
+      assert {:ok, updated_warehouse} = Logistics.grow_warehouse(warehouse.id)
+      
+      assert updated_warehouse.level == 2
+      assert updated_warehouse.capacity == 2000
+
+      updated_company = Repo.get(Tradewinds.Companies.Company, company.id)
+      assert updated_company.treasury == 4900
+
+      # verify ledger entry
+      assert Repo.get_by(Tradewinds.Companies.Ledger, company_id: company.id, reference_type: "warehouse", reference_id: warehouse.id)
+    end
+
+    test "grow_warehouse/1 fails if insufficient funds" do
+      company = insert(:company, treasury: 50) # less than 100
+      warehouse = insert(:warehouse, company: company, level: 1, capacity: 1000)
+
+      assert {:error, :insufficient_funds} = Logistics.grow_warehouse(warehouse.id)
+      
+      reloaded = Repo.get(Tradewinds.Logistics.Warehouse, warehouse.id)
+      assert reloaded.level == 1
+    end
+
+    test "shrink_warehouse/1 decreases level and capacity" do
+      warehouse = insert(:warehouse, level: 2, capacity: 2000)
+
+      assert {:ok, updated_warehouse} = Logistics.shrink_warehouse(warehouse.id)
+      assert updated_warehouse.level == 1
+      assert updated_warehouse.capacity == 1000
+    end
+
+    test "shrink_warehouse/1 fails if already at minimum tier" do
+      warehouse = insert(:warehouse, level: 1, capacity: 1000)
+
+      assert {:error, :already_minimum_tier} = Logistics.shrink_warehouse(warehouse.id)
+    end
+
+    test "shrink_warehouse/1 fails if inventory exceeds new capacity" do
+      warehouse = insert(:warehouse, level: 2, capacity: 2000)
+      good = insert(:good)
+      
+      # Fill it with 1500, new capacity would be 1000
+      insert(:warehouse_inventory, warehouse: warehouse, good: good, quantity: 1500)
+
+      assert {:error, :capacity_exceeded_if_shrunk} = Logistics.shrink_warehouse(warehouse.id)
+    end
+  end
+
   describe "cargo" do
     test "add_cargo/3 successfully adds new cargo" do
       warehouse = insert(:warehouse, capacity: 100)
