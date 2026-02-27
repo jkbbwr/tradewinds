@@ -16,6 +16,27 @@ defmodule Tradewinds.LogisticsTest do
     end
   end
 
+  describe "pricing" do
+    alias Tradewinds.Logistics.Warehouse
+
+    test "upgrade_cost/1 calculates correct cost based on tier" do
+      assert Logistics.upgrade_cost(%Warehouse{level: 1}) == 100
+      assert Logistics.upgrade_cost(%Warehouse{level: 2}) == 110
+      assert Logistics.upgrade_cost(%Warehouse{level: 3}) == 121
+      assert Logistics.upgrade_cost(%Warehouse{level: 4}) == 133
+      assert Logistics.upgrade_cost(%Warehouse{level: 5}) == 146
+    end
+
+    test "upgrade_cost/1 fetches warehouse and returns calculated cost" do
+      warehouse = insert(:warehouse, level: 3)
+      assert {:ok, 121} = Logistics.upgrade_cost(warehouse.id)
+    end
+
+    test "upgrade_cost/1 returns error if warehouse not found" do
+      assert {:error, :warehouse_not_found} = Logistics.upgrade_cost(Ecto.UUID.generate())
+    end
+  end
+
   describe "cargo" do
     test "add_cargo/3 successfully adds new cargo" do
       warehouse = insert(:warehouse, capacity: 100)

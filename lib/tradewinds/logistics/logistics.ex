@@ -24,6 +24,20 @@ defmodule Tradewinds.Logistics do
     end)
   end
 
+  @doc """
+  Calculates the cost to upgrade a warehouse to the next tier.
+  Cost formula: 100 * 1.1^(tier-1)
+  """
+  def upgrade_cost(%Warehouse{level: level}) do
+    (100 * :math.pow(1.1, level - 1)) |> trunc()
+  end
+
+  def upgrade_cost(warehouse_id) do
+    with {:ok, warehouse} <- fetch_warehouse(warehouse_id) do
+      {:ok, upgrade_cost(warehouse)}
+    end
+  end
+
   def fetch_warehouse(id) do
     Repo.get(Warehouse, id)
     |> Repo.ok_or(:warehouse_not_found)
