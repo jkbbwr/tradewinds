@@ -148,5 +148,28 @@ defmodule Tradewinds.AccountsTest do
 
       assert {:error, :unauthorized} = Accounts.validate(created_token.token)
     end
+
+    test "fetch_auth_token/2 returns token with preloaded player" do
+      password = "password1234"
+      player = insert(:player, password: password, enabled: true)
+      {:ok, created_token} = Accounts.authenticate(player.email, password)
+
+      assert {:ok, fetched_token} = Accounts.fetch_auth_token(created_token.token, player.id)
+      assert fetched_token.id == created_token.id
+      assert fetched_token.player.id == player.id
+    end
+
+    test "fetch_auth_token/2 returns error if not found" do
+      player = insert(:player)
+      assert {:error, :unauthorized} = Accounts.fetch_auth_token("invalid", player.id)
+    end
+
+    test "generate_token/1 signs player id into token string" do
+      player = insert(:player)
+      token_string = Accounts.generate_token(player)
+      
+      assert {:ok, verified_id} = Phoenix.Token.verify(TradewindsWeb.Endpoint, "player auth", token_string)
+      assert verified_id == player.id
+    end
   end
 end
