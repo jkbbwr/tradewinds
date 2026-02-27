@@ -38,6 +38,22 @@ defmodule Tradewinds.Logistics do
     end
   end
 
+  @doc """
+  Calculates the monthly upkeep cost for a warehouse.
+  Base rate per 10 capacity: 10 * 1.05^(tier-1)
+  Total cost = (capacity / 10) * base_rate
+  """
+  def upkeep_cost(%Warehouse{level: level, capacity: capacity}) do
+    base_rate = (10 * :math.pow(1.05, level - 1)) |> trunc()
+    div(capacity, 10) * base_rate
+  end
+
+  def upkeep_cost(warehouse_id) do
+    with {:ok, warehouse} <- fetch_warehouse(warehouse_id) do
+      {:ok, upkeep_cost(warehouse)}
+    end
+  end
+
   def fetch_warehouse(id) do
     Repo.get(Warehouse, id)
     |> Repo.ok_or(:warehouse_not_found)

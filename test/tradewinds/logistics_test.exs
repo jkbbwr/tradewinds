@@ -35,6 +35,31 @@ defmodule Tradewinds.LogisticsTest do
     test "upgrade_cost/1 returns error if warehouse not found" do
       assert {:error, :warehouse_not_found} = Logistics.upgrade_cost(Ecto.UUID.generate())
     end
+
+    test "upkeep_cost/1 calculates correct total cost based on tier and capacity" do
+      # Base rate per 10 capacity: 10 * 1.05^(tier-1)
+      # Tier 1: 10
+      assert Logistics.upkeep_cost(%Warehouse{level: 1, capacity: 100}) == 100
+      # Tier 2: 10 * 1.05 = 10
+      assert Logistics.upkeep_cost(%Warehouse{level: 2, capacity: 100}) == 100
+      # Tier 3: 10 * 1.05^2 = 11.025 -> 11
+      assert Logistics.upkeep_cost(%Warehouse{level: 3, capacity: 100}) == 110
+      # Tier 4: 10 * 1.05^3 = 11.57625 -> 11
+      assert Logistics.upkeep_cost(%Warehouse{level: 4, capacity: 100}) == 110
+      # Tier 5: 10 * 1.05^4 = 12.1550625 -> 12
+      assert Logistics.upkeep_cost(%Warehouse{level: 5, capacity: 100}) == 120
+      # Test capacity variation
+      assert Logistics.upkeep_cost(%Warehouse{level: 5, capacity: 200}) == 240
+    end
+
+    test "upkeep_cost/1 fetches warehouse and returns calculated cost" do
+      warehouse = insert(:warehouse, level: 3, capacity: 100)
+      assert {:ok, 110} = Logistics.upkeep_cost(warehouse.id)
+    end
+
+    test "upkeep_cost/1 returns error if warehouse not found" do
+      assert {:error, :warehouse_not_found} = Logistics.upkeep_cost(Ecto.UUID.generate())
+    end
   end
 
   describe "cargo" do
