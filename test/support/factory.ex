@@ -71,6 +71,51 @@ defmodule Tradewinds.Factory do
     }
   end
 
+  def route_factory do
+    %Tradewinds.World.Route{
+      distance: 100,
+      from: build(:port),
+      to: build(:port)
+    }
+  end
+
+  def good_factory do
+    %Tradewinds.World.Good{
+      name: sequence(:good_name, &"Good #{&1}"),
+      description: "A very valuable good.",
+      category: "food",
+      base_price: 100,
+      volatility: 0.1,
+      elasticity: 0.5
+    }
+  end
+
+  def ship_cargo_factory do
+    %Tradewinds.Fleet.ShipCargo{
+      ship: build(:ship),
+      good: build(:good),
+      quantity: 10
+    }
+  end
+
+  def warehouse_factory do
+    %Tradewinds.Logistics.Warehouse{
+      level: 1,
+      capacity: 1000,
+      delinquent: false,
+      port: build(:port),
+      company: build(:company)
+    }
+  end
+
+  def warehouse_inventory_factory do
+    %Tradewinds.Logistics.WarehouseInventory{
+      warehouse: build(:warehouse),
+      good: build(:good),
+      quantity: 100
+    }
+  end
+
   def shipyard_factory do
     %Tradewinds.Shipyards.Shipyard{
       port: build(:port)

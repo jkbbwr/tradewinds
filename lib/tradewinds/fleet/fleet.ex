@@ -176,7 +176,11 @@ defmodule Tradewinds.Fleet do
   end
 
   def fetch_ship(id, opts \\ []) do
-    Repo.get(Ship, id, opts)
+    preload = Keyword.get(opts, :preload, [])
+
+    Ship
+    |> Repo.get(id)
+    |> Repo.preload(preload)
     |> Repo.ok_or(:ship_not_found)
   end
 
