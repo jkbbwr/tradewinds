@@ -200,4 +200,26 @@ defmodule Tradewinds.Fleet do
       ship |> Ship.transfer_changeset(new_company_id) |> Repo.update()
     end
   end
+
+  def transfer_to_warehouse(ship_id, warehouse_id, good_id, quantity) when quantity > 0 do
+    with {:ok, ship} <- fetch_ship(ship_id),
+         {:ok, warehouse} <- Tradewinds.Logistics.fetch_warehouse(warehouse_id),
+         :ok <- check_ship_at_warehouse(ship, warehouse) do
+      Repo.transact(fn ->
+        with {:ok, _} <- remove_cargo(ship_id, good_id, quantity),
+             {:ok, _} <- Tradewinds.Logistics.add_cargo(warehouse_id, good_id, quantity) do
+          {:ok, :transferred}
+        end
+      end)
+    end
+  end
+
+  defp check_ship_at_warehouse(ship, warehouse) do
+    cond do
+      ship.status != :docked -> {:error, :ship_not_docked}
+      ship.port_id == nil -> {:error, :ship_not_at_port}
+      ship.port_id != warehouse.port_id -> {:error, :not_at_same_port}
+      true -> :ok
+    end
+  end
 end
