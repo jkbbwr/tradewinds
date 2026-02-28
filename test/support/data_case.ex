@@ -29,6 +29,7 @@ defmodule Tradewinds.DataCase do
   end
 
   setup tags do
+    Mox.stub_with(Tradewinds.ClockMock, Tradewinds.Clock.Frozen)
     Tradewinds.DataCase.setup_sandbox(tags)
     :ok
   end

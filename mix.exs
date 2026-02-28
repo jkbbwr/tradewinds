@@ -31,7 +31,7 @@ defmodule Tradewinds.MixProject do
   end
 
   # Specifies which paths to compile per environment.
-  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(:test), do: ["test/support", "lib"]
   defp elixirc_paths(_), do: ["lib"]
 
   # Specifies your project dependencies.
@@ -57,7 +57,8 @@ defmodule Tradewinds.MixProject do
       {:ex_machina, "~> 2.8", only: :test},
       {:oban, "~> 2.20"},
       {:igniter, "~> 0.7.2", only: :dev},
-      {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:mox, "~> 1.1", only: :test}
     ]
   end
 

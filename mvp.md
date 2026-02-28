@@ -72,7 +72,7 @@ Time model:
 
 ## Milestone 6 — Economy scaffolding: clock + shocks + day/month boundaries
 
-- [ ] Implement `game_clock` storage + `Clock.current_tick/0`
+- [x] Implement `game_clock` storage + `Clock.current_tick/0`
 - [ ] Implement `Economy.Shocks` persistence (scoped target: global/port/good)
 - [ ] Implement day boundary helper (idempotent daily work guard)
 - [ ] Implement month boundary helper (idempotent monthly work guard)

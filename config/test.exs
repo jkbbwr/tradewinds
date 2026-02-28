@@ -1,6 +1,12 @@
 import Config
 config :tradewinds, Oban, testing: :manual
 
+config :tradewinds,
+  skip_clock_refresh: false
+
+# Set clock adapter to mock for tests
+config :tradewinds, :clock_adapter, Tradewinds.Clock.Frozen
+
 # Configure your database
 #
 # The MIX_TEST_PARTITION environment variable can be used

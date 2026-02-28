@@ -13,6 +13,8 @@ defmodule Tradewinds.Application do
       {DNSCluster, query: Application.get_env(:tradewinds, :dns_cluster_query) || :ignore},
       {Oban, Application.fetch_env!(:tradewinds, Oban)},
       {Phoenix.PubSub, name: Tradewinds.PubSub},
+      # Initialize the Clock cache on boot
+      {Task, fn -> Tradewinds.Clock.refresh_cache() end},
       # Start a worker by calling: Tradewinds.Worker.start_link(arg)
       # {Tradewinds.Worker, arg},
       # Start to serve requests, typically the last entry

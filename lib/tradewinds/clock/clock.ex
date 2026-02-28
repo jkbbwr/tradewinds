@@ -1,12 +1,12 @@
 defmodule Tradewinds.Clock do
-  @moduledoc """
-  The Clock context manages the global game time (ticks).
-  """
+  @callback get_tick() :: non_neg_integer()
+  @callback refresh_cache() :: :ok
 
-  @doc """
-  Gets the current global game tick.
-  """
-  def get_tick() do
-    0
+  def get_tick, do: impl().get_tick()
+  
+  def refresh_cache, do: impl().refresh_cache()
+
+  defp impl do
+    Application.get_env(:tradewinds, :clock_adapter, Tradewinds.Clock.Live)
   end
 end
