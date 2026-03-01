@@ -22,12 +22,17 @@ defmodule Tradewinds.Clock.Live do
   @impl true
   def refresh_cache() do
     season = Repo.one(from s in Season, where: s.active == true, limit: 1)
-    # Store a map to avoid leaking schema structs into other processes if they get updated
-    cache_data = %{
-      id: season.id,
-      start_date: season.start_date,
-      tick_duration_seconds: season.tick_duration_seconds
-    }
+    
+    cache_data =
+      if season do
+        %{
+          id: season.id,
+          start_date: season.start_date,
+          tick_duration_seconds: season.tick_duration_seconds
+        }
+      else
+        nil
+      end
 
     :persistent_term.put(@cache_key, cache_data)
     :ok

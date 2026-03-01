@@ -15,8 +15,7 @@ defmodule Tradewinds.Application do
       {Phoenix.PubSub, name: Tradewinds.PubSub},
       # Initialize the Clock cache on boot
       {Task, fn -> Tradewinds.Clock.refresh_cache() end},
-      # Start a worker by calling: Tradewinds.Worker.start_link(arg)
-      # {Tradewinds.Worker, arg},
+
       # Start to serve requests, typically the last entry
       TradewindsWeb.Endpoint
     ]
