@@ -69,7 +69,7 @@ defmodule Tradewinds.LogisticsTest do
 
       # level 1 upgrade cost is 100
       assert {:ok, updated_warehouse} = Logistics.grow_warehouse(warehouse.id)
-      
+
       assert updated_warehouse.level == 2
       assert updated_warehouse.capacity == 2000
 
@@ -77,15 +77,20 @@ defmodule Tradewinds.LogisticsTest do
       assert updated_company.treasury == 4900
 
       # verify ledger entry
-      assert Repo.get_by(Tradewinds.Companies.Ledger, company_id: company.id, reference_type: "warehouse", reference_id: warehouse.id)
+      assert Repo.get_by(Tradewinds.Companies.Ledger,
+               company_id: company.id,
+               reference_type: "warehouse",
+               reference_id: warehouse.id
+             )
     end
 
     test "grow_warehouse/1 fails if insufficient funds" do
-      company = insert(:company, treasury: 50) # less than 100
+      # less than 100
+      company = insert(:company, treasury: 50)
       warehouse = insert(:warehouse, company: company, level: 1, capacity: 1000)
 
       assert {:error, :insufficient_funds} = Logistics.grow_warehouse(warehouse.id)
-      
+
       reloaded = Repo.get(Tradewinds.Logistics.Warehouse, warehouse.id)
       assert reloaded.level == 1
     end
@@ -107,7 +112,7 @@ defmodule Tradewinds.LogisticsTest do
     test "shrink_warehouse/1 fails if inventory exceeds new capacity" do
       warehouse = insert(:warehouse, level: 2, capacity: 2000)
       good = insert(:good)
-      
+
       # Fill it with 1500, new capacity would be 1000
       insert(:warehouse_inventory, warehouse: warehouse, good: good, quantity: 1500)
 
@@ -131,7 +136,7 @@ defmodule Tradewinds.LogisticsTest do
       Logistics.add_cargo(warehouse.id, good.id, 50)
       assert {:ok, _} = Logistics.add_cargo(warehouse.id, good.id, 25)
       assert {:ok, 75} = Logistics.current_inventory_total(warehouse.id)
-      
+
       inventory = Repo.get_by(WarehouseInventory, warehouse_id: warehouse.id, good_id: good.id)
       assert inventory.quantity == 75
     end
@@ -160,7 +165,7 @@ defmodule Tradewinds.LogisticsTest do
 
       assert {:ok, _} = Logistics.remove_cargo(warehouse.id, good.id, 20)
       assert {:ok, 30} = Logistics.current_inventory_total(warehouse.id)
-      
+
       inventory = Repo.get_by(WarehouseInventory, warehouse_id: warehouse.id, good_id: good.id)
       assert inventory.quantity == 30
     end

@@ -11,6 +11,7 @@ defmodule Tradewinds.Repo.Migrations.CreatePorts do
     create table(:port) do
       add :name, :text, null: false
       add :shortcode, :text, null: false
+      add :is_hub, :boolean, null: false, default: false
       add :country_id, references(:country), null: false
       timestamps()
     end

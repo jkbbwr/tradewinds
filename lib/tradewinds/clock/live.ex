@@ -22,7 +22,7 @@ defmodule Tradewinds.Clock.Live do
   @impl true
   def refresh_cache() do
     season = Repo.one(from s in Season, where: s.active == true, limit: 1)
-    
+
     cache_data =
       if season do
         %{

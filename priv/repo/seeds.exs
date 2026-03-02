@@ -17,6 +17,8 @@ alias Tradewinds.World.Route
 alias Tradewinds.World.Good
 alias Tradewinds.World.ShipType
 alias Tradewinds.Shipyards.Shipyard
+alias Tradewinds.Commerce.Trader
+alias Tradewinds.Commerce.TraderPosition
 
 # United Kingdom
 uk =
@@ -26,8 +28,8 @@ uk =
       "A maritime powerhouse with a storied naval history and bustling industrial ports that connect the British Isles to the world."
   })
 
-london = Repo.insert!(%Port{name: "London", shortcode: "LON", country_id: uk.id})
-edinburgh = Repo.insert!(%Port{name: "Edinburgh", shortcode: "EDI", country_id: uk.id})
+london = Repo.insert!(%Port{name: "London", shortcode: "LON", country_id: uk.id, is_hub: true})
+edinburgh = Repo.insert!(%Port{name: "Edinburgh", shortcode: "EDI", country_id: uk.id, is_hub: true})
 bristol = Repo.insert!(%Port{name: "Bristol", shortcode: "BRS", country_id: uk.id})
 hull = Repo.insert!(%Port{name: "Hull", shortcode: "HUL", country_id: uk.id})
 portsmouth = Repo.insert!(%Port{name: "Portsmouth", shortcode: "PME", country_id: uk.id})
@@ -42,7 +44,7 @@ netherlands =
       "The gateway to Europe, a nation defined by its intricate canal systems and some of the world's most advanced deep-water harbors."
   })
 
-amsterdam = Repo.insert!(%Port{name: "Amsterdam", shortcode: "AMS", country_id: netherlands.id})
+amsterdam = Repo.insert!(%Port{name: "Amsterdam", shortcode: "AMS", country_id: netherlands.id, is_hub: true})
 rotterdam = Repo.insert!(%Port{name: "Rotterdam", shortcode: "RTM", country_id: netherlands.id})
 
 # Germany
@@ -53,7 +55,7 @@ germany =
       "A hub of engineering and trade, where historic Hanseatic cities continue to serve as vital arteries for Central European commerce."
   })
 
-hamburg = Repo.insert!(%Port{name: "Hamburg", shortcode: "HAM", country_id: germany.id})
+hamburg = Repo.insert!(%Port{name: "Hamburg", shortcode: "HAM", country_id: germany.id, is_hub: true})
 bremen = Repo.insert!(%Port{name: "Bremen", shortcode: "BRE", country_id: germany.id})
 
 # Belgium
@@ -462,3 +464,70 @@ Repo.insert!(%Shipyard{port_id: london.id})
 Repo.insert!(%Shipyard{port_id: amsterdam.id})
 Repo.insert!(%Shipyard{port_id: hamburg.id})
 Repo.insert!(%Shipyard{port_id: edinburgh.id})
+
+ports = Repo.all(Port)
+goods = Repo.all(Good) |> Map.new(&{&1.name, &1})
+
+# Mapping of port specialties
+port_market_data = %{
+  "Bristol" => %{sells: ["Iron", "Coal", "Wool"], buys: ["Wine", "Salt", "Grain"]},
+  "Hull" => %{sells: ["Fish", "Grain", "Wool"], buys: ["Timber", "Iron", "Tar/Pitch"]},
+  "Portsmouth" => %{sells: ["Hemp", "Salt", "Timber"], buys: ["Coal", "Cloth", "Wine"]},
+  "Plymouth" => %{sells: ["Copper", "Fish", "Salt"], buys: ["Cloth", "Grain", "Timber"]},
+  "Rotterdam" => %{sells: ["Hemp", "Tar/Pitch", "Cloth"], buys: ["Coal", "Iron", "Silk"]},
+  "Antwerp" => %{sells: ["Silk", "Cloth", "Wine"], buys: ["Wool", "Copper", "Grain"]},
+  "Dunkirk" => %{sells: ["Wine", "Grain", "Cloth"], buys: ["Iron", "Coal", "Fish"]},
+  "Calais" => %{sells: ["Wine", "Salt", "Grain"], buys: ["Wool", "Timber", "Coal"]},
+  "Dublin" => %{sells: ["Wool", "Fish", "Salt"], buys: ["Iron", "Timber", "Cloth"]},
+  "Bremen" => %{sells: ["Timber", "Tar/Pitch", "Grain"], buys: ["Spices", "Copper", "Salt"]},
+  "London" => %{sells: ["Cloth", "Wool", "Iron"], buys: ["Timber", "Hemp", "Wine"]},
+  "Amsterdam" => %{sells: ["Spices", "Silk", "Fish"], buys: ["Grain", "Wool", "Iron"]},
+  "Hamburg" => %{sells: ["Timber", "Grain", "Copper"], buys: ["Wine", "Silk", "Cloth"]},
+  "Edinburgh" => %{sells: ["Coal", "Fish", "Wool"], buys: ["Salt", "Hemp", "Spices"]}
+}
+
+for port <- ports do
+  # Each port has one primary Merchant Guild trader
+  trader = Repo.insert!(%Trader{name: "#{port.name} Merchant Guild"})
+
+  market_data = Map.get(port_market_data, port.name, %{sells: [], buys: []})
+
+  # Scaling factors based on your is_hub flag
+  hub_mult = if port.is_hub, do: 2.0, else: 1.0
+  base_spread = if port.is_hub, do: 0.05, else: 0.08
+
+  for {good_name, good} <- goods do
+    is_selling = good_name in market_data.sells
+    is_buying = good_name in market_data.buys
+
+    {stock, target, s_rate, d_rate} =
+      cond do
+        is_selling ->
+          # Producers: High stock (1,000–2,000), fast 12%/day regeneration
+          {round(1000 * hub_mult), round(1000 * hub_mult), 0.12, 0.02}
+
+        is_buying ->
+          # Consumers: Low stock, 10%/day depletion
+          {round(100 * hub_mult), round(800 * hub_mult), 0.02, 0.10}
+
+        true ->
+          # Neutral: Low churn, steady baseline
+          {round(300 * hub_mult), round(300 * hub_mult), 0.04, 0.04}
+      end
+
+    Repo.insert!(%TraderPosition{
+      trader_id: trader.id,
+      port_id: port.id,
+      good_id: good.id,
+      stock: stock,
+      target_stock: target,
+      # Rates treated as daily fractional drift in the simulation loop
+      supply_rate: s_rate,
+      demand_rate: d_rate,
+      # Stable pricing for multiplayer throughput
+      elasticity: 0.12,
+      spread: base_spread,
+      monthly_profit: 0
+    })
+  end
+end

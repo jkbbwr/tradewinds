@@ -167,8 +167,10 @@ defmodule Tradewinds.AccountsTest do
     test "generate_token/1 signs player id into token string" do
       player = insert(:player)
       token_string = Accounts.generate_token(player)
-      
-      assert {:ok, verified_id} = Phoenix.Token.verify(TradewindsWeb.Endpoint, "player auth", token_string)
+
+      assert {:ok, verified_id} =
+               Phoenix.Token.verify(TradewindsWeb.Endpoint, "player auth", token_string)
+
       assert verified_id == player.id
     end
   end

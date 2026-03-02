@@ -11,6 +11,9 @@ defmodule Tradewinds.Repo.Migrations.Season do
       timestamps()
     end
 
-    create unique_index(:season, [:active], where: "active = true", name: :active_season_must_be_unique)
+    create unique_index(:season, [:active],
+             where: "active = true",
+             name: :active_season_must_be_unique
+           )
   end
 end

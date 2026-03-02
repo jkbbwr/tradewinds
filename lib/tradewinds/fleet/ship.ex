@@ -42,7 +42,12 @@ defmodule Tradewinds.Fleet.Ship do
 
   def dock_changeset(ship, port_id) do
     ship
-    |> cast(%{status: :docked, port_id: port_id, route_id: nil, arriving_at: nil}, [:status, :port_id, :route_id, :arriving_at])
+    |> cast(%{status: :docked, port_id: port_id, route_id: nil, arriving_at: nil}, [
+      :status,
+      :port_id,
+      :route_id,
+      :arriving_at
+    ])
     |> validate_required([:status, :port_id])
     |> validate_inclusion(:status, [:docked])
     |> validate_location()

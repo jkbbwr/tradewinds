@@ -50,7 +50,9 @@ defmodule Tradewinds.ScopeTest do
 
     test "returns {:error, :unauthorized} if scope is not a Scope struct" do
       company_id = Ecto.UUID.generate()
-      assert Scope.authorizes?(%{company_ids: [company_id]}, company_id) == {:error, :unauthorized}
+
+      assert Scope.authorizes?(%{company_ids: [company_id]}, company_id) ==
+               {:error, :unauthorized}
     end
   end
 
@@ -61,7 +63,7 @@ defmodule Tradewinds.ScopeTest do
       scope = %Scope{company_ids: [initial_id]}
 
       updated_scope = Scope.put_company_id(scope, new_id)
-      
+
       assert new_id in updated_scope.company_ids
       assert initial_id in updated_scope.company_ids
     end
