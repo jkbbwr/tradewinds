@@ -70,18 +70,14 @@ Time model:
 
 ---
 
-## Milestone 6 — Commerce (NPC trader): trader maths, restocking, instant buy/sell
+## Milestone 6 — Commerce (NPC trader): trader maths, instant buy/sell
 
-- [ ] Implement `npc_stock` + `npc_trader` persistence + seeding
+- [x] Implement `npc_stock` + `npc_trader` persistence + seeding
 - [ ] Implement effective supply/demand/volatility computation with active shocks
-- [ ] Implement daily NPC simulation `Commerce.simulate_day(day)`
-    - stock drift/restocking + clamps + volatility update + idempotent guard
 - [ ] Implement NPC price function (quantities hidden) + availability buckets
 - [ ] Implement slippage/impact model (quantity-based, capped)
 - [ ] Implement instant buy from NPC trader (atomic: ledger + cargo + npc state)
 - [ ] Implement instant sell to NPC trader (atomic)
-- [ ] Implement monthly reset for NPC trader stance (profit/spread reset)
-- [ ] Implement net-player-flow aggregation for NPC simulation (from trade log)
 
 ---
 
@@ -92,41 +88,42 @@ Time model:
 - [ ] Implement cancel order (scope auth)
 - [ ] Implement matching engine (per port+good) + fill emission
 - [ ] Implement settlement for a matched fill (atomic ledger + inventory)
-- [ ] Implement order expiry sweep (release/cancel logic TBD)
 - [ ] Implement market read functions (best N levels + recent trades)
 
 ---
 
-## Milestone 8 — Economy scaffolding: clock + shocks + day/month boundaries
+## Milestone 8 — Economy scaffolding: clock + shocks
 
 - [x] Implement `game_clock` storage + `Clock.current_tick/0`
 - [ ] Implement `Economy.Shocks` persistence (scoped target: global/port/good)
-- [ ] Implement day boundary helper (idempotent daily work guard)
-- [ ] Implement month boundary helper (idempotent monthly work guard)
 
 ---
 
-## Milestone 9 — Cross-cutting: trade logs + upkeep
+## Milestone 9 — Cross-cutting: trade logs
 
 - [ ] Implement trade log (unambiguous buyer/seller, qty, price, port, tick, source)
-- [ ] Implement monthly company upkeep calculation (ships + warehouses)
-- [ ] Implement monthly upkeep processing function (delinquency flags, dormant/evict rules)
 
 ---
 
-## Milestone 9.5 — Ship Construction
-
-- [ ] Implement ship construction function `Shipyards.produce_ships(current_tick)`
-    - Produce at day boundary (every 24 ticks), idempotent via `last_produced_day`
-
----
-
-## Milestone 10 — Oban/Cron LAST (replace temp scheduler + scale-out)
+## Milestone 10 — Oban/Cron (Simulations and Scheduled Jobs)
 
 - [ ] Add Oban + queues config + migrations
 - [ ] Replace GenServer tick runner with Oban Cron job(s)
 - [ ] Replace arrival scanning with “schedule on departure” Oban jobs
 - [ ] Split heavy sweeps into workers (idempotent day/month guards)
+- [ ] Implement day boundary helper (idempotent daily work guard)
+- [ ] Implement month boundary helper (idempotent monthly work guard)
+- [ ] Implement daily NPC simulation `Commerce.simulate_day(day)`
+    - stock drift/restocking + clamps + volatility update + idempotent guard
+- [ ] Implement net-player-flow aggregation for NPC simulation (from trade log)
+- [ ] Implement monthly reset for NPC trader stance (profit/spread reset)
+- [ ] Implement order expiry sweep (release/cancel logic TBD)
+- [ ] Implement monthly company upkeep calculation (ships + warehouses)
+- [ ] Implement monthly upkeep processing function (delinquency flags, dormant/evict rules)
+- [ ] Implement ship construction function `Shipyards.produce_ships(current_tick)`
+    - Produce at day boundary (every 24 ticks), idempotent via `last_produced_day`
+- [ ] Implement quote expiry sweep (drop or mark expired quotes > `expires_tick`)
+- [ ] Implement maturity execution job (Oban scheduled at `maturity_tick`)
 
 ---
 
@@ -149,7 +146,6 @@ Time model:
 - [ ] Implement quote exercise (scope auth, verify `current_tick <= expires_tick`)
 - [ ] Implement dynamic stock check on exercise (honor up to available `npc_market.stock`, allow partial fill)
 - [ ] Implement settlement for exercised quote (atomic ledger debit, inventory credit, stock deduct)
-- [ ] Implement quote expiry sweep (drop or mark expired quotes > `expires_tick`)
 
 ---
 
@@ -169,7 +165,6 @@ Time model:
 - [ ] Implement `future_contract` persistence (buyer_id, seller_id, port_id, good_id, qty, price, maturity_tick, collateral)
 - [ ] Implement contract creation (scope auth both parties, agree on terms)
 - [ ] Implement collateral escrow (atomic ledger deduct from both buyer and seller on creation)
-- [ ] Implement maturity execution job (Oban scheduled at `maturity_tick`)
 - [ ] Implement successful settlement (atomic transfer of goods/credits at agreed price, refund collateral)
 - [ ] Implement default settlement (if funds/goods missing: forfeit collateral to victim, void contract)
 
