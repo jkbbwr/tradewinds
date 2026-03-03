@@ -151,4 +151,17 @@ defmodule Tradewinds.Factory do
       monthly_profit: 0
     }
   end
+
+  def trade_log_factory do
+    %Tradewinds.Economy.TradeLog{
+      tick: 1,
+      quantity: 10,
+      price: 100,
+      source: :npc_trader,
+      port: build(:port),
+      good: build(:good),
+      buyer_id: Ecto.UUID.generate(),
+      seller_id: Ecto.UUID.generate()
+    }
+  end
 end

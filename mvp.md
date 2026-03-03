@@ -101,7 +101,7 @@ Time model:
 
 ## Milestone 9 — Cross-cutting: trade logs
 
-- [ ] Implement trade log (unambiguous buyer/seller, qty, price, port, tick, source)
+- [x] Implement trade log (unambiguous buyer/seller, qty, price, port, tick, source)
 
 ---
 

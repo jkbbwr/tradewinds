@@ -163,6 +163,17 @@ defmodule Tradewinds.Market do
          {:ok, _} <- Logistics.add_cargo(ctx.buyer_warehouse_id, ctx.order.good_id, ctx.quantity),
          {:ok, _} <- Companies.update_reputation(ctx.buyer_id, @success_rep_gain),
          {:ok, _} <- Companies.update_reputation(ctx.seller_id, @success_rep_gain),
+         {:ok, _} <-
+           Tradewinds.Economy.log_trade(%{
+             tick: tick,
+             quantity: ctx.quantity,
+             price: ctx.order.price,
+             source: :market,
+             port_id: ctx.order.port_id,
+             good_id: ctx.order.good_id,
+             buyer_id: ctx.buyer_id,
+             seller_id: ctx.seller_id
+           }),
          {:ok, updated_order} <- update_order_fulfillment(ctx.order, ctx.quantity) do
       {:ok, updated_order}
     end

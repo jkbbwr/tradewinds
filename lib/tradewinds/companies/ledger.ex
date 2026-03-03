@@ -27,7 +27,7 @@ defmodule Tradewinds.Companies.Ledger do
 
     belongs_to :company, Tradewinds.Companies.Company
 
-    timestamps()
+    timestamps(updated_at: false)
   end
 
   @doc false

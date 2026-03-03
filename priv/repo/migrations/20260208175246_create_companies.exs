@@ -7,6 +7,7 @@ defmodule Tradewinds.Repo.Migrations.CreateCompanies do
       add :ticker, :string, size: 5, null: false
       add :treasury, :integer, null: false
       add :home_port_id, references(:port), null: false
+      add :reputation, :integer, null: false, default: 1000
       timestamps()
     end
 

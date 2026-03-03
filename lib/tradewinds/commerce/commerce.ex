@@ -158,6 +158,11 @@ defmodule Tradewinds.Commerce do
     current_tick = Tradewinds.Clock.get_tick()
     amount = if quote_data.action == :buy, do: -quote_data.total_price, else: quote_data.total_price
 
+    {buyer_id, seller_id} =
+      if quote_data.action == :buy,
+        do: {quote_data.company_id, Tradewinds.Economy.system_npc_id()},
+        else: {Tradewinds.Economy.system_npc_id(), quote_data.company_id}
+
     with {:ok, _} <-
            Tradewinds.Companies.record_transaction(
              quote_data.company_id,
@@ -168,7 +173,18 @@ defmodule Tradewinds.Commerce do
              current_tick
            ),
          :ok <- update_cargo_destinations(quote_data, destinations),
-         {:ok, _} <- update_market_position(quote_data, position) do
+         {:ok, _} <- update_market_position(quote_data, position),
+         {:ok, _} <-
+           Tradewinds.Economy.log_trade(%{
+             tick: current_tick,
+             quantity: quote_data.quantity,
+             price: quote_data.unit_price,
+             source: :npc_trader,
+             port_id: quote_data.port_id,
+             good_id: quote_data.good_id,
+             buyer_id: buyer_id,
+             seller_id: seller_id
+           }) do
       {:ok, quote_data}
     end
   end

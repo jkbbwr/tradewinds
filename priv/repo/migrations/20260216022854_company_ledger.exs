@@ -11,7 +11,7 @@ defmodule Tradewinds.Repo.Migrations.CompanyLedger do
       add :reference_id, :uuid, null: false
       add :idempotency_key, :text, null: false
       add :meta, :jsonb, default: "{}"
-      timestamps()
+      timestamps(updated_at: false)
     end
 
     create unique_index(:company_ledger, :idempotency_key)
