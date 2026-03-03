@@ -8,7 +8,10 @@ defmodule Tradewinds.Shipyards.Shipyard do
     timestamps()
   end
 
-  @doc false
+  @doc """
+  Builds a changeset for creating a shipyard at a specific port.
+  Enforces one shipyard per port.
+  """
   def create_changeset(shipyard, attrs) do
     shipyard
     |> cast(attrs, [:port_id])

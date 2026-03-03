@@ -1,14 +1,17 @@
 defmodule Tradewinds.Commerce do
   @moduledoc """
   The Commerce context.
+  Handles interactions between players and NPC traders, including price calculation,
+  signed quotes, immediate execution, and daily market simulations.
   """
 
   alias Tradewinds.Repo
   import Ecto.Query
 
   @doc """
-  Generates a signed quote for a company to buy or sell a specific quantity of goods from/to a trader.
-  Returns {:ok, token, quote_data} or {:error, reason}.
+  Generates a signed, stateless quote for a company to buy or sell goods from/to a trader.
+  Applies active economic shocks to base price and volatility.
+  Returns `{:ok, token, quote_data}` or `{:error, reason}`.
   """
   def generate_quote(company_id, port_id, good_id, action, quantity)
       when action in [:buy, :sell] and is_integer(quantity) and quantity > 0 do
@@ -70,7 +73,7 @@ defmodule Tradewinds.Commerce do
 
   @doc """
   Verifies a trader quote token.
-  Returns {:ok, quote_data} or {:error, reason}.
+  Enforces a maximum age (e.g., 120 seconds) to prevent stale price execution.
   """
   def verify_quote(token) do
     # 5 ticks * 24 seconds/tick = 120 seconds max age
@@ -78,8 +81,8 @@ defmodule Tradewinds.Commerce do
   end
 
   @doc """
-  Executes a signed quote, performing the atomic trade between the company and the trader.
-  `destinations` is a list of maps: `[%{type: :ship, id: id, quantity: qty}, %{type: :warehouse, id: id, quantity: qty}]`.
+  Executes a previously signed quote atomically.
+  Distributes or withdraws the goods across multiple specified `destinations` (ships/warehouses).
   """
   def execute_quote(token, destinations) when is_list(destinations) do
     with {:ok, quote_data} <- verify_quote(token),
@@ -95,6 +98,10 @@ defmodule Tradewinds.Commerce do
     end
   end
 
+  @doc """
+  Calculates and executes a trade immediately in one atomic step without requiring a signed quote.
+  Applies all economic shocks dynamically before execution.
+  """
   def execute_immediate(company_id, port_id, good_id, action, destinations)
       when action in [:buy, :sell] and is_list(destinations) do
     total_qty = Enum.reduce(destinations, 0, fn %{quantity: qty}, acc -> acc + qty end)
@@ -150,6 +157,7 @@ defmodule Tradewinds.Commerce do
     end
   end
 
+  # Ensures the requested distribution of goods perfectly matches the quoted total quantity.
   defp validate_destinations_total(quote_data, destinations) do
     total_qty = Enum.reduce(destinations, 0, fn %{quantity: qty}, acc -> acc + qty end)
 
@@ -160,6 +168,7 @@ defmodule Tradewinds.Commerce do
     end
   end
 
+  # Fetches and row-locks an NPC trader position to prevent race conditions during execution.
   defp fetch_position_for_update(port_id, good_id) do
     Tradewinds.Commerce.TraderPosition
     |> where(port_id: ^port_id, good_id: ^good_id)
@@ -169,6 +178,7 @@ defmodule Tradewinds.Commerce do
     |> Repo.ok_or(:market_not_found)
   end
 
+  # Verifies the NPC actually has enough stock to fulfill a buy order.
   defp validate_trade_execution(quote_data, position, _destinations) do
     if quote_data.action == :buy && position.stock < quote_data.quantity do
       {:error, :insufficient_market_stock}
@@ -177,6 +187,7 @@ defmodule Tradewinds.Commerce do
     end
   end
 
+  # The core atomic execution block. Charges the treasury, moves cargo, updates NPC stock, and writes a trade log.
   defp perform_execution(quote_data, position, destinations, current_tick) do
     amount = if quote_data.action == :buy, do: -quote_data.total_price, else: quote_data.total_price
 
@@ -211,6 +222,7 @@ defmodule Tradewinds.Commerce do
     end
   end
 
+  # Iterates over specified destinations, adding or removing goods while validating location and ownership.
   defp update_cargo_destinations(quote_data, destinations) do
     Enum.reduce_while(destinations, :ok, fn %{type: type, id: id, quantity: qty}, :ok ->
       result =
@@ -256,17 +268,20 @@ defmodule Tradewinds.Commerce do
     end)
   end
 
+  # Validates that an entity (ship/warehouse) is physically present at the requested port.
   defp validate_location(%{port_id: port_id}, expected_port_id) when port_id == expected_port_id,
     do: :ok
 
   defp validate_location(_, _), do: {:error, :wrong_location}
 
+  # Validates that the trading company owns the target entity (ship/warehouse).
   defp validate_ownership(%{company_id: company_id}, expected_company_id)
        when company_id == expected_company_id,
        do: :ok
 
   defp validate_ownership(_, _), do: {:error, :wrong_owner}
 
+  # Adjusts the NPC's stock balance and accrues virtual profit based on the spread.
   defp update_market_position(quote_data, position) do
     new_stock =
       if quote_data.action == :buy,
@@ -300,7 +315,7 @@ defmodule Tradewinds.Commerce do
   end
 
   @doc """
-  Calculates the base market price before any noise or spread.
+  Calculates the base market price based on elasticity and how far stock deviates from the target.
   """
   def base_market_price(current_stock, target_stock, base_price, elasticity) do
     price_ratio = target_stock / (current_stock + 1)
@@ -354,6 +369,7 @@ defmodule Tradewinds.Commerce do
     clamp(price, floor_price, ceil_price)
   end
 
+  # Helper for clamping integer boundaries.
   defp clamp(value, min, max) do
     value |> max(min) |> min(max)
   end

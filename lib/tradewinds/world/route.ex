@@ -9,7 +9,9 @@ defmodule Tradewinds.World.Route do
     timestamps()
   end
 
-  @doc false
+  @doc """
+  Builds a changeset for creating a bidirectional travel route between two ports.
+  """
   def create_changeset(route, attrs) do
     route
     |> cast(attrs, [:distance, :from_id, :to_id])

@@ -9,7 +9,10 @@ defmodule Tradewinds.Fleet.ShipCargo do
     timestamps()
   end
 
-  @doc false
+  @doc """
+  Builds a changeset for adding a new type of cargo to a ship.
+  Enforces a positive quantity and uniqueness per ship/good combination.
+  """
   def create_changeset(ship_cargo, attrs) do
     ship_cargo
     |> cast(attrs, [:quantity, :ship_id, :good_id])
@@ -21,7 +24,9 @@ defmodule Tradewinds.Fleet.ShipCargo do
     |> check_constraint(:quantity, name: :quantity_must_be_positive)
   end
 
-  @doc false
+  @doc """
+  Builds a changeset for updating the existing quantity of cargo on a ship.
+  """
   def update_quantity_changeset(ship_cargo, attrs) do
     ship_cargo
     |> cast(attrs, [:quantity])

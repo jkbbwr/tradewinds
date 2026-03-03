@@ -15,7 +15,9 @@ defmodule Tradewinds.Economy.TradeLog do
     timestamps(updated_at: false)
   end
 
-  @doc false
+  @doc """
+  Builds a changeset for recording an immutable trade execution log.
+  """
   def create_changeset(trade_log, attrs) do
     trade_log
     |> cast(attrs, [:tick, :quantity, :price, :source, :port_id, :good_id, :buyer_id, :seller_id])

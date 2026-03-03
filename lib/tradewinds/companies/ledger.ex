@@ -30,7 +30,9 @@ defmodule Tradewinds.Companies.Ledger do
     timestamps(updated_at: false)
   end
 
-  @doc false
+  @doc """
+  Builds a changeset for a new immutable ledger entry representing a financial event.
+  """
   def create_changeset(ledger, attrs) do
     ledger
     |> cast(attrs, [

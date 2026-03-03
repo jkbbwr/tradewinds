@@ -9,7 +9,10 @@ defmodule Tradewinds.Logistics.WarehouseInventory do
     belongs_to :good, Tradewinds.World.Good
   end
 
-  @doc false
+  @doc """
+  Builds a changeset for creating a new inventory record within a warehouse.
+  Enforces uniqueness per warehouse/good combination.
+  """
   def create_changeset(warehouse_inventory, attrs) do
     warehouse_inventory
     |> cast(attrs, [:quantity, :warehouse_id, :good_id])
@@ -23,7 +26,9 @@ defmodule Tradewinds.Logistics.WarehouseInventory do
     |> check_constraint(:quantity, name: :quantity_must_be_positive)
   end
 
-  @doc false
+  @doc """
+  Builds a changeset for updating the quantity of an existing inventory record.
+  """
   def update_quantity_changeset(warehouse_inventory, attrs) do
     warehouse_inventory
     |> cast(attrs, [:quantity])

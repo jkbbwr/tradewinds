@@ -20,6 +20,10 @@ defmodule Tradewinds.Economy.Shock do
     timestamps()
   end
 
+  @doc """
+  Builds a changeset for creating or updating an Economy Shock.
+  Modifiers are stored in Basis Points (BPS) where 10,000 = 1.0x.
+  """
   def changeset(shock, attrs) do
     shock
     |> cast(attrs, [

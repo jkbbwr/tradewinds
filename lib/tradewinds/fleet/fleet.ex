@@ -1,6 +1,7 @@
 defmodule Tradewinds.Fleet do
   @moduledoc """
   The Fleet context.
+  Handles ship operations including transit, cargo management, and ownership.
   """
 
   import Ecto.Query, warn: false
@@ -10,6 +11,10 @@ defmodule Tradewinds.Fleet do
   alias Tradewinds.Scope
   alias Tradewinds.World
 
+  @doc """
+  Initiates travel for a docked ship along a specific route.
+  Sets the ship's status to `:traveling` and calculates the arrival tick.
+  """
   def transit_ship(ship_id, route_id) do
     with {:ok, ship} <- fetch_ship(ship_id),
          :ok <- check_ship_docked(ship),
@@ -29,6 +34,7 @@ defmodule Tradewinds.Fleet do
     end
   end
 
+  # Validates that a ship is currently docked at a port.
   defp check_ship_docked(ship) do
     if ship.status == :docked do
       :ok
@@ -37,6 +43,7 @@ defmodule Tradewinds.Fleet do
     end
   end
 
+  # Validates that a ship is at the origin port of the given route.
   defp check_ship_at_route_origin(ship, route) do
     if ship.port_id == route.from_id do
       :ok
@@ -45,6 +52,9 @@ defmodule Tradewinds.Fleet do
     end
   end
 
+  @doc """
+  Docks a traveling ship at its destination port if the arrival tick has passed.
+  """
   def dock_ship(ship_id) do
     with {:ok, ship} <- fetch_ship(ship_id, preload: [:route]),
          :ok <- check_ship_traveling(ship),
@@ -55,6 +65,7 @@ defmodule Tradewinds.Fleet do
     end
   end
 
+  # Validates that a ship is currently traveling on a route.
   defp check_ship_traveling(ship) do
     if ship.status == :traveling do
       :ok
@@ -63,6 +74,7 @@ defmodule Tradewinds.Fleet do
     end
   end
 
+  # Checks if the current game tick is past the ship's arrival tick.
   defp check_ship_arrived(ship) do
     current_tick = Tradewinds.Clock.get_tick()
 
@@ -74,7 +86,8 @@ defmodule Tradewinds.Fleet do
   end
 
   @doc """
-  Calculates the transit time in ticks for a specific ship on a specific route.
+  Calculates the transit time in ticks for a specific ship on a specific route,
+  taking into account the ship's speed and route distance.
   """
   def transit_time(ship_id, route_id) do
     with {:ok, ship} <- fetch_ship(ship_id, preload: [:ship_type]),
@@ -94,6 +107,9 @@ defmodule Tradewinds.Fleet do
     end
   end
 
+  @doc """
+  Adds a quantity of a specific good to a ship's cargo, enforcing capacity limits.
+  """
   def add_cargo(ship_id, good_id, quantity) do
     Repo.transact(fn ->
       with {:ok, ship} <- fetch_ship_for_update(ship_id),
@@ -109,6 +125,7 @@ defmodule Tradewinds.Fleet do
     end)
   end
 
+  # Fetches and locks a ship record for transaction safety.
   defp fetch_ship_for_update(ship_id) do
     Ship
     |> where(id: ^ship_id)
@@ -118,6 +135,7 @@ defmodule Tradewinds.Fleet do
     |> Repo.ok_or(:ship_not_found)
   end
 
+  # Ensures the ship has enough remaining capacity for the new cargo.
   defp check_capacity(ship, current_total, quantity) do
     if current_total + quantity > ship.ship_type.capacity do
       {:error, :capacity_exceeded}
@@ -126,6 +144,10 @@ defmodule Tradewinds.Fleet do
     end
   end
 
+  @doc """
+  Removes a quantity of a specific good from a ship's cargo.
+  Deletes the cargo record entirely if the quantity drops to zero.
+  """
   def remove_cargo(ship_id, good_id, quantity) when quantity > 0 do
     Repo.transact(fn ->
       with {:ok, cargo} <- fetch_ship_cargo_for_update(ship_id, good_id),
@@ -141,6 +163,7 @@ defmodule Tradewinds.Fleet do
     end)
   end
 
+  # Fetches and locks a specific cargo record for transaction safety.
   defp fetch_ship_cargo_for_update(ship_id, good_id) do
     ShipCargo
     |> where(ship_id: ^ship_id, good_id: ^good_id)
@@ -149,6 +172,7 @@ defmodule Tradewinds.Fleet do
     |> Repo.ok_or(:cargo_not_found)
   end
 
+  # Ensures the ship actually holds enough of the requested good.
   defp check_sufficient_cargo(cargo, quantity) do
     if cargo.quantity < quantity do
       {:error, :insufficient_cargo}
@@ -175,6 +199,9 @@ defmodule Tradewinds.Fleet do
     end
   end
 
+  @doc """
+  Fetches a single ship by ID, optionally preloading associations.
+  """
   def fetch_ship(id, opts \\ []) do
     preload = Keyword.get(opts, :preload, [])
 
@@ -184,6 +211,9 @@ defmodule Tradewinds.Fleet do
     |> Repo.ok_or(:ship_not_found)
   end
 
+  @doc """
+  Renames a ship, enforcing scope authorization to ensure the caller owns the company.
+  """
   def rename_ship(%Scope{} = scope, ship_id, new_name) do
     with {:ok, ship} <- fetch_ship(ship_id),
          :ok <- Scope.authorizes?(scope, ship.company_id) do
@@ -191,6 +221,9 @@ defmodule Tradewinds.Fleet do
     end
   end
 
+  @doc """
+  Assigns a ship to a new company (used by the system, no scope authorization).
+  """
   def assign_ship(ship_id, company_id) do
     case fetch_ship(ship_id) do
       {:ok, ship} -> Ship.transfer_changeset(ship, company_id) |> Repo.update()
@@ -198,6 +231,9 @@ defmodule Tradewinds.Fleet do
     end
   end
 
+  @doc """
+  Transfers a ship to another company, enforcing scope authorization on the current owner.
+  """
   def transfer_ship(%Scope{} = scope, ship_id, new_company_id) do
     with {:ok, ship} <- fetch_ship(ship_id),
          :ok <- Scope.authorizes?(scope, ship.company_id) do
@@ -205,6 +241,9 @@ defmodule Tradewinds.Fleet do
     end
   end
 
+  @doc """
+  Atomically transfers cargo from a docked ship to a warehouse at the same port.
+  """
   def transfer_to_warehouse(ship_id, warehouse_id, good_id, quantity) when quantity > 0 do
     with {:ok, ship} <- fetch_ship(ship_id),
          {:ok, warehouse} <- Tradewinds.Logistics.fetch_warehouse(warehouse_id),
@@ -218,6 +257,7 @@ defmodule Tradewinds.Fleet do
     end
   end
 
+  # Validates that a ship is docked at the same port as the target warehouse.
   defp check_ship_at_warehouse(ship, warehouse) do
     cond do
       ship.status != :docked -> {:error, :ship_not_docked}

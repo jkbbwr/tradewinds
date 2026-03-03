@@ -10,7 +10,9 @@ defmodule Tradewinds.World.Country do
     timestamps()
   end
 
-  @doc false
+  @doc """
+  Builds a changeset for creating a static country definition.
+  """
   def create_changeset(country, attrs) do
     country
     |> cast(attrs, [:name, :description])

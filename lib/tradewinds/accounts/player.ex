@@ -16,12 +16,16 @@ defmodule Tradewinds.Accounts.Player do
     timestamps()
   end
 
+  # Automatically hashes the virtual password field using Argon2 if it was changed.
   defp hash_password(%{changes: %{password: password}} = changeset) do
     change(changeset, password_hash: Argon2.hash_pwd_salt(password))
   end
 
   defp hash_password(changeset), do: changeset
 
+  @doc """
+  Builds a changeset for creating a new player, including password hashing.
+  """
   def create_changeset(player, attrs) do
     player
     |> cast(attrs, [:name, :email, :password])
@@ -32,6 +36,9 @@ defmodule Tradewinds.Accounts.Player do
     |> prepare_changes(&hash_password/1)
   end
 
+  @doc """
+  Builds a changeset for updating the player's enabled status.
+  """
   def enabled_changeset(player, enabled) do
     cast(player, %{enabled: enabled}, [:enabled])
   end

@@ -9,7 +9,9 @@ defmodule Tradewinds.Shipyards.Inventory do
     timestamps()
   end
 
-  @doc false
+  @doc """
+  Builds a changeset for adding an unowned ship to a shipyard's inventory for sale.
+  """
   def create_changeset(inventory, attrs) do
     inventory
     |> cast(attrs, [:shipyard_id, :ship_type_id, :ship_id, :cost])

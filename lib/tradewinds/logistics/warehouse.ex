@@ -13,7 +13,10 @@ defmodule Tradewinds.Logistics.Warehouse do
     timestamps()
   end
 
-  @doc false
+  @doc """
+  Builds a changeset for initially creating a warehouse.
+  Enforces a unique warehouse per company per port.
+  """
   def create_changeset(warehouse, attrs) do
     warehouse
     |> cast(attrs, [:level, :capacity, :delinquent, :port_id, :company_id])
@@ -27,7 +30,9 @@ defmodule Tradewinds.Logistics.Warehouse do
     |> check_constraint(:capacity, name: :capacity_must_be_positive)
   end
 
-  @doc false
+  @doc """
+  Builds a changeset for updating the level and capacity of an existing warehouse.
+  """
   def update_tier_changeset(warehouse, attrs) do
     warehouse
     |> cast(attrs, [:level, :capacity])

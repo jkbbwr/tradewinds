@@ -12,7 +12,9 @@ defmodule Tradewinds.World.Good do
     timestamps()
   end
 
-  @doc false
+  @doc """
+  Builds a changeset for defining a tradeable commodity and its economic baseline parameters.
+  """
   def changeset(good, attrs) do
     good
     |> cast(attrs, [:name, :description, :category, :base_price, :volatility, :elasticity])

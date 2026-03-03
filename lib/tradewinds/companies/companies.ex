@@ -1,6 +1,7 @@
 defmodule Tradewinds.Companies do
   @moduledoc """
   The Companies context.
+  Handles company creation, directorship mapping, financial transactions, and reputation.
   """
 
   import Ecto.Query, warn: false
@@ -12,7 +13,7 @@ defmodule Tradewinds.Companies do
   alias Tradewinds.Accounts.Player
 
   @doc """
-  Creates a company and assigns the current player (from scope) as a director.
+  Creates a new company and automatically assigns the calling player as its first director.
   """
   def create(%Scope{} = scope, name, ticker, home_port_id, treasury \\ 10000) do
     Repo.transact(fn ->
@@ -31,6 +32,9 @@ defmodule Tradewinds.Companies do
     end)
   end
 
+  @doc """
+  Assigns an existing player (via scope) as a director to a company.
+  """
   def add_director(%Scope{} = scope, %Company{} = company) do
     with :ok <- Scope.authorizes?(scope, company.id) do
       %Director{}
@@ -40,7 +44,7 @@ defmodule Tradewinds.Companies do
   end
 
   @doc """
-  Returns a list of company_ids that the player is a director of.
+  Retrieves a list of company IDs that a given player is authorized to act on behalf of.
   """
   def list_player_company_ids(%Player{} = player) do
     player
@@ -49,6 +53,10 @@ defmodule Tradewinds.Companies do
     |> Repo.all()
   end
 
+  @doc """
+  Atomically records a financial transaction to the ledger and updates the company's treasury.
+  Fails and rolls back if the company lacks sufficient funds for a deduction.
+  """
   def record_transaction(
         company_id,
         amount,
@@ -85,18 +93,23 @@ defmodule Tradewinds.Companies do
     end)
   end
 
+  # Updates the cached treasury balance on the company record.
   defp update_company_treasury(company, amount) do
     company
     |> Company.update_treasury_changeset(amount)
     |> Repo.update()
   end
 
+  @doc """
+  Fetches a single company by ID.
+  """
   def fetch_company(id) do
     Company
     |> Repo.get(id)
     |> Repo.ok_or(:company_not_found)
   end
 
+  # Fetches and locks a company record for transaction safety.
   defp fetch_company_for_update(company_id) do
     Company
     |> where(id: ^company_id)
@@ -105,6 +118,7 @@ defmodule Tradewinds.Companies do
     |> Repo.ok_or(:company_not_found)
   end
 
+  # Validates that a deduction will not push the company's treasury below zero.
   defp check_sufficient_funds(company, amount) do
     if amount < 0 && company.treasury + amount < 0 do
       {:error, :insufficient_funds}
@@ -113,6 +127,9 @@ defmodule Tradewinds.Companies do
     end
   end
 
+  @doc """
+  Atomically updates a company's reputation by a given delta.
+  """
   def update_reputation(company_id, delta) do
     Repo.transact(fn ->
       with {:ok, company} <- fetch_company_for_update(company_id),

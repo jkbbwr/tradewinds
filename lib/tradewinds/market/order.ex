@@ -18,7 +18,10 @@ defmodule Tradewinds.Market.Order do
     timestamps()
   end
 
-  @doc false
+  @doc """
+  Builds a changeset for initially posting an order to the market.
+  Calculates the initial `remaining` quantity from the `total`.
+  """
   def create_changeset(order, attrs) do
     order
     |> cast(attrs, [
@@ -54,6 +57,9 @@ defmodule Tradewinds.Market.Order do
     |> foreign_key_constraint(:good_id)
   end
 
+  @doc """
+  Builds a changeset to transition the order's status (e.g. to cancelled or expired).
+  """
   def update_status_changeset(order, status) when status in [:filled, :cancelled, :expired] do
     order
     |> cast(%{status: status}, [:status])
@@ -61,6 +67,9 @@ defmodule Tradewinds.Market.Order do
     |> validate_inclusion(:status, [:filled, :cancelled, :expired])
   end
 
+  @doc """
+  Builds a changeset to decrement the remaining quantity of an order after a partial fill.
+  """
   def update_remaining_changeset(order, new_remaining) do
     order
     |> cast(%{remaining: new_remaining}, [:remaining])

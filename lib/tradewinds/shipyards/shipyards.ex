@@ -1,4 +1,9 @@
 defmodule Tradewinds.Shipyards do
+  @moduledoc """
+  The Shipyards context.
+  Handles ship construction, shipyard inventory, and player ship purchasing.
+  """
+
   import Ecto.Query, warn: false
   alias Tradewinds.Repo
   alias Tradewinds.Companies
@@ -7,16 +12,25 @@ defmodule Tradewinds.Shipyards do
   alias Tradewinds.Shipyards.Inventory
   alias Tradewinds.Scope
 
+  @doc """
+  Fetches a shipyard by its ID.
+  """
   def fetch_shipyard(id) do
     Repo.get(Shipyard, id)
     |> Repo.ok_or(:shipyard_not_found)
   end
 
+  @doc """
+  Fetches the shipyard associated with a specific port.
+  """
   def fetch_shipyard_for_port(port) do
     Repo.get_by(Shipyard, port_id: port.id)
     |> Repo.ok_or(:shipyard_not_found)
   end
 
+  @doc """
+  Fetches all available inventory (unowned ships) currently for sale at a shipyard.
+  """
   def fetch_shipyard_inventory(shipyard_id) do
     query =
       from s in Shipyard,
@@ -28,6 +42,10 @@ defmodule Tradewinds.Shipyards do
     |> Repo.ok_or(:shipyard_not_found)
   end
 
+  @doc """
+  Checks if a shipyard has at least one ship of a specific type in stock.
+  Returns boolean or an error if the shipyard doesn't exist.
+  """
   def has_stock?(shipyard_id, ship_type_id) do
     query =
       from s in Shipyard,
@@ -43,6 +61,10 @@ defmodule Tradewinds.Shipyards do
     end
   end
 
+  @doc """
+  Atomically purchases a ship from a shipyard, assigning it to the company 
+  and deducting the cost from the company's treasury.
+  """
   def purchase_ship(%Scope{} = scope, company_id, shipyard_id, ship_type_id) do
     Repo.transact(fn ->
       with :ok <- Scope.authorizes?(scope, company_id),
@@ -65,6 +87,7 @@ defmodule Tradewinds.Shipyards do
     end)
   end
 
+  # Fetches and locks an inventory record for transaction safety during a purchase.
   defp fetch_inventory_for_update(shipyard_id, ship_type_id) do
     Inventory
     |> where(shipyard_id: ^shipyard_id, ship_type_id: ^ship_type_id)
@@ -74,6 +97,9 @@ defmodule Tradewinds.Shipyards do
     |> Repo.ok_or(:inventory_not_found)
   end
 
+  @doc """
+  Seeds a newly built, unowned ship into a shipyard's inventory.
+  """
   def create_ship(shipyard_id, ship_type_id, ship_id, cost) do
     %Inventory{}
     |> Inventory.create_changeset(%{

@@ -17,7 +17,10 @@ defmodule Tradewinds.Commerce.TraderPosition do
     timestamps()
   end
 
-  @doc false
+  @doc """
+  Builds a changeset for defining an NPC Trader's inventory pool and 
+  economic parameters for a specific good at a specific port.
+  """
   def changeset(position, attrs) do
     position
     |> cast(attrs, [

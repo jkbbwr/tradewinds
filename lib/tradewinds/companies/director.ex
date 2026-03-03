@@ -6,7 +6,9 @@ defmodule Tradewinds.Companies.Director do
     belongs_to :player, Tradewinds.Accounts.Player
   end
 
-  @doc false
+  @doc """
+  Builds a changeset linking a player to a company as a director.
+  """
   def create_changeset(director, attrs) do
     director
     |> cast(attrs, [:company_id, :player_id])

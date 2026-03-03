@@ -10,6 +10,10 @@ defmodule Tradewinds.Clock.Season do
     timestamps()
   end
 
+  @doc """
+  Builds a changeset for a season, enforcing tick duration boundaries 
+  and unique active constraints.
+  """
   def changeset(season, attrs) do
     season
     |> cast(attrs, [:start_date, :end_date, :active, :tick_duration_seconds])

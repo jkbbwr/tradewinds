@@ -9,7 +9,9 @@ defmodule Tradewinds.Commerce.Trader do
     timestamps()
   end
 
-  @doc false
+  @doc """
+  Builds a changeset for creating a top-level NPC Trader entity.
+  """
   def changeset(trader, attrs) do
     trader
     |> cast(attrs, [:name])

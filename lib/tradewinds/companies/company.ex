@@ -14,6 +14,9 @@ defmodule Tradewinds.Companies.Company do
     timestamps()
   end
 
+  @doc """
+  Builds a changeset for initializing a new company.
+  """
   def create_changeset(company, attrs) do
     company
     |> cast(attrs, [:name, :ticker, :treasury, :reputation, :home_port_id])
@@ -25,6 +28,9 @@ defmodule Tradewinds.Companies.Company do
     |> foreign_key_constraint(:home_port_id)
   end
 
+  @doc """
+  Builds a changeset for mutating the treasury balance, ensuring it never drops below zero.
+  """
   def update_treasury_changeset(company, delta) do
     company
     |> change()
@@ -32,6 +38,9 @@ defmodule Tradewinds.Companies.Company do
     |> validate_number(:treasury, greater_than_or_equal_to: 0)
   end
 
+  @doc """
+  Builds a changeset for mutating the reputation, ensuring it stays strictly positive.
+  """
   def update_reputation_changeset(company, delta) do
     company
     |> change()

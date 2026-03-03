@@ -18,6 +18,11 @@ defmodule Tradewinds.Scope do
     struct(__MODULE__, attrs)
   end
 
+  @doc """
+  Validates whether the current scope (representing the player's session)
+  has permission to act on behalf of the given company ID.
+  Returns `:ok` or `{:error, :unauthorized}`.
+  """
   def authorizes?(%__MODULE__{company_ids: company_ids}, company_id) do
     if company_id in company_ids do
       :ok
@@ -28,10 +33,15 @@ defmodule Tradewinds.Scope do
 
   def authorizes?(_scope, _company_id), do: {:error, :unauthorized}
 
+  @doc """
+  Injects a newly created company ID into the current scope's authorization list.
+  Typically used right after a player founds a new company in the same request cycle.
+  """
   def put_company_id(%__MODULE__{} = scope, company_id) do
     %{scope | company_ids: [company_id | scope.company_ids]}
   end
 
+  # Lazily loads the list of company IDs a player is a director of.
   defp fetch_company_ids(%Tradewinds.Accounts.Player{} = player) do
     Tradewinds.Companies.list_player_company_ids(player)
   end

@@ -1,10 +1,19 @@
 defmodule Tradewinds.Logistics do
+  @moduledoc """
+  The Logistics context.
+  Handles warehouse management, storage capacity, and inventory movement.
+  """
+
   import Ecto.Query, warn: false
   alias Tradewinds.Repo
   alias Tradewinds.Scope
   alias Tradewinds.Logistics.Warehouse
   alias Tradewinds.Logistics.WarehouseInventory
 
+  @doc """
+  Adds a specified quantity of a good to a warehouse.
+  Enforces capacity limits and uses an upsert (on_conflict inc) to update existing inventory.
+  """
   def add_cargo(warehouse_id, good_id, quantity) when quantity > 0 do
     Repo.transact(fn ->
       with {:ok, warehouse} <- fetch_warehouse_for_update(warehouse_id),
@@ -54,6 +63,10 @@ defmodule Tradewinds.Logistics do
     end
   end
 
+  @doc """
+  Upgrades a warehouse to the next tier, increasing its level and capacity.
+  Charges the company's treasury for the upgrade cost.
+  """
   def grow_warehouse(warehouse_id) do
     Repo.transact(fn ->
       with {:ok, warehouse} <- fetch_warehouse_for_update(warehouse_id),
@@ -78,6 +91,10 @@ defmodule Tradewinds.Logistics do
     end)
   end
 
+  @doc """
+  Downgrades a warehouse to the previous tier, decreasing its level and capacity.
+  Fails if the resulting capacity would be less than the currently stored inventory.
+  """
   def shrink_warehouse(warehouse_id) do
     Repo.transact(fn ->
       with {:ok, warehouse} <- fetch_warehouse_for_update(warehouse_id),
@@ -93,6 +110,7 @@ defmodule Tradewinds.Logistics do
     end)
   end
 
+  # Validates that a warehouse is eligible to be downgraded.
   defp check_can_shrink(warehouse, inventory_total) do
     cond do
       warehouse.level <= 1 ->
@@ -106,11 +124,17 @@ defmodule Tradewinds.Logistics do
     end
   end
 
+  @doc """
+  Retrieves a warehouse by its ID.
+  """
   def fetch_warehouse(id) do
     Repo.get(Warehouse, id)
     |> Repo.ok_or(:warehouse_not_found)
   end
 
+  @doc """
+  Retrieves a specific company's warehouse at a given port.
+  """
   def fetch_warehouse(company_id, port_id) do
     Warehouse
     |> where(company_id: ^company_id, port_id: ^port_id)
@@ -118,6 +142,7 @@ defmodule Tradewinds.Logistics do
     |> Repo.ok_or(:warehouse_not_found)
   end
 
+  # Retrieves and locks a warehouse for transaction safety.
   defp fetch_warehouse_for_update(warehouse_id) do
     Warehouse
     |> where(id: ^warehouse_id)
@@ -126,6 +151,7 @@ defmodule Tradewinds.Logistics do
     |> Repo.ok_or(:warehouse_not_found)
   end
 
+  # Ensures the warehouse has enough remaining capacity for the new quantity.
   defp check_capacity(warehouse, current_total, quantity) do
     if current_total + quantity > warehouse.capacity do
       {:error, :capacity_exceeded}
@@ -152,6 +178,10 @@ defmodule Tradewinds.Logistics do
     end
   end
 
+  @doc """
+  Removes a specified quantity of a good from a warehouse.
+  Deletes the inventory record entirely if the quantity drops to zero.
+  """
   def remove_cargo(warehouse_id, good_id, quantity) when quantity > 0 do
     Repo.transact(fn ->
       with {:ok, inventory} <- fetch_inventory_for_update(warehouse_id, good_id),
@@ -169,6 +199,7 @@ defmodule Tradewinds.Logistics do
     end)
   end
 
+  # Retrieves and locks a specific inventory record for transaction safety.
   defp fetch_inventory_for_update(warehouse_id, good_id) do
     WarehouseInventory
     |> where(warehouse_id: ^warehouse_id, good_id: ^good_id)
@@ -177,6 +208,7 @@ defmodule Tradewinds.Logistics do
     |> Repo.ok_or(:inventory_not_found)
   end
 
+  # Ensures the warehouse actually holds enough of the requested good.
   defp check_sufficient_inventory(inventory, quantity) do
     if inventory.quantity < quantity do
       {:error, :insufficient_inventory}
@@ -185,15 +217,19 @@ defmodule Tradewinds.Logistics do
     end
   end
 
+  # Stub: Rent a new warehouse for a company at a port.
   def rent_warehouse(%Scope{} = _scope, _company_id, _port_id) do
   end
 
+  # Stub: List all warehouses owned by a company.
   def list_warehouses(%Scope{} = _scope, _company_id) do
   end
 
+  # Stub: Move goods from a ship to a warehouse.
   def deposit(%Scope{} = _scope, _warehouse_id, _good_id, _quantity) do
   end
 
+  # Stub: Move goods from a warehouse to a ship.
   def withdraw(%Scope{} = _scope, _warehouse_id, _good_id, _quantity) do
   end
 end

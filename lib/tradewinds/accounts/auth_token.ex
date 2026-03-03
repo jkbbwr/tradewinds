@@ -8,6 +8,9 @@ defmodule Tradewinds.Accounts.AuthToken do
     timestamps()
   end
 
+  @doc """
+  Builds a changeset for persisting a generated auth token.
+  """
   def create_changeset(auth_token, attrs) do
     auth_token
     |> cast(attrs, [:token, :player_id])

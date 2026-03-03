@@ -13,7 +13,9 @@ defmodule Tradewinds.World.Port do
     timestamps()
   end
 
-  @doc false
+  @doc """
+  Builds a changeset for creating a static port location in the world.
+  """
   def create_changeset(port, attrs) do
     port
     |> cast(attrs, [:name, :shortcode, :country_id, :is_hub])

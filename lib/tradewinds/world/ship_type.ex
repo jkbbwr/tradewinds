@@ -12,7 +12,9 @@ defmodule Tradewinds.World.ShipType do
     timestamps()
   end
 
-  @doc false
+  @doc """
+  Builds a changeset for defining a class of ship and its static stats (speed, capacity).
+  """
   def changeset(ship_type, attrs) do
     ship_type
     |> cast(attrs, [:name, :description, :capacity, :speed, :base_price, :upkeep])
