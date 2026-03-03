@@ -1,0 +1,317 @@
+defmodule Tradewinds.Commerce do
+  @moduledoc """
+  The Commerce context.
+  """
+
+  alias Tradewinds.Repo
+  import Ecto.Query
+
+  @doc """
+  Generates a signed quote for a company to buy or sell a specific quantity of goods from/to a trader.
+  Returns {:ok, token, quote_data} or {:error, reason}.
+  """
+  def generate_quote(company_id, port_id, good_id, action, quantity)
+      when action in [:buy, :sell] and is_integer(quantity) and quantity > 0 do
+    query =
+      from p in Tradewinds.Commerce.TraderPosition,
+        where: p.port_id == ^port_id and p.good_id == ^good_id,
+        preload: [:good]
+
+    case Repo.one(query) do
+      nil ->
+        {:error, :not_found}
+
+      position ->
+        if action == :buy and quantity > position.stock do
+          {:error, :insufficient_stock}
+        else
+          base_price = position.good.base_price
+          market_price = base_market_price(position.stock, position.target_stock, base_price, position.elasticity)
+          final_base_price = apply_volatility_jitter(market_price)
+
+          {ask, bid} = quotes(final_base_price, position.spread)
+
+          quote_price = if action == :buy, do: ask, else: bid
+          impact_action = if action == :buy, do: :ask, else: :bid
+
+          final_unit_price =
+            apply_slippage(impact_action, quote_price, quantity, position.stock)
+            |> clamp_price(base_price)
+
+          quote_data = %{
+            company_id: company_id,
+            port_id: port_id,
+            good_id: good_id,
+            action: action,
+            quantity: quantity,
+            unit_price: final_unit_price,
+            total_price: final_unit_price * quantity,
+            market_price: final_base_price,
+            spread: position.spread
+          }
+
+          token = Phoenix.Token.sign(TradewindsWeb.Endpoint, "trader_quote", quote_data)
+          {:ok, token, quote_data}
+        end
+    end
+  end
+
+  @doc """
+  Verifies a trader quote token.
+  Returns {:ok, quote_data} or {:error, reason}.
+  """
+  def verify_quote(token) do
+    # 5 ticks * 24 seconds/tick = 120 seconds max age
+    Phoenix.Token.verify(TradewindsWeb.Endpoint, "trader_quote", token, max_age: 120)
+  end
+
+  @doc """
+  Executes a signed quote, performing the atomic trade between the company and the trader.
+  `destinations` is a list of maps: `[%{type: :ship, id: id, quantity: qty}, %{type: :warehouse, id: id, quantity: qty}]`.
+  """
+  def execute_quote(token, destinations) when is_list(destinations) do
+    with {:ok, quote_data} <- verify_quote(token),
+         :ok <- validate_destinations_total(quote_data, destinations) do
+      Repo.transact(fn ->
+        with {:ok, position} <- fetch_position_for_update(quote_data.port_id, quote_data.good_id),
+             :ok <- validate_trade_execution(quote_data, position, destinations) do
+          perform_execution(quote_data, position, destinations)
+        else
+          {:error, reason} -> Repo.rollback(reason)
+        end
+      end)
+    end
+  end
+
+  def execute_immediate(company_id, port_id, good_id, action, destinations)
+      when action in [:buy, :sell] and is_list(destinations) do
+    total_qty = Enum.reduce(destinations, 0, fn %{quantity: qty}, acc -> acc + qty end)
+
+    if total_qty <= 0 do
+      {:error, :invalid_quantity}
+    else
+      Repo.transact(fn ->
+        with {:ok, position} <- fetch_position_for_update(port_id, good_id),
+             :ok <- validate_trade_execution(%{action: action, quantity: total_qty}, position, destinations) do
+          
+          base_price = position.good.base_price
+          market_price = base_market_price(position.stock, position.target_stock, base_price, position.elasticity)
+          final_base_price = apply_volatility_jitter(market_price)
+
+          {ask, bid} = quotes(final_base_price, position.spread)
+
+          quote_price = if action == :buy, do: ask, else: bid
+          impact_action = if action == :buy, do: :ask, else: :bid
+
+          final_unit_price =
+            apply_slippage(impact_action, quote_price, total_qty, position.stock)
+            |> clamp_price(base_price)
+
+          quote_data = %{
+            company_id: company_id,
+            port_id: port_id,
+            good_id: good_id,
+            action: action,
+            quantity: total_qty,
+            unit_price: final_unit_price,
+            total_price: final_unit_price * total_qty,
+            market_price: final_base_price,
+            spread: position.spread
+          }
+
+          perform_execution(quote_data, position, destinations)
+        else
+          {:error, reason} -> Repo.rollback(reason)
+        end
+      end)
+    end
+  end
+
+  defp validate_destinations_total(quote_data, destinations) do
+    total_qty = Enum.reduce(destinations, 0, fn %{quantity: qty}, acc -> acc + qty end)
+
+    if total_qty == quote_data.quantity do
+      :ok
+    else
+      {:error, :quantity_mismatch}
+    end
+  end
+
+  defp fetch_position_for_update(port_id, good_id) do
+    Tradewinds.Commerce.TraderPosition
+    |> where(port_id: ^port_id, good_id: ^good_id)
+    |> lock("FOR UPDATE")
+    |> preload([:good])
+    |> Repo.one()
+    |> Repo.ok_or(:market_not_found)
+  end
+
+  defp validate_trade_execution(quote_data, position, _destinations) do
+    if quote_data.action == :buy && position.stock < quote_data.quantity do
+      {:error, :insufficient_market_stock}
+    else
+      :ok
+    end
+  end
+
+  defp perform_execution(quote_data, position, destinations) do
+    current_tick = Tradewinds.Clock.get_tick()
+    amount = if quote_data.action == :buy, do: -quote_data.total_price, else: quote_data.total_price
+
+    with {:ok, _} <-
+           Tradewinds.Companies.record_transaction(
+             quote_data.company_id,
+             amount,
+             "npc_trade",
+             "market",
+             position.id,
+             current_tick
+           ),
+         :ok <- update_cargo_destinations(quote_data, destinations),
+         {:ok, _} <- update_market_position(quote_data, position) do
+      {:ok, quote_data}
+    end
+  end
+
+  defp update_cargo_destinations(quote_data, destinations) do
+    Enum.reduce_while(destinations, :ok, fn %{type: type, id: id, quantity: qty}, :ok ->
+      result =
+        case {quote_data.action, type} do
+          {:buy, :ship} ->
+            with {:ok, ship} <- Tradewinds.Fleet.fetch_ship(id),
+                 :ok <- validate_location(ship, quote_data.port_id),
+                 :ok <- validate_ownership(ship, quote_data.company_id),
+                 {:ok, _} <- Tradewinds.Fleet.add_cargo(id, quote_data.good_id, qty) do
+              :ok
+            end
+
+          {:buy, :warehouse} ->
+            with {:ok, warehouse} <- Tradewinds.Logistics.fetch_warehouse(id),
+                 :ok <- validate_location(warehouse, quote_data.port_id),
+                 :ok <- validate_ownership(warehouse, quote_data.company_id),
+                 {:ok, _} <- Tradewinds.Logistics.add_cargo(id, quote_data.good_id, qty) do
+              :ok
+            end
+
+          {:sell, :ship} ->
+            with {:ok, ship} <- Tradewinds.Fleet.fetch_ship(id),
+                 :ok <- validate_location(ship, quote_data.port_id),
+                 :ok <- validate_ownership(ship, quote_data.company_id),
+                 {:ok, _} <- Tradewinds.Fleet.remove_cargo(id, quote_data.good_id, qty) do
+              :ok
+            end
+
+          {:sell, :warehouse} ->
+            with {:ok, warehouse} <- Tradewinds.Logistics.fetch_warehouse(id),
+                 :ok <- validate_location(warehouse, quote_data.port_id),
+                 :ok <- validate_ownership(warehouse, quote_data.company_id),
+                 {:ok, _} <- Tradewinds.Logistics.remove_cargo(id, quote_data.good_id, qty) do
+              :ok
+            end
+        end
+
+      case result do
+        :ok -> {:cont, :ok}
+        {:ok, _} -> {:cont, :ok}
+        {:error, reason} -> {:halt, {:error, reason}}
+      end
+    end)
+  end
+
+  defp validate_location(%{port_id: port_id}, expected_port_id) when port_id == expected_port_id,
+    do: :ok
+
+  defp validate_location(_, _), do: {:error, :wrong_location}
+
+  defp validate_ownership(%{company_id: company_id}, expected_company_id)
+       when company_id == expected_company_id,
+       do: :ok
+
+  defp validate_ownership(_, _), do: {:error, :wrong_owner}
+
+  defp update_market_position(quote_data, position) do
+    new_stock =
+      if quote_data.action == :buy,
+        do: position.stock - quote_data.quantity,
+        else: position.stock + quote_data.quantity
+
+    profit_accrued = floor(quote_data.quantity * quote_data.market_price * quote_data.spread)
+
+    position
+    |> Tradewinds.Commerce.TraderPosition.changeset(%{
+      stock: new_stock,
+      monthly_profit: position.monthly_profit + profit_accrued
+    })
+    |> Repo.update()
+  end
+
+  @doc """
+  Calculates the new stock after one day of simulation.
+  Based on stock drift and consumption towards a target equilibrium.
+  """
+  def simulate_daily_tick(current_stock, target_stock, supply_rate, demand_rate) do
+    drift = floor((target_stock - current_stock) * supply_rate)
+    consumption = floor(current_stock * demand_rate)
+    max_stock = target_stock * 5
+
+    new_stock = current_stock + drift - consumption
+    clamp(new_stock, 0, max_stock)
+  end
+
+  @doc """
+  Calculates the base market price before any noise or spread.
+  """
+  def base_market_price(current_stock, target_stock, base_price, elasticity) do
+    price_ratio = target_stock / (current_stock + 1)
+    base_price * :math.pow(price_ratio, elasticity)
+  end
+
+  @doc """
+  Injects +/- 3% random noise to the market price.
+  """
+  def apply_volatility_jitter(market_price) do
+    # random noise between -3% and +3%
+    noise = 1.0 + (:rand.uniform() * 0.06 - 0.03)
+    round(market_price * noise)
+  end
+
+  @doc """
+  Returns {ask_price, bid_price} based on the final base price and spread.
+  Ask is what the player pays to buy. Bid is what the player receives when selling.
+  """
+  def quotes(final_base_price, spread) do
+    ask = floor(final_base_price * (1.0 + spread))
+    bid = floor(final_base_price * (1.0 - spread))
+    {ask, bid}
+  end
+
+  @doc """
+  Applies slippage (average impact factor) to a quote price based on the order quantity.
+  Uses the average fill price (half the maximum slippage) to reward bulk trading.
+  """
+  def apply_slippage(:ask, quote_price, order_qty, current_stock) do
+    # Buying from NPC: price goes up
+    # average_impact_factor = 1.0 + (order_qty / (2 * (current_stock + 1)))
+    quote_price + div(quote_price * order_qty, 2 * (current_stock + 1))
+  end
+
+  def apply_slippage(:bid, quote_price, order_qty, current_stock) do
+    # Selling to NPC: price goes down
+    # average_impact_factor = 1.0 + (order_qty / (2 * (current_stock + 1)))
+    # final_price = quote_price / average_impact_factor
+    div(quote_price * 2 * (current_stock + 1), 2 * (current_stock + 1) + order_qty)
+  end
+
+  @doc """
+  Clamps the final unit price to not fall below 10% of base price or exceed 1000% of base price.
+  """
+  def clamp_price(price, base_price) do
+    floor_price = floor(base_price * 0.1)
+    ceil_price = floor(base_price * 10.0)
+    clamp(price, floor_price, ceil_price)
+  end
+
+  defp clamp(value, min, max) do
+    value |> max(min) |> min(max)
+  end
+end

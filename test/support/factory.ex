@@ -130,4 +130,25 @@ defmodule Tradewinds.Factory do
       cost: 1000
     }
   end
+
+  def trader_factory do
+    %Tradewinds.Commerce.Trader{
+      name: sequence(:trader_name, &"Trader #{&1}")
+    }
+  end
+
+  def trader_position_factory do
+    %Tradewinds.Commerce.TraderPosition{
+      trader: build(:trader),
+      port: build(:port),
+      good: build(:good),
+      stock: 100,
+      target_stock: 100,
+      supply_rate: 0.1,
+      demand_rate: 0.05,
+      elasticity: 0.12,
+      spread: 0.05,
+      monthly_profit: 0
+    }
+  end
 end

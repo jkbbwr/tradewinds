@@ -73,11 +73,11 @@ Time model:
 ## Milestone 6 — Commerce (NPC trader): trader maths, instant buy/sell
 
 - [x] Implement `npc_stock` + `npc_trader` persistence + seeding
-- [ ] Implement effective supply/demand/volatility computation with active shocks
-- [ ] Implement NPC price function (quantities hidden) + availability buckets
-- [ ] Implement slippage/impact model (quantity-based, capped)
-- [ ] Implement instant buy from NPC trader (atomic: ledger + cargo + npc state)
-- [ ] Implement instant sell to NPC trader (atomic)
+- [x] Implement effective supply/demand/volatility computation with active shocks
+- [x] Implement NPC price function (quantities hidden) + availability buckets
+- [x] Implement slippage/impact model (quantity-based, capped)
+- [x] Implement instant buy from NPC trader (atomic: ledger + cargo + npc state)
+- [x] Implement instant sell to NPC trader (atomic)
 
 ---
 
