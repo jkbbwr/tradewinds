@@ -6,6 +6,7 @@ defmodule Tradewinds.Economy do
   import Ecto.Query, warn: false
   alias Tradewinds.Repo
   alias Tradewinds.Economy.TradeLog
+  alias Tradewinds.Economy.Shock
 
   @system_npc_id "00000000-0000-0000-0000-000000000000"
 
@@ -18,6 +19,42 @@ defmodule Tradewinds.Economy do
     %TradeLog{}
     |> TradeLog.create_changeset(attrs)
     |> Repo.insert()
+  end
+
+  @doc """
+  Creates a new economy shock.
+  """
+  def create_shock(attrs) do
+    %Shock{}
+    |> Shock.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Returns aggregated modifiers for a specific port/good at a specific tick.
+  Multiplies all active modifiers together.
+  """
+  def get_active_modifiers(port_id, good_id, current_tick) do
+    query =
+      from s in Shock,
+        where: s.status == :active,
+        where: s.start_tick <= ^current_tick,
+        where: is_nil(s.end_tick) or s.end_tick >= ^current_tick,
+        where: is_nil(s.port_id) or s.port_id == ^port_id,
+        where: is_nil(s.good_id) or s.good_id == ^good_id
+
+    Repo.all(query)
+    |> Enum.reduce(
+      %{demand: 1.0, supply: 1.0, price: 1.0, volatility: 1.0},
+      fn shock, acc ->
+        %{
+          demand: acc.demand * (shock.demand_modifier / 10_000),
+          supply: acc.supply * (shock.supply_modifier / 10_000),
+          price: acc.price * (shock.price_modifier / 10_000),
+          volatility: acc.volatility * (shock.volatility_modifier / 10_000)
+        }
+      end
+    )
   end
 
   @doc """

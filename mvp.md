@@ -95,7 +95,7 @@ Time model:
 ## Milestone 8 — Economy scaffolding: clock + shocks
 
 - [x] Implement `game_clock` storage + `Clock.current_tick/0`
-- [ ] Implement `Economy.Shocks` persistence (scoped target: global/port/good)
+- [x] Implement `Economy.Shocks` persistence (scoped target: global/port/good)
 
 ---
 

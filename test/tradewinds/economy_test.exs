@@ -80,4 +80,47 @@ defmodule Tradewinds.EconomyTest do
       assert Economy.vwap(port.id, good.id, 0, 10) == 120.0
     end
   end
+
+  describe "economy shocks" do
+    test "get_active_modifiers/3 aggregates multiple shocks" do
+      port = insert(:port)
+      good = insert(:good)
+
+      # Global price shock (1.5x)
+      insert(:shock, %{
+        name: "Global Inflation",
+        price_modifier: 15_000,
+        start_tick: 0,
+        end_tick: 100
+      })
+
+      # Local demand shock (2.0x)
+      insert(:shock, %{
+        name: "Local Famine",
+        port: port,
+        good: good,
+        demand_modifier: 20_000,
+        start_tick: 10,
+        end_tick: 20
+      })
+
+      # Paused shock (should be ignored)
+      insert(:shock, %{
+        name: "Paused Event",
+        status: :paused,
+        price_modifier: 50_000,
+        start_tick: 0
+      })
+
+      # At tick 5: Only global inflation applies
+      mods = Economy.get_active_modifiers(port.id, good.id, 5)
+      assert mods.price == 1.5
+      assert mods.demand == 1.0
+
+      # At tick 15: Both apply (1.5x price, 2.0x demand)
+      mods = Economy.get_active_modifiers(port.id, good.id, 15)
+      assert mods.price == 1.5
+      assert mods.demand == 2.0
+    end
+  end
 end

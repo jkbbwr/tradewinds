@@ -164,4 +164,16 @@ defmodule Tradewinds.Factory do
       seller_id: Ecto.UUID.generate()
     }
   end
+
+  def shock_factory do
+    %Tradewinds.Economy.Shock{
+      name: sequence(:shock_name, &"Shock #{&1}"),
+      status: :active,
+      start_tick: 0,
+      demand_modifier: 10_000,
+      supply_modifier: 10_000,
+      price_modifier: 10_000,
+      volatility_modifier: 10_000
+    }
+  end
 end

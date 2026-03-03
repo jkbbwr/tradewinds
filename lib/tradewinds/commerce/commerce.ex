@@ -25,9 +25,20 @@ defmodule Tradewinds.Commerce do
         if action == :buy and quantity > position.stock do
           {:error, :insufficient_stock}
         else
-          base_price = position.good.base_price
-          market_price = base_market_price(position.stock, position.target_stock, base_price, position.elasticity)
-          final_base_price = apply_volatility_jitter(market_price)
+          current_tick = Tradewinds.Clock.get_tick()
+          modifiers = Tradewinds.Economy.get_active_modifiers(port_id, good_id, current_tick)
+
+          base_price = round(position.good.base_price * modifiers.price)
+
+          market_price =
+            base_market_price(
+              position.stock,
+              position.target_stock,
+              base_price,
+              position.elasticity
+            )
+
+          final_base_price = apply_volatility_jitter(market_price, modifiers.volatility)
 
           {ask, bid} = quotes(final_base_price, position.spread)
 
@@ -47,7 +58,8 @@ defmodule Tradewinds.Commerce do
             unit_price: final_unit_price,
             total_price: final_unit_price * quantity,
             market_price: final_base_price,
-            spread: position.spread
+            spread: position.spread,
+            tick: current_tick
           }
 
           token = Phoenix.Token.sign(TradewindsWeb.Endpoint, "trader_quote", quote_data)
@@ -75,7 +87,7 @@ defmodule Tradewinds.Commerce do
       Repo.transact(fn ->
         with {:ok, position} <- fetch_position_for_update(quote_data.port_id, quote_data.good_id),
              :ok <- validate_trade_execution(quote_data, position, destinations) do
-          perform_execution(quote_data, position, destinations)
+          perform_execution(quote_data, position, destinations, quote_data.tick)
         else
           {:error, reason} -> Repo.rollback(reason)
         end
@@ -92,11 +104,22 @@ defmodule Tradewinds.Commerce do
     else
       Repo.transact(fn ->
         with {:ok, position} <- fetch_position_for_update(port_id, good_id),
-             :ok <- validate_trade_execution(%{action: action, quantity: total_qty}, position, destinations) do
-          
-          base_price = position.good.base_price
-          market_price = base_market_price(position.stock, position.target_stock, base_price, position.elasticity)
-          final_base_price = apply_volatility_jitter(market_price)
+             :ok <-
+               validate_trade_execution(%{action: action, quantity: total_qty}, position, destinations) do
+          current_tick = Tradewinds.Clock.get_tick()
+          modifiers = Tradewinds.Economy.get_active_modifiers(port_id, good_id, current_tick)
+
+          base_price = round(position.good.base_price * modifiers.price)
+
+          market_price =
+            base_market_price(
+              position.stock,
+              position.target_stock,
+              base_price,
+              position.elasticity
+            )
+
+          final_base_price = apply_volatility_jitter(market_price, modifiers.volatility)
 
           {ask, bid} = quotes(final_base_price, position.spread)
 
@@ -119,7 +142,7 @@ defmodule Tradewinds.Commerce do
             spread: position.spread
           }
 
-          perform_execution(quote_data, position, destinations)
+          perform_execution(quote_data, position, destinations, current_tick)
         else
           {:error, reason} -> Repo.rollback(reason)
         end
@@ -154,8 +177,7 @@ defmodule Tradewinds.Commerce do
     end
   end
 
-  defp perform_execution(quote_data, position, destinations) do
-    current_tick = Tradewinds.Clock.get_tick()
+  defp perform_execution(quote_data, position, destinations, current_tick) do
     amount = if quote_data.action == :buy, do: -quote_data.total_price, else: quote_data.total_price
 
     {buyer_id, seller_id} =
@@ -265,9 +287,12 @@ defmodule Tradewinds.Commerce do
   Calculates the new stock after one day of simulation.
   Based on stock drift and consumption towards a target equilibrium.
   """
-  def simulate_daily_tick(current_stock, target_stock, supply_rate, demand_rate) do
-    drift = floor((target_stock - current_stock) * supply_rate)
-    consumption = floor(current_stock * demand_rate)
+  def simulate_daily_tick(current_stock, target_stock, supply_rate, demand_rate, modifiers \\ %{supply: 1.0, demand: 1.0}) do
+    effective_supply_rate = supply_rate * modifiers.supply
+    effective_demand_rate = demand_rate * modifiers.demand
+
+    drift = floor((target_stock - current_stock) * effective_supply_rate)
+    consumption = floor(current_stock * effective_demand_rate)
     max_stock = target_stock * 5
 
     new_stock = current_stock + drift - consumption
@@ -283,11 +308,13 @@ defmodule Tradewinds.Commerce do
   end
 
   @doc """
-  Injects +/- 3% random noise to the market price.
+  Injects random noise to the market price.
+  Baseline noise is +/- 3%. Volatility modifier from shocks is applied.
   """
-  def apply_volatility_jitter(market_price) do
+  def apply_volatility_jitter(market_price, vol_modifier \\ 1.0) do
     # random noise between -3% and +3%
-    noise = 1.0 + (:rand.uniform() * 0.06 - 0.03)
+    base_noise = :rand.uniform() * 0.06 - 0.03
+    noise = 1.0 + (base_noise * vol_modifier)
     round(market_price * noise)
   end
 
