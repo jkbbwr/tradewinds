@@ -83,12 +83,12 @@ Time model:
 
 ## Milestone 7 — Market (order book): orders, matching, settlement (taxless for now)
 
-- [ ] Implement order persistence (tick expiry) + 7-day expiry default
-- [ ] Implement place limit order (scope auth)
+- [x] Implement order persistence (tick expiry) + 7-day expiry default
+- [x] Implement place limit order (scope auth)
 - [ ] Implement cancel order (scope auth)
-- [ ] Implement matching engine (per port+good) + fill emission
-- [ ] Implement settlement for a matched fill (atomic ledger + inventory)
-- [ ] Implement market read functions (best N levels + recent trades)
+- [x] Implement matching engine (per port+good) + fill emission
+- [x] Implement settlement for a matched fill (atomic ledger + inventory)
+- [x] Implement market read functions (best N levels + recent trades)
 
 ---
 

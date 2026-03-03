@@ -12,13 +12,15 @@ defmodule Tradewinds.Companies.Ledger do
         :ship_purchase,
         :tax,
         :market_trade,
+        :market_listing_fee,
+        :market_penalty_fine,
         :warehouse_upgrade,
         :warehouse_upkeep,
         :ship_upkeep,
         :npc_trade
       ]
 
-    field :reference_type, Ecto.Enum, values: [:market, :ship, :warehouse]
+    field :reference_type, Ecto.Enum, values: [:market, :ship, :warehouse, :order]
     field :reference_id, :binary_id
     field :idempotency_key, :string
     field :meta, :map

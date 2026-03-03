@@ -111,6 +111,13 @@ defmodule Tradewinds.Logistics do
     |> Repo.ok_or(:warehouse_not_found)
   end
 
+  def fetch_warehouse(company_id, port_id) do
+    Warehouse
+    |> where(company_id: ^company_id, port_id: ^port_id)
+    |> Repo.one()
+    |> Repo.ok_or(:warehouse_not_found)
+  end
+
   defp fetch_warehouse_for_update(warehouse_id) do
     Warehouse
     |> where(id: ^warehouse_id)

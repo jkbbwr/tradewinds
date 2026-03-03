@@ -91,6 +91,12 @@ defmodule Tradewinds.Companies do
     |> Repo.update()
   end
 
+  def fetch_company(id) do
+    Company
+    |> Repo.get(id)
+    |> Repo.ok_or(:company_not_found)
+  end
+
   defp fetch_company_for_update(company_id) do
     Company
     |> where(id: ^company_id)
@@ -105,5 +111,17 @@ defmodule Tradewinds.Companies do
     else
       :ok
     end
+  end
+
+  def update_reputation(company_id, delta) do
+    Repo.transact(fn ->
+      with {:ok, company} <- fetch_company_for_update(company_id),
+           {:ok, updated_company} <-
+             company
+             |> Company.update_reputation_changeset(delta)
+             |> Repo.update() do
+        {:ok, updated_company}
+      end
+    end)
   end
 end
