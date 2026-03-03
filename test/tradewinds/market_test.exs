@@ -62,6 +62,29 @@ defmodule Tradewinds.MarketTest do
     end
   end
 
+  describe "canceling orders" do
+    test "cancels an open order successfully", %{scope: scope, company: company, good: good, port: port} do
+      {:ok, order} = Market.post_order(scope, company.id, port.id, good.id, :sell, 100, 10)
+      
+      assert {:ok, cancelled_order} = Market.cancel_order(scope, company.id, order.id)
+      assert cancelled_order.status == :cancelled
+    end
+
+    test "fails if order does not belong to company", %{scope: scope, company: company, good: good, port: port} do
+      {:ok, order} = Market.post_order(scope, company.id, port.id, good.id, :sell, 100, 10)
+
+      other_player = insert(:player)
+      other_company = insert(:company, home_port: port)
+      insert(:director, company: other_company, player: other_player)
+      other_scope = Scope.for(player: other_player)
+
+      assert {:error, :unauthorized_order} = Market.cancel_order(other_scope, other_company.id, order.id)
+      
+      # Order should still be open
+      assert Repo.get(Tradewinds.Market.Order, order.id).status == :open
+    end
+  end
+
   describe "filling orders" do
     test "successfully fills a sell order (taker buys)", %{
       scope: scope,

@@ -85,7 +85,7 @@ Time model:
 
 - [x] Implement order persistence (tick expiry) + 7-day expiry default
 - [x] Implement place limit order (scope auth)
-- [ ] Implement cancel order (scope auth)
+- [x] Implement cancel order (scope auth)
 - [x] Implement matching engine (per port+good) + fill emission
 - [x] Implement settlement for a matched fill (atomic ledger + inventory)
 - [x] Implement market read functions (best N levels + recent trades)

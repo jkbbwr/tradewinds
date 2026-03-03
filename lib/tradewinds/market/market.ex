@@ -72,6 +72,24 @@ defmodule Tradewinds.Market do
   end
 
   @doc """
+  Cancels an open order.
+  """
+  def cancel_order(%Scope{} = scope, company_id, order_id) do
+    Repo.transact(fn ->
+      with :ok <- Scope.authorizes?(scope, company_id),
+           {:ok, order} <- fetch_order_for_update(order_id),
+           :ok <- validate_order_ownership(order, company_id),
+           :ok <- validate_order_status(order) do
+        order
+        |> Order.update_status_changeset(:cancelled)
+        |> Repo.update()
+      else
+        {:error, reason} -> Repo.rollback(reason)
+      end
+    end)
+  end
+
+  @doc """
   Fills an order (Taker action).
   """
   def fill_order(%Scope{} = scope, taker_company_id, order_id, quantity) do
@@ -265,6 +283,10 @@ defmodule Tradewinds.Market do
 
   defp validate_order_status(order) do
     if order.status == :open, do: :ok, else: {:error, :order_not_open}
+  end
+
+  defp validate_order_ownership(order, company_id) do
+    if order.company_id == company_id, do: :ok, else: {:error, :unauthorized_order}
   end
 
   defp validate_quantity(order, quantity) do
