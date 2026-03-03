@@ -15,8 +15,8 @@ Time model:
 - [x] Seed world data: 14 ports + shipyard flags + countries/regions
 - [x] Seed goods (14) with base params (base_price, volatility, elasticity)
 - [x] Seed ship types (MVP ships)
-    - Cog (cap 50), Caravel (cap 100), Galleon (cap 200)
-    - Speed is **knots** (nm/hour); routes store **distance in nm**
+  - Cog (cap 50), Caravel (cap 100), Galleon (cap 200)
+  - Speed is **knots** (nm/hour); routes store **distance in nm**
 - [x] Seed distance matrix in nm (bidirectional)
 - [x] Implement `Accounts` stubs (player auth) sufficient to obtain `player_id`
 - [x] Implement `Scope` module + hydration from player + `authorizes?/2`
@@ -29,11 +29,11 @@ Time model:
 - [x] Implement `Companies.create_company(scope, attrs)` (starting port is player choice)
 - [x] Implement company balance storage (`companies.credits_balance` integer)
 - [x] Implement append-only `company_ledger_entries`
-    - Signed `amount` (+ inflow, - outflow), `reason`, `tick`, `ref_type/ref_id`, `meta`
-    - Add `idempotency_key` unique per company to prevent double-posting
+  - Signed `amount` (+ inflow, - outflow), `reason`, `tick`, `ref_type/ref_id`, `meta`
+  - Add `idempotency_key` unique per company to prevent double-posting
 - [x] Implement atomic money movement primitive (spec)
-    - Within one transaction: lock company row, check sufficient funds (no negative),
-      insert ledger entry, update cached balance
+  - Within one transaction: lock company row, check sufficient funds (no negative),
+    insert ledger entry, update cached balance
 
 ---
 
@@ -43,8 +43,8 @@ Time model:
 - [x] Implement ship purchase from shipyard port (scope + company_id required)
 - [x] Implement ship cargo persistence (barrels only) + capacity enforcement
 - [x] Implement transit time formula with nm + knots + modifiers
-    - `travel_ticks = ceil_div(distance_nm, effective_knots)`
-    - `effective_knots = floor(base_knots * (10_000 + bonus_bps) / 10_000)` clamped to >= 1
+  - `travel_ticks = ceil_div(distance_nm, effective_knots)`
+  - `effective_knots = floor(base_knots * (10_000 + bonus_bps) / 10_000)` clamped to >= 1
 - [x] Implement `Fleet.sail_ship(scope, ship_id, destination_port_id, current_tick)`
 - [x] Implement `Fleet.dock_ship/1` (idempotent single-ship docking)
 
@@ -61,8 +61,8 @@ Time model:
 
 - [x] Implement warehouse persistence unique `(company_id, port_id)` + tier + contents
 - [x] Implement warehouse pricing functions (quote-only)
-    - Upgrade cost per tier: `100 * 1.1^(tier-1)` (int)
-    - Monthly upkeep rate per 10 bbl: `10 * 1.05^(tier-1)` (int)
+  - Upgrade cost per tier: `100 * 1.1^(tier-1)` (int)
+  - Monthly upkeep rate per 10 bbl: `10 * 1.05^(tier-1)` (int)
 - [x] Implement grow warehouse tier (scope auth + ledger debit)
 - [x] Implement shrink warehouse tier (scope auth, cannot shrink below used)
 - [x] Implement deposit ship→warehouse (scope auth, ship docked at port, atomic)
@@ -108,20 +108,19 @@ Time model:
 ## Milestone 10 — Oban/Cron (Simulations and Scheduled Jobs)
 
 - [ ] Add Oban + queues config + migrations
-- [ ] Replace GenServer tick runner with Oban Cron job(s)
-- [ ] Replace arrival scanning with “schedule on departure” Oban jobs
+- [ ] “schedule on departure” Oban jobs
 - [ ] Split heavy sweeps into workers (idempotent day/month guards)
 - [ ] Implement day boundary helper (idempotent daily work guard)
 - [ ] Implement month boundary helper (idempotent monthly work guard)
 - [ ] Implement daily NPC simulation `Commerce.simulate_day(day)`
-    - stock drift/restocking + clamps + volatility update + idempotent guard
+  - stock drift/restocking + clamps + volatility update + idempotent guard
 - [ ] Implement net-player-flow aggregation for NPC simulation (from trade log)
 - [ ] Implement monthly reset for NPC trader stance (profit/spread reset)
 - [ ] Implement order expiry sweep (release/cancel logic TBD)
 - [ ] Implement monthly company upkeep calculation (ships + warehouses)
 - [ ] Implement monthly upkeep processing function (delinquency flags, dormant/evict rules)
 - [ ] Implement ship construction function `Shipyards.produce_ships(current_tick)`
-    - Produce at day boundary (every 24 ticks), idempotent via `last_produced_day`
+  - Produce at day boundary (every 24 ticks), idempotent via `last_produced_day`
 - [ ] Implement quote expiry sweep (drop or mark expired quotes > `expires_tick`)
 - [ ] Implement maturity execution job (Oban scheduled at `maturity_tick`)
 
@@ -130,42 +129,36 @@ Time model:
 ## Milestone 11 — Taxes (added at the end)
 
 - [ ] Define tax configuration model (initially “burn it” sink)
-    - At minimum: per-port bps for `npc_trade`, `market_trade`, `ship_purchase`, `warehouse_upgrade`
+  - At minimum: per-port bps for `npc_trade`, `market_trade`, `ship_purchase`, `warehouse_upgrade`
 - [ ] Implement shared tax calculator helper (integer rounding rule)
 - [ ] Apply tax to NPC trader instant buy/sell
-    - Additional ledger outflow entry with `reason="tax"` and metadata
+  - Additional ledger outflow entry with `reason="tax"` and metadata
 - [ ] Apply tax to market fills (order book settlement)
 - [ ] Apply tax to ship purchases
 - [ ] Apply tax to warehouse upgrades
 - [ ] Add reporting hooks (optional): accumulate tax burned totals for debugging
 
-## Milestone 12 — Quotes: short-lived price promises (soft lock)
+## Milestone 12 — Bankrupcy
 
-- [ ] Implement `npc_quote` persistence (market_id, company_id, quoted_price, max_qty, expires_tick)
-- [ ] Implement quote generation (snapshot current NPC price, set expiry to current_tick + 5)
-- [ ] Implement quote exercise (scope auth, verify `current_tick <= expires_tick`)
-- [ ] Implement dynamic stock check on exercise (honor up to available `npc_market.stock`, allow partial fill)
-- [ ] Implement settlement for exercised quote (atomic ledger debit, inventory credit, stock deduct)
+- [ ] Implement bankrupcy / freezes.
+- [ ] Bailout loans?
 
----
+## Milestone 13 — REST API
 
-## Milestone 13 — Options: transferable quotes
-
-- [ ] Add `owner_id` (company) and `transfer_count` (integer) to `npc_quote`
-- [ ] Implement option list/read (view quotes owned by others open for sale)
-- [ ] Implement option transfer/purchase (scope auth, check `transfer_count < max_transfers`)
-- [ ] Implement premium settlement for transfer (atomic ledger debit buyer -> credit seller)
-- [ ] Implement ownership re-assignment + increment `transfer_count`
-- [ ] Update quote exercise logic to validate current `owner_id`
+- [ ] Define RESTful routing structure and controller namespaces (`/api/v1/*`)
+- [ ] Implement authentication plug to validate player tokens for protected endpoints
+- [ ] Implement `World` endpoints (GET ports, goods, ship types, routes)
+- [ ] Implement `Companies` endpoints (GET company profile, GET ledger history)
+- [ ] Implement `Fleet` & `Logistics` endpoints (GET ships, POST transit, POST cargo transfers)
+- [ ] Implement `Market` & `Commerce` endpoints (GET order book, POST limit orders, POST NPC trades)
+- [ ] Ensure all API responses use consistent JSON views and error handling
 
 ---
 
-## Milestone 14 — Futures: deferred delivery contracts
+## Milestone 14 — News / ticker / event feed
 
-- [ ] Implement `future_contract` persistence (buyer_id, seller_id, port_id, good_id, qty, price, maturity_tick, collateral)
-- [ ] Implement contract creation (scope auth both parties, agree on terms)
-- [ ] Implement collateral escrow (atomic ledger deduct from both buyer and seller on creation)
-- [ ] Implement successful settlement (atomic transfer of goods/credits at agreed price, refund collateral)
-- [ ] Implement default settlement (if funds/goods missing: forfeit collateral to victim, void contract)
-
----
+- [ ] Implement `Tradewinds.News` context for storing global and port-specific events
+- [ ] Hook into `Economy.Shocks` to automatically generate news items (e.g. "Famine hits Port Royal")
+- [ ] Configure Phoenix Channels for real-time event broadcasting to clients
+- [ ] Broadcast ship arrivals, order fills, and major market movements to subscribed channels
+- [ ] Implement API endpoint to fetch historical news feed with pagination
