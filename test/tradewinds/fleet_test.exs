@@ -1,5 +1,6 @@
 defmodule Tradewinds.FleetTest do
   use Tradewinds.DataCase
+  use Oban.Testing, repo: Tradewinds.Repo
 
   alias Tradewinds.Fleet
   alias Tradewinds.Fleet.ShipCargo
@@ -83,7 +84,7 @@ defmodule Tradewinds.FleetTest do
       assert {:ok, 10} = Fleet.transit_time(ship.id, route.id)
     end
 
-    test "transit_ship/2 starts traveling" do
+    test "transit_ship/2 starts traveling and schedules job" do
       port1 = insert(:port)
       port2 = insert(:port)
       route = insert(:route, from: port1, to: port2, distance: 100)
@@ -95,6 +96,11 @@ defmodule Tradewinds.FleetTest do
       assert updated_ship.port_id == nil
       assert updated_ship.route_id == route.id
       assert updated_ship.arriving_at == 10
+
+      assert_enqueued(
+        worker: Tradewinds.Fleet.TransitJob,
+        args: %{"ship_id" => ship.id}
+      )
     end
 
     test "dock_ship/1 docks a traveling ship" do

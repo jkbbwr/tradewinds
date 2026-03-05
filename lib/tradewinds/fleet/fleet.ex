@@ -22,15 +22,25 @@ defmodule Tradewinds.Fleet do
          :ok <- check_ship_at_route_origin(ship, route),
          {:ok, ticks} <- transit_time(ship_id, route_id) do
       current_tick = Tradewinds.Clock.get_tick()
+      seconds = Tradewinds.Clock.ticks_to_seconds(ticks)
 
-      ship
-      |> Ship.transit_changeset(%{
-        status: :traveling,
-        port_id: nil,
-        route_id: route.id,
-        arriving_at: current_tick + ticks
-      })
-      |> Repo.update()
+      Repo.transact(fn ->
+        with {:ok, updated_ship} <-
+               ship
+               |> Ship.transit_changeset(%{
+                 status: :traveling,
+                 port_id: nil,
+                 route_id: route.id,
+                 arriving_at: current_tick + ticks
+               })
+               |> Repo.update(),
+             {:ok, _job} <-
+               %{"ship_id" => ship_id}
+               |> Tradewinds.Fleet.TransitJob.new(schedule_in: seconds)
+               |> Oban.insert() do
+          {:ok, updated_ship}
+        end
+      end)
     end
   end
 

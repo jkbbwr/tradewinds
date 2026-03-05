@@ -12,6 +12,12 @@ defmodule Tradewinds.Clock.Frozen do
 
   @impl true
   @doc """
+  Always returns 0 for testing stability.
+  """
+  def ticks_to_seconds(_ticks), do: 0
+
+  @impl true
+  @doc """
   A no-op for the frozen clock.
   """
   def refresh_cache, do: :ok

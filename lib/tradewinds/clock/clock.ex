@@ -16,6 +16,11 @@ defmodule Tradewinds.Clock do
   @callback refresh_cache() :: :ok
 
   @doc """
+  Calculates the total number of real-time seconds for a given number of game ticks.
+  """
+  @callback ticks_to_seconds(ticks :: non_neg_integer()) :: non_neg_integer()
+
+  @doc """
   Delegates `get_tick` to the configured adapter.
   """
   def get_tick, do: impl().get_tick()
@@ -24,6 +29,11 @@ defmodule Tradewinds.Clock do
   Delegates `refresh_cache` to the configured adapter.
   """
   def refresh_cache, do: impl().refresh_cache()
+
+  @doc """
+  Delegates `ticks_to_seconds` to the configured adapter.
+  """
+  def ticks_to_seconds(ticks), do: impl().ticks_to_seconds(ticks)
 
   # Determines the active clock adapter from application configuration.
   defp impl do

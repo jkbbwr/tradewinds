@@ -107,8 +107,8 @@ Time model:
 
 ## Milestone 10 — Oban/Cron (Simulations and Scheduled Jobs)
 
-- [ ] Add Oban + queues config + migrations
-- [ ] “schedule on departure” Oban jobs
+- [x] Add Oban + queues config + migrations
+- [x] “schedule on departure” Oban jobs
 - [ ] Split heavy sweeps into workers (idempotent day/month guards)
 - [ ] Implement day boundary helper (idempotent daily work guard)
 - [ ] Implement month boundary helper (idempotent monthly work guard)

@@ -50,6 +50,18 @@ defmodule Tradewinds.Clock.Live do
     :ok
   end
 
+  @impl true
+  @doc """
+  Calculates the total number of real-time seconds for a given number of game ticks.
+  Uses the cached tick_duration_seconds.
+  """
+  def ticks_to_seconds(ticks) do
+    case get_active_season() do
+      %{tick_duration_seconds: duration} -> ticks * duration
+      nil -> ticks * 24 # Default fallback to 24s if no season
+    end
+  end
+
   # Retrieves the cached active season map.
   defp get_active_season() do
     :persistent_term.get(@cache_key, nil)
