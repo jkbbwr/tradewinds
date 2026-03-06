@@ -110,4 +110,52 @@ defmodule Tradewinds.Shipyards do
     })
     |> Repo.insert()
   end
+
+  @doc """
+  Produces ships at a specific shipyard to maintain stock levels.
+  Ensures a minimum stock of 2 for each ship type.
+  Bigger ships (higher capacity) take proportionally longer to build based on a weekly probability roll.
+  """
+  def produce_ships(shipyard_id) do
+    with {:ok, shipyard} <- fetch_shipyard(shipyard_id),
+         ship_types <- Repo.all(Tradewinds.World.ShipType),
+         {:ok, result} <-
+           Repo.transact(fn ->
+             Enum.each(ship_types, fn type ->
+               count =
+                 Inventory
+                 |> where(shipyard_id: ^shipyard.id, ship_type_id: ^type.id)
+                 |> Repo.aggregate(:count, :id)
+
+               # Calculate production probability. Base capacity of 100 has a 100% chance per week.
+               # Larger ships like a 200 capacity Galleon have a 50% chance per week (~2 weeks).
+               probability = min(1.0, 100.0 / max(type.capacity, 1))
+
+               if count < 2 and :rand.uniform() <= probability do
+                 build_ship_for_inventory(shipyard, type)
+               end
+             end)
+
+             {:ok, :produced}
+           end) do
+      {:ok, result}
+    end
+  end
+
+  defp build_ship_for_inventory(shipyard, ship_type) do
+    ship_name = "#{ship_type.name} - #{Ecto.UUID.generate() |> String.slice(0..7)}"
+
+    with {:ok, ship} <-
+           %Tradewinds.Fleet.Ship{}
+           |> Tradewinds.Fleet.Ship.create_changeset(%{
+             name: ship_name,
+             status: :docked,
+             port_id: shipyard.port_id,
+             ship_type_id: ship_type.id,
+             company_id: nil
+           })
+           |> Repo.insert() do
+      create_ship(shipyard.id, ship_type.id, ship.id, ship_type.base_price)
+    end
+  end
 end

@@ -112,13 +112,13 @@ Time model:
 - [ ] Split heavy sweeps into workers (idempotent day/month guards)
 - [ ] Implement day boundary helper (idempotent daily work guard)
 - [ ] Implement month boundary helper (idempotent monthly work guard)
-- [ ] Implement daily NPC simulation `Commerce.simulate_day(day)`
+- [x] Implement daily NPC simulation `Commerce.simulate_day(day)`
   - stock drift/restocking + clamps + volatility update + idempotent guard
 - [ ] Implement net-player-flow aggregation for NPC simulation (from trade log)
 - [ ] Implement monthly reset for NPC trader stance (profit/spread reset)
-- [ ] Implement order expiry sweep (release/cancel logic TBD)
-- [ ] Implement monthly company upkeep calculation (ships + warehouses)
-- [ ] Implement monthly upkeep processing function (delinquency flags, dormant/evict rules)
+- [x] Implement order expiry sweep (release/cancel logic TBD)
+- [x] Implement monthly company upkeep calculation (ships + warehouses)
+- [x] Implement monthly upkeep processing function (delinquency flags, dormant/evict rules)
 - [ ] Implement ship construction function `Shipyards.produce_ships(current_tick)`
   - Produce at day boundary (every 24 ticks), idempotent via `last_produced_day`
 - [ ] Implement quote expiry sweep (drop or mark expired quotes > `expires_tick`)

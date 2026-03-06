@@ -21,7 +21,7 @@ defmodule Tradewinds.Fleet.Ship do
   def create_changeset(ship, attrs) do
     ship
     |> cast(attrs, [:name, :status, :arriving_at, :company_id, :ship_type_id, :port_id, :route_id])
-    |> validate_required([:name, :status, :company_id, :ship_type_id])
+    |> validate_required([:name, :status, :ship_type_id])
     |> validate_inclusion(:status, [:docked, :traveling, :dormant])
     |> validate_location()
     |> check_constraint(:port_id, name: :port_xor_route)
