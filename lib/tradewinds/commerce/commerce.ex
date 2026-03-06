@@ -345,7 +345,21 @@ defmodule Tradewinds.Commerce do
         |> Tradewinds.Commerce.TraderPosition.update_stock_changeset(%{stock: new_stock})
         |> Repo.update!()
       end)
+
+      {:ok, :simulated}
     end)
+  end
+
+  @doc """
+  Resets the monthly profit for a trader's positions.
+  This allows the trader to reassess their stance (e.g., adjust spread) in the future.
+  """
+  def reset_trader_stances(trader_id) do
+    Tradewinds.Commerce.TraderPosition
+    |> where(trader_id: ^trader_id)
+    |> Repo.update_all(set: [monthly_profit: 0, updated_at: DateTime.utc_now()])
+    
+    {:ok, :reset}
   end
 
   @doc """

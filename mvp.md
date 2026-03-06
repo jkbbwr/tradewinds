@@ -115,7 +115,7 @@ Time model:
 - [x] Implement daily NPC simulation `Commerce.simulate_day(day)`
   - stock drift/restocking + clamps + volatility update + idempotent guard
 - [ ] Implement net-player-flow aggregation for NPC simulation (from trade log)
-- [ ] Implement monthly reset for NPC trader stance (profit/spread reset)
+- [x] Implement monthly reset for NPC trader stance (profit/spread reset)
 - [x] Implement order expiry sweep (release/cancel logic TBD)
 - [x] Implement monthly company upkeep calculation (ships + warehouses)
 - [x] Implement monthly upkeep processing function (delinquency flags, dormant/evict rules)
