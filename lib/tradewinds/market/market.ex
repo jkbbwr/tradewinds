@@ -10,10 +10,9 @@ defmodule Tradewinds.Market do
   alias Tradewinds.Companies
   alias Tradewinds.Companies.Company
   alias Tradewinds.Logistics
-  alias Tradewinds.Clock
 
   @base_fee 100
-  @listing_expiry 168
+  @listing_expiry_hours 168
   @penalty_fine_rate 0.05
   @penalty_rep_loss -50
   @success_rep_gain 1
@@ -36,8 +35,10 @@ defmodule Tradewinds.Market do
   end
 
   defp create_order(company, port_id, good_id, side, price, total) do
-    tick = Clock.get_tick()
-    expires_tick = tick + @listing_expiry
+    now = DateTime.utc_now()
+    # Assuming @listing_expiry_hours is in game hours, map it to real seconds if needed, or if real time, just add hours.
+    # In the new model, 1 game hour = 1 real hour? Or we can just use real hours. Let's add hours.
+    expires_at = DateTime.add(now, @listing_expiry_hours, :hour)
 
     attrs = %{
       company_id: company.id,
@@ -46,8 +47,8 @@ defmodule Tradewinds.Market do
       side: side,
       price: price,
       total: total,
-      created_tick: tick,
-      expires_tick: expires_tick,
+      created_at: now,
+      expires_at: expires_at,
       posted_reputation: company.reputation,
       status: :open
     }
@@ -59,7 +60,7 @@ defmodule Tradewinds.Market do
 
   defp deduct_listing_fee(company, order_id) do
     fee = calculate_listing_fee(company)
-    tick = Clock.get_tick()
+    now = DateTime.utc_now()
 
     Companies.record_transaction(
       company.id,
@@ -67,7 +68,7 @@ defmodule Tradewinds.Market do
       :market_listing_fee,
       :order,
       order_id,
-      tick
+      now
     )
   end
 
@@ -138,7 +139,7 @@ defmodule Tradewinds.Market do
   end
 
   defp execute_successful_trade(ctx) do
-    tick = Clock.get_tick()
+    now = DateTime.utc_now()
 
     with {:ok, _} <-
            Companies.record_transaction(
@@ -147,7 +148,7 @@ defmodule Tradewinds.Market do
              :market_trade,
              :order,
              ctx.order.id,
-             tick
+             now
            ),
          {:ok, _} <-
            Companies.record_transaction(
@@ -156,7 +157,7 @@ defmodule Tradewinds.Market do
              :market_trade,
              :order,
              ctx.order.id,
-             tick
+             now
            ),
          {:ok, _} <-
            Logistics.remove_cargo(ctx.seller_warehouse_id, ctx.order.good_id, ctx.quantity),
@@ -165,7 +166,7 @@ defmodule Tradewinds.Market do
          {:ok, _} <- Companies.update_reputation(ctx.seller_id, @success_rep_gain),
          {:ok, _} <-
            Tradewinds.Economy.log_trade(%{
-             tick: tick,
+             occurred_at: now,
              quantity: ctx.quantity,
              price: ctx.order.price,
              source: :market,
@@ -199,7 +200,7 @@ defmodule Tradewinds.Market do
                :market_penalty_fine,
                :order,
                order.id,
-               Clock.get_tick()
+               DateTime.utc_now()
              ),
            {:ok, _} <- Companies.update_reputation(offender_id, @penalty_rep_loss),
            {:ok, _} <- Repo.delete(order) do
@@ -244,11 +245,11 @@ defmodule Tradewinds.Market do
   Sweeps expired orders.
   """
   def sweep_expired_orders do
-    tick = Clock.get_tick()
+    now = DateTime.utc_now()
 
     Order
-    |> where([o], o.status == :open and o.expires_tick < ^tick)
-    |> Repo.update_all(set: [status: :expired, updated_at: DateTime.utc_now()])
+    |> where([o], o.status == :open and o.expires_at < ^now)
+    |> Repo.update_all(set: [status: :expired, updated_at: now])
   end
 
   @doc """

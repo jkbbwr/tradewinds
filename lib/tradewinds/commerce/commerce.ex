@@ -28,8 +28,8 @@ defmodule Tradewinds.Commerce do
         if action == :buy and quantity > position.stock do
           {:error, :insufficient_stock}
         else
-          current_tick = Tradewinds.Clock.get_tick()
-          modifiers = Tradewinds.Economy.get_active_modifiers(port_id, good_id, current_tick)
+          now = DateTime.utc_now()
+          modifiers = Tradewinds.Economy.get_active_modifiers(port_id, good_id, now)
 
           base_price = round(position.good.base_price * modifiers.price)
 
@@ -62,7 +62,7 @@ defmodule Tradewinds.Commerce do
             total_price: final_unit_price * quantity,
             market_price: final_base_price,
             spread: position.spread,
-            tick: current_tick
+            timestamp: DateTime.to_iso8601(now)
           }
 
           token = Phoenix.Token.sign(TradewindsWeb.Endpoint, "trader_quote", quote_data)
@@ -76,7 +76,7 @@ defmodule Tradewinds.Commerce do
   Enforces a maximum age (e.g., 120 seconds) to prevent stale price execution.
   """
   def verify_quote(token) do
-    # 5 ticks * 24 seconds/tick = 120 seconds max age
+    # 120 seconds max age
     Phoenix.Token.verify(TradewindsWeb.Endpoint, "trader_quote", token, max_age: 120)
   end
 
@@ -87,10 +87,14 @@ defmodule Tradewinds.Commerce do
   def execute_quote(token, destinations) when is_list(destinations) do
     with {:ok, quote_data} <- verify_quote(token),
          :ok <- validate_destinations_total(quote_data, destinations) do
+      # Decode the timestamp back to DateTime
+      {:ok, quote_timestamp, _} = DateTime.from_iso8601(quote_data.timestamp)
+      quote_data = Map.put(quote_data, :timestamp, quote_timestamp)
+
       Repo.transact(fn ->
         with {:ok, position} <- fetch_position_for_update(quote_data.port_id, quote_data.good_id),
              :ok <- validate_trade_execution(quote_data, position, destinations) do
-          perform_execution(quote_data, position, destinations, quote_data.tick)
+          perform_execution(quote_data, position, destinations, quote_data.timestamp)
         else
           {:error, reason} -> Repo.rollback(reason)
         end
@@ -113,8 +117,8 @@ defmodule Tradewinds.Commerce do
         with {:ok, position} <- fetch_position_for_update(port_id, good_id),
              :ok <-
                validate_trade_execution(%{action: action, quantity: total_qty}, position, destinations) do
-          current_tick = Tradewinds.Clock.get_tick()
-          modifiers = Tradewinds.Economy.get_active_modifiers(port_id, good_id, current_tick)
+          now = DateTime.utc_now()
+          modifiers = Tradewinds.Economy.get_active_modifiers(port_id, good_id, now)
 
           base_price = round(position.good.base_price * modifiers.price)
 
@@ -149,7 +153,7 @@ defmodule Tradewinds.Commerce do
             spread: position.spread
           }
 
-          perform_execution(quote_data, position, destinations, current_tick)
+          perform_execution(quote_data, position, destinations, now)
         else
           {:error, reason} -> Repo.rollback(reason)
         end
@@ -188,7 +192,7 @@ defmodule Tradewinds.Commerce do
   end
 
   # The core atomic execution block. Charges the treasury, moves cargo, updates NPC stock, and writes a trade log.
-  defp perform_execution(quote_data, position, destinations, current_tick) do
+  defp perform_execution(quote_data, position, destinations, now) do
     amount = if quote_data.action == :buy, do: -quote_data.total_price, else: quote_data.total_price
 
     {buyer_id, seller_id} =
@@ -203,13 +207,13 @@ defmodule Tradewinds.Commerce do
              "npc_trade",
              "market",
              position.id,
-             current_tick
+             now
            ),
          :ok <- update_cargo_destinations(quote_data, destinations),
          {:ok, _} <- update_market_position(quote_data, position),
          {:ok, _} <-
            Tradewinds.Economy.log_trade(%{
-             tick: current_tick,
+             occurred_at: now,
              quantity: quote_data.quantity,
              price: quote_data.unit_price,
              source: :npc_trader,

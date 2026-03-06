@@ -78,7 +78,7 @@ defmodule Tradewinds.Shipyards do
                :ship_purchase,
                :ship,
                inventory.ship_id,
-               Tradewinds.Clock.get_tick()
+               DateTime.utc_now()
              ) do
         {:ok, ship}
       else

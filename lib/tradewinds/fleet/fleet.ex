@@ -13,16 +13,17 @@ defmodule Tradewinds.Fleet do
 
   @doc """
   Initiates travel for a docked ship along a specific route.
-  Sets the ship's status to `:traveling` and calculates the arrival tick.
+  Sets the ship's status to `:traveling` and calculates the arrival time.
   """
   def transit_ship(ship_id, route_id) do
     with {:ok, ship} <- fetch_ship(ship_id),
          :ok <- check_ship_docked(ship),
          {:ok, route} <- World.fetch_route_by_id(route_id),
          :ok <- check_ship_at_route_origin(ship, route),
-         {:ok, ticks} <- transit_time(ship_id, route_id) do
-      current_tick = Tradewinds.Clock.get_tick()
-      seconds = Tradewinds.Clock.ticks_to_seconds(ticks)
+         {:ok, seconds} <- transit_time(ship_id, route_id) do
+      
+      now = DateTime.utc_now()
+      arrival_time = DateTime.add(now, seconds, :second)
 
       Repo.transact(fn ->
         with {:ok, updated_ship} <-
@@ -31,7 +32,7 @@ defmodule Tradewinds.Fleet do
                  status: :traveling,
                  port_id: nil,
                  route_id: route.id,
-                 arriving_at: current_tick + ticks
+                 arriving_at: arrival_time
                })
                |> Repo.update(),
              {:ok, _job} <-
@@ -63,7 +64,7 @@ defmodule Tradewinds.Fleet do
   end
 
   @doc """
-  Docks a traveling ship at its destination port if the arrival tick has passed.
+  Docks a traveling ship at its destination port if the arrival time has passed.
   """
   def dock_ship(ship_id) do
     with {:ok, ship} <- fetch_ship(ship_id, preload: [:route]),
@@ -84,11 +85,11 @@ defmodule Tradewinds.Fleet do
     end
   end
 
-  # Checks if the current game tick is past the ship's arrival tick.
+  # Checks if the current time is past the ship's arrival time.
   defp check_ship_arrived(ship) do
-    current_tick = Tradewinds.Clock.get_tick()
+    now = DateTime.utc_now()
 
-    if ship.arriving_at && current_tick >= ship.arriving_at do
+    if ship.arriving_at && DateTime.compare(now, ship.arriving_at) != :lt do
       :ok
     else
       {:error, :ship_not_arrived}
@@ -96,7 +97,7 @@ defmodule Tradewinds.Fleet do
   end
 
   @doc """
-  Calculates the transit time in ticks for a specific ship on a specific route,
+  Calculates the transit time in real-time seconds for a specific ship on a specific route,
   taking into account the ship's speed and route distance.
   """
   def transit_time(ship_id, route_id) do
@@ -111,9 +112,10 @@ defmodule Tradewinds.Fleet do
         |> div(10_000)
         |> max(1)
 
-      ticks = div(distance_nm + effective_knots - 1, effective_knots)
+      game_hours = div(distance_nm + effective_knots - 1, effective_knots)
+      seconds = game_hours * 24
 
-      {:ok, ticks}
+      {:ok, seconds}
     end
   end
 

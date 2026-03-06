@@ -63,7 +63,7 @@ defmodule Tradewinds.Companies do
         reason,
         ref_type,
         ref_id,
-        tick,
+        occurred_at,
         opts \\ []
       ) do
     idempotency_key = Keyword.get_lazy(opts, :idempotency_key, &Ecto.UUID.generate/0)
@@ -77,7 +77,7 @@ defmodule Tradewinds.Companies do
           reason: reason,
           reference_type: ref_type,
           reference_id: ref_id,
-          tick: tick,
+          occurred_at: occurred_at,
           idempotency_key: idempotency_key,
           meta: meta
         })

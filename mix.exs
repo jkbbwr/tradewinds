@@ -74,8 +74,7 @@ defmodule Tradewinds.MixProject do
       "ecto.setup": [
         "ecto.create",
         "ecto.migrate",
-        "run priv/repo/seeds.exs",
-        "run priv/repo/dev_seeds.exs"
+        "run priv/repo/seeds.exs"
       ],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],

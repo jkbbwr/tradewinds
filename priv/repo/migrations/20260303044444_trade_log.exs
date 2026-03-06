@@ -3,7 +3,7 @@ defmodule Tradewinds.Repo.Migrations.TradeLog do
 
   def change do
     create table(:trade_log) do
-      add :tick, :integer, null: false
+      add :occurred_at, :utc_datetime_usec, null: false
       add :quantity, :integer, null: false
       add :price, :integer, null: false
       add :source, :text, null: false
@@ -14,9 +14,9 @@ defmodule Tradewinds.Repo.Migrations.TradeLog do
       timestamps(updated_at: false)
     end
 
-    create index(:trade_log, [:port_id, :good_id, :tick])
-    create index(:trade_log, [:buyer_id, :tick])
-    create index(:trade_log, [:seller_id, :tick])
+    create index(:trade_log, [:port_id, :good_id, :occurred_at])
+    create index(:trade_log, [:buyer_id, :occurred_at])
+    create index(:trade_log, [:seller_id, :occurred_at])
     # create index(:trade_log, [:seller_id, :tick])
   end
 end

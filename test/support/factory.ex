@@ -154,7 +154,7 @@ defmodule Tradewinds.Factory do
 
   def trade_log_factory do
     %Tradewinds.Economy.TradeLog{
-      tick: 1,
+      occurred_at: ~U[2026-03-06 00:00:00Z],
       quantity: 10,
       price: 100,
       source: :npc_trader,
@@ -169,7 +169,7 @@ defmodule Tradewinds.Factory do
     %Tradewinds.Economy.Shock{
       name: sequence(:shock_name, &"Shock #{&1}"),
       status: :active,
-      start_tick: 0,
+      start_time: DateTime.utc_now(),
       demand_modifier: 10_000,
       supply_modifier: 10_000,
       price_modifier: 10_000,

@@ -31,15 +31,15 @@ defmodule Tradewinds.Economy do
   end
 
   @doc """
-  Returns aggregated modifiers for a specific port/good at a specific tick.
+  Returns aggregated modifiers for a specific port/good at a specific time.
   Multiplies all active modifiers together.
   """
-  def get_active_modifiers(port_id, good_id, current_tick) do
+  def get_active_modifiers(port_id, good_id, now) do
     query =
       from s in Shock,
         where: s.status == :active,
-        where: s.start_tick <= ^current_tick,
-        where: is_nil(s.end_tick) or s.end_tick >= ^current_tick,
+        where: s.start_time <= ^now,
+        where: is_nil(s.end_time) or s.end_time >= ^now,
         where: is_nil(s.port_id) or s.port_id == ^port_id,
         where: is_nil(s.good_id) or s.good_id == ^good_id
 
@@ -58,15 +58,15 @@ defmodule Tradewinds.Economy do
   end
 
   @doc """
-  Calculates the net player flow from the NPC trader for a specific port, good, and tick range.
+  Calculates the net player flow from the NPC trader for a specific port, good, and time range.
   Positive value means players bought from the NPC.
   Negative value means players sold to the NPC.
   """
-  def net_player_flow_from_npc(port_id, good_id, start_tick, end_tick) do
+  def net_player_flow_from_npc(port_id, good_id, start_time, end_time) do
     query =
       from t in TradeLog,
         where: t.port_id == ^port_id and t.good_id == ^good_id,
-        where: t.tick >= ^start_tick and t.tick <= ^end_tick,
+        where: t.occurred_at >= ^start_time and t.occurred_at <= ^end_time,
         where: t.source == :npc_trader
 
     Repo.all(query)
@@ -80,13 +80,13 @@ defmodule Tradewinds.Economy do
   end
 
   @doc """
-  Calculates the Volume Weighted Average Price (VWAP) for a port/good over a tick range.
+  Calculates the Volume Weighted Average Price (VWAP) for a port/good over a time range.
   """
-  def vwap(port_id, good_id, start_tick, end_tick) do
+  def vwap(port_id, good_id, start_time, end_time) do
     query =
       from t in TradeLog,
         where: t.port_id == ^port_id and t.good_id == ^good_id,
-        where: t.tick >= ^start_tick and t.tick <= ^end_tick,
+        where: t.occurred_at >= ^start_time and t.occurred_at <= ^end_time,
         select: {sum(t.price * t.quantity), sum(t.quantity)}
 
     case Repo.one(query) do

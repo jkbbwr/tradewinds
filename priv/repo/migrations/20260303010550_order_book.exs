@@ -10,15 +10,15 @@ defmodule Tradewinds.Repo.Migrations.OrderBook do
       add :price, :integer, null: false, comment: "limit price"
       add :total, :integer, null: false
       add :remaining, :integer, null: false
-      add :created_tick, :integer, null: false
-      add :expires_tick, :integer, null: false
+      add :created_at, :utc_datetime_usec, null: false
+      add :expires_at, :utc_datetime_usec, null: false
       add :posted_reputation, :integer, null: false
       add :status, :text, null: false
       timestamps()
     end
 
     create index(:order_book, [:port_id, :good_id, :status, :side, :price, :inserted_at])
-    create index(:order_book, [:status, :expires_tick])
+    create index(:order_book, [:status, :expires_at])
     create index(:order_book, [:company_id, :status])
     create index(:order_book, [:port_id])
     create index(:order_book, [:good_id])

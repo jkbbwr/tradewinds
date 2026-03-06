@@ -93,8 +93,6 @@ defmodule Tradewinds.CommerceTest do
 
   describe "execute_quote/2" do
     test "successfully executes a buy quote depositing into a ship" do
-      Tradewinds.ClockMock
-      |> expect(:get_tick, fn -> 1000 end)
 
       company = insert(:company, treasury: 10_000)
       port = insert(:port)
@@ -149,8 +147,6 @@ defmodule Tradewinds.CommerceTest do
     end
 
     test "successfully executes a sell quote withdrawing from a ship" do
-      Tradewinds.ClockMock
-      |> expect(:get_tick, fn -> 1000 end)
 
       company = insert(:company, treasury: 10_000)
       port = insert(:port)
@@ -181,8 +177,6 @@ defmodule Tradewinds.CommerceTest do
 
   describe "execute_immediate/5" do
     test "successfully executes an immediate buy quote depositing into a ship" do
-      Tradewinds.ClockMock
-      |> expect(:get_tick, fn -> 1000 end)
 
       company = insert(:company, treasury: 10_000)
       port = insert(:port)

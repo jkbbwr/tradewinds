@@ -12,7 +12,7 @@ defmodule Tradewinds.EconomyTest do
       seller = insert(:company)
 
       attrs = %{
-        tick: 10,
+        occurred_at: ~U[2026-03-06 00:00:00Z],
         quantity: 100,
         price: 50,
         source: :market,
@@ -23,7 +23,7 @@ defmodule Tradewinds.EconomyTest do
       }
 
       assert {:ok, %TradeLog{} = log} = Economy.log_trade(attrs)
-      assert log.tick == 10
+      assert DateTime.compare(log.occurred_at, ~U[2026-03-06 00:00:00Z]) == :eq
       assert log.quantity == 100
       assert log.price == 50
       assert log.source == :market
@@ -35,9 +35,15 @@ defmodule Tradewinds.EconomyTest do
       company = insert(:company)
       npc_id = Economy.system_npc_id()
 
+      start_time = ~U[2026-03-06 00:00:00Z]
+      time1 = ~U[2026-03-06 00:00:01Z]
+      time5 = ~U[2026-03-06 00:00:05Z]
+      time10 = ~U[2026-03-06 00:00:10Z]
+      end_time = ~U[2026-03-06 00:00:20Z]
+
       # Player buys 100 from NPC
       insert(:trade_log, %{
-        tick: 1,
+        occurred_at: time1,
         quantity: 100,
         source: :npc_trader,
         port: port,
@@ -48,7 +54,7 @@ defmodule Tradewinds.EconomyTest do
 
       # Player sells 40 to NPC
       insert(:trade_log, %{
-        tick: 5,
+        occurred_at: time5,
         quantity: 40,
         source: :npc_trader,
         port: port,
@@ -59,25 +65,30 @@ defmodule Tradewinds.EconomyTest do
 
       # Market trade (should be ignored)
       insert(:trade_log, %{
-        tick: 10,
+        occurred_at: time10,
         quantity: 50,
         source: :market,
         port: port,
         good: good
       })
 
-      assert Economy.net_player_flow_from_npc(port.id, good.id, 0, 20) == 60
+      assert Economy.net_player_flow_from_npc(port.id, good.id, start_time, end_time) == 60
     end
 
     test "vwap/4 calculates correctly" do
       port = insert(:port)
       good = insert(:good)
 
-      insert(:trade_log, %{tick: 1, quantity: 10, price: 100, port: port, good: good})
-      insert(:trade_log, %{tick: 2, quantity: 20, price: 130, port: port, good: good})
+      start_time = ~U[2026-03-06 00:00:00Z]
+      time1 = ~U[2026-03-06 00:00:01Z]
+      time2 = ~U[2026-03-06 00:00:02Z]
+      end_time = ~U[2026-03-06 00:00:10Z]
+
+      insert(:trade_log, %{occurred_at: time1, quantity: 10, price: 100, port: port, good: good})
+      insert(:trade_log, %{occurred_at: time2, quantity: 20, price: 130, port: port, good: good})
 
       # Should be (10*100 + 20*130) / (10 + 20) = (1000 + 2600) / 30 = 3600 / 30 = 120
-      assert Economy.vwap(port.id, good.id, 0, 10) == 120.0
+      assert Economy.vwap(port.id, good.id, start_time, end_time) == 120.0
     end
   end
 
@@ -86,12 +97,19 @@ defmodule Tradewinds.EconomyTest do
       port = insert(:port)
       good = insert(:good)
 
+      t0 = ~U[2026-03-06 00:00:00Z]
+      t5 = ~U[2026-03-06 00:00:05Z]
+      t10 = ~U[2026-03-06 00:00:10Z]
+      t15 = ~U[2026-03-06 00:00:15Z]
+      t20 = ~U[2026-03-06 00:00:20Z]
+      t100 = ~U[2026-03-06 00:01:40Z]
+
       # Global price shock (1.5x)
       insert(:shock, %{
         name: "Global Inflation",
         price_modifier: 15_000,
-        start_tick: 0,
-        end_tick: 100
+        start_time: t0,
+        end_time: t100
       })
 
       # Local demand shock (2.0x)
@@ -100,8 +118,8 @@ defmodule Tradewinds.EconomyTest do
         port: port,
         good: good,
         demand_modifier: 20_000,
-        start_tick: 10,
-        end_tick: 20
+        start_time: t10,
+        end_time: t20
       })
 
       # Paused shock (should be ignored)
@@ -109,16 +127,16 @@ defmodule Tradewinds.EconomyTest do
         name: "Paused Event",
         status: :paused,
         price_modifier: 50_000,
-        start_tick: 0
+        start_time: t0
       })
 
       # At tick 5: Only global inflation applies
-      mods = Economy.get_active_modifiers(port.id, good.id, 5)
+      mods = Economy.get_active_modifiers(port.id, good.id, t5)
       assert mods.price == 1.5
       assert mods.demand == 1.0
 
       # At tick 15: Both apply (1.5x price, 2.0x demand)
-      mods = Economy.get_active_modifiers(port.id, good.id, 15)
+      mods = Economy.get_active_modifiers(port.id, good.id, t15)
       assert mods.price == 1.5
       assert mods.demand == 2.0
     end

@@ -78,7 +78,7 @@ defmodule Tradewinds.CompaniesTest do
                  :market_trade,
                  :market,
                  Ecto.UUID.generate(),
-                 100
+                 ~U[2026-03-06 00:00:00Z]
                )
 
       # Verify ledger entry
@@ -86,7 +86,7 @@ defmodule Tradewinds.CompaniesTest do
       assert ledger_entry.company_id == company.id
       assert ledger_entry.amount == 500
       assert ledger_entry.reason == :market_trade
-      assert ledger_entry.tick == 100
+      assert DateTime.compare(ledger_entry.occurred_at, ~U[2026-03-06 00:00:00Z]) == :eq
     end
 
     test "record_transaction/8 fails with invalid reason" do
@@ -99,7 +99,7 @@ defmodule Tradewinds.CompaniesTest do
                  :invalid_reason,
                  :market,
                  Ecto.UUID.generate(),
-                 100
+                 ~U[2026-03-06 00:00:00Z]
                )
 
       assert "is invalid" in errors_on(changeset).reason
@@ -115,7 +115,7 @@ defmodule Tradewinds.CompaniesTest do
                  :market_trade,
                  :market,
                  Ecto.UUID.generate(),
-                 100
+                 ~U[2026-03-06 00:00:00Z]
                )
 
       # Verify treasury unchanged

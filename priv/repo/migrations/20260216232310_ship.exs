@@ -9,7 +9,7 @@ defmodule Tradewinds.Repo.Migrations.Ship do
       add :status, :text, null: false
       add :port_id, references(:port)
       add :route_id, references(:route)
-      add :arriving_at, :integer
+      add :arriving_at, :utc_datetime_usec
       timestamps()
     end
 

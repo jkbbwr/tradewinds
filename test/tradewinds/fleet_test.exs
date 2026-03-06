@@ -81,7 +81,7 @@ defmodule Tradewinds.FleetTest do
       ship = insert(:ship, ship_type: ship_type)
       route = insert(:route, distance: 100)
 
-      assert {:ok, 10} = Fleet.transit_time(ship.id, route.id)
+      assert {:ok, 240} = Fleet.transit_time(ship.id, route.id)
     end
 
     test "transit_ship/2 starts traveling and schedules job" do
@@ -95,7 +95,9 @@ defmodule Tradewinds.FleetTest do
       assert updated_ship.status == :traveling
       assert updated_ship.port_id == nil
       assert updated_ship.route_id == route.id
-      assert updated_ship.arriving_at == 10
+      
+      diff = DateTime.diff(updated_ship.arriving_at, DateTime.utc_now(), :second)
+      assert diff in 235..245
 
       assert_enqueued(
         worker: Tradewinds.Fleet.TransitJob,
@@ -105,7 +107,7 @@ defmodule Tradewinds.FleetTest do
 
     test "dock_ship/1 docks a traveling ship" do
       route = insert(:route)
-      ship = insert(:ship, status: :traveling, port: nil, route: route, arriving_at: 0)
+      ship = insert(:ship, status: :traveling, port: nil, route: route, arriving_at: ~U[2026-03-06 00:00:00Z])
 
       assert {:ok, updated_ship} = Fleet.dock_ship(ship.id)
       assert updated_ship.status == :docked

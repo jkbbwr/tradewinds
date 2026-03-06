@@ -6,8 +6,8 @@ defmodule Tradewinds.Market.Order do
     field :price, :integer
     field :total, :integer
     field :remaining, :integer
-    field :created_tick, :integer
-    field :expires_tick, :integer
+    field :created_at, :utc_datetime_usec
+    field :expires_at, :utc_datetime_usec
     field :posted_reputation, :integer
     field :status, Ecto.Enum, values: [:open, :filled, :cancelled, :expired], default: :open
 
@@ -31,8 +31,8 @@ defmodule Tradewinds.Market.Order do
       :side,
       :price,
       :total,
-      :created_tick,
-      :expires_tick,
+      :created_at,
+      :expires_at,
       :posted_reputation
     ])
     |> validate_required([
@@ -42,8 +42,8 @@ defmodule Tradewinds.Market.Order do
       :side,
       :price,
       :total,
-      :created_tick,
-      :expires_tick,
+      :created_at,
+      :expires_at,
       :posted_reputation
     ])
     |> put_change(:remaining, attrs[:total] || attrs["total"])

@@ -2,7 +2,7 @@ defmodule Tradewinds.Companies.Ledger do
   use Tradewinds.Schema
 
   schema "company_ledger" do
-    field :tick, :integer
+    field :occurred_at, :utc_datetime_usec
     field :amount, :integer
 
     field :reason, Ecto.Enum,
@@ -37,7 +37,7 @@ defmodule Tradewinds.Companies.Ledger do
     ledger
     |> cast(attrs, [
       :company_id,
-      :tick,
+      :occurred_at,
       :amount,
       :reason,
       :reference_type,
@@ -47,7 +47,7 @@ defmodule Tradewinds.Companies.Ledger do
     ])
     |> validate_required([
       :company_id,
-      :tick,
+      :occurred_at,
       :amount,
       :reason,
       :reference_type,
@@ -55,7 +55,6 @@ defmodule Tradewinds.Companies.Ledger do
       :idempotency_key
     ])
     |> validate_number(:amount, not_equal_to: 0)
-    |> validate_number(:tick, greater_than_or_equal_to: 0)
     |> unique_constraint(:idempotency_key)
   end
 end

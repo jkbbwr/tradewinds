@@ -4,7 +4,7 @@ defmodule Tradewinds.Fleet.Ship do
   schema "ship" do
     field :name, :string
     field :status, Ecto.Enum, values: [:docked, :traveling, :dormant]
-    field :arriving_at, :integer
+    field :arriving_at, :utc_datetime_usec
 
     belongs_to :company, Tradewinds.Companies.Company
     belongs_to :ship_type, Tradewinds.World.ShipType

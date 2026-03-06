@@ -5,7 +5,7 @@ defmodule Tradewinds.Fleet.TransitJobTest do
 
   test "perform/1 calls dock_ship" do
     route = insert(:route)
-    ship = insert(:ship, status: :traveling, port: nil, route: route, arriving_at: 0)
+    ship = insert(:ship, status: :traveling, port: nil, route: route, arriving_at: ~U[2026-03-06 00:00:00Z])
 
     # Note that dock_ship returns {:ok, ship} but TransitJob.perform doesn't currently unwrap it.
     # The job just executes Fleet.dock_ship(ship_id). We can assert the change was made in DB.

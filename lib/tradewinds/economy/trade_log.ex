@@ -2,7 +2,7 @@ defmodule Tradewinds.Economy.TradeLog do
   use Tradewinds.Schema
 
   schema "trade_log" do
-    field :tick, :integer
+    field :occurred_at, :utc_datetime_usec
     field :quantity, :integer
     field :price, :integer
     field :source, Ecto.Enum, values: [:market, :npc_trader, :contract_execution]
@@ -20,8 +20,8 @@ defmodule Tradewinds.Economy.TradeLog do
   """
   def create_changeset(trade_log, attrs) do
     trade_log
-    |> cast(attrs, [:tick, :quantity, :price, :source, :port_id, :good_id, :buyer_id, :seller_id])
-    |> validate_required([:tick, :quantity, :price, :source, :port_id, :good_id, :buyer_id, :seller_id])
+    |> cast(attrs, [:occurred_at, :quantity, :price, :source, :port_id, :good_id, :buyer_id, :seller_id])
+    |> validate_required([:occurred_at, :quantity, :price, :source, :port_id, :good_id, :buyer_id, :seller_id])
     |> validate_number(:quantity, greater_than: 0)
     |> validate_number(:price, greater_than: 0)
     |> foreign_key_constraint(:port_id)

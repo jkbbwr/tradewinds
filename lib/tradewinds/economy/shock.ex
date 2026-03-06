@@ -6,8 +6,8 @@ defmodule Tradewinds.Economy.Shock do
     field :description, :string
     field :status, Ecto.Enum, values: [:active, :paused, :expired], default: :active
 
-    field :start_tick, :integer
-    field :end_tick, :integer
+    field :start_time, :utc_datetime_usec
+    field :end_time, :utc_datetime_usec
 
     field :demand_modifier, :integer, default: 10_000
     field :supply_modifier, :integer, default: 10_000
@@ -32,14 +32,14 @@ defmodule Tradewinds.Economy.Shock do
       :status,
       :port_id,
       :good_id,
-      :start_tick,
-      :end_tick,
+      :start_time,
+      :end_time,
       :demand_modifier,
       :supply_modifier,
       :price_modifier,
       :volatility_modifier
     ])
-    |> validate_required([:name, :status, :start_tick])
+    |> validate_required([:name, :status, :start_time])
     |> validate_number(:demand_modifier, greater_than: 0)
     |> validate_number(:supply_modifier, greater_than: 0)
     |> validate_number(:price_modifier, greater_than: 0)
