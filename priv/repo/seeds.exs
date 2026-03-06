@@ -28,13 +28,13 @@ uk =
       "A maritime powerhouse with a storied naval history and bustling industrial ports that connect the British Isles to the world."
   })
 
-london = Repo.insert!(%Port{name: "London", shortcode: "LON", country_id: uk.id, is_hub: true})
-edinburgh = Repo.insert!(%Port{name: "Edinburgh", shortcode: "EDI", country_id: uk.id, is_hub: true})
-bristol = Repo.insert!(%Port{name: "Bristol", shortcode: "BRS", country_id: uk.id})
-hull = Repo.insert!(%Port{name: "Hull", shortcode: "HUL", country_id: uk.id})
-portsmouth = Repo.insert!(%Port{name: "Portsmouth", shortcode: "PME", country_id: uk.id})
-plymouth = Repo.insert!(%Port{name: "Plymouth", shortcode: "PLH", country_id: uk.id})
-glasgow = Repo.insert!(%Port{name: "Glasgow", shortcode: "GLA", country_id: uk.id})
+london = Repo.insert!(%Port{name: "London", shortcode: "LON", country_id: uk.id, is_hub: true, tax_rate_bps: 500})
+edinburgh = Repo.insert!(%Port{name: "Edinburgh", shortcode: "EDI", country_id: uk.id, is_hub: true, tax_rate_bps: 500})
+bristol = Repo.insert!(%Port{name: "Bristol", shortcode: "BRS", country_id: uk.id, tax_rate_bps: 200})
+hull = Repo.insert!(%Port{name: "Hull", shortcode: "HUL", country_id: uk.id, tax_rate_bps: 200})
+portsmouth = Repo.insert!(%Port{name: "Portsmouth", shortcode: "PME", country_id: uk.id, tax_rate_bps: 200})
+plymouth = Repo.insert!(%Port{name: "Plymouth", shortcode: "PLH", country_id: uk.id, tax_rate_bps: 200})
+glasgow = Repo.insert!(%Port{name: "Glasgow", shortcode: "GLA", country_id: uk.id, tax_rate_bps: 200})
 
 # Netherlands
 netherlands =
@@ -44,8 +44,8 @@ netherlands =
       "The gateway to Europe, a nation defined by its intricate canal systems and some of the world's most advanced deep-water harbors."
   })
 
-amsterdam = Repo.insert!(%Port{name: "Amsterdam", shortcode: "AMS", country_id: netherlands.id, is_hub: true})
-rotterdam = Repo.insert!(%Port{name: "Rotterdam", shortcode: "RTM", country_id: netherlands.id})
+amsterdam = Repo.insert!(%Port{name: "Amsterdam", shortcode: "AMS", country_id: netherlands.id, is_hub: true, tax_rate_bps: 500})
+rotterdam = Repo.insert!(%Port{name: "Rotterdam", shortcode: "RTM", country_id: netherlands.id, tax_rate_bps: 200})
 
 # Germany
 germany =
@@ -55,8 +55,8 @@ germany =
       "A hub of engineering and trade, where historic Hanseatic cities continue to serve as vital arteries for Central European commerce."
   })
 
-hamburg = Repo.insert!(%Port{name: "Hamburg", shortcode: "HAM", country_id: germany.id, is_hub: true})
-bremen = Repo.insert!(%Port{name: "Bremen", shortcode: "BRE", country_id: germany.id})
+hamburg = Repo.insert!(%Port{name: "Hamburg", shortcode: "HAM", country_id: germany.id, is_hub: true, tax_rate_bps: 500})
+bremen = Repo.insert!(%Port{name: "Bremen", shortcode: "BRE", country_id: germany.id, tax_rate_bps: 200})
 
 # Belgium
 belgium =
@@ -66,7 +66,7 @@ belgium =
       "A vital crossroads of European trade, home to massive inland ports that bridge the gap between the North Sea and the heart of the continent."
   })
 
-antwerp = Repo.insert!(%Port{name: "Antwerp", shortcode: "ANR", country_id: belgium.id})
+antwerp = Repo.insert!(%Port{name: "Antwerp", shortcode: "ANR", country_id: belgium.id, tax_rate_bps: 200})
 
 # France
 france =
@@ -76,8 +76,8 @@ france =
       "A nation of diverse coastlines, where strategic northern ports have served as the threshold for cross-channel trade for centuries."
   })
 
-dunkirk = Repo.insert!(%Port{name: "Dunkirk", shortcode: "DKK", country_id: france.id})
-calais = Repo.insert!(%Port{name: "Calais", shortcode: "CQF", country_id: france.id})
+dunkirk = Repo.insert!(%Port{name: "Dunkirk", shortcode: "DKK", country_id: france.id, tax_rate_bps: 200})
+calais = Repo.insert!(%Port{name: "Calais", shortcode: "CQF", country_id: france.id, tax_rate_bps: 200})
 
 # Ireland
 ireland =
@@ -87,7 +87,7 @@ ireland =
       "The Emerald Isle, whose vibrant coastal cities have long been shaped by their deep connection to the Atlantic and the Irish Sea."
   })
 
-dublin = Repo.insert!(%Port{name: "Dublin", shortcode: "DUB", country_id: ireland.id})
+dublin = Repo.insert!(%Port{name: "Dublin", shortcode: "DUB", country_id: ireland.id, tax_rate_bps: 200})
 
 # Routes
 

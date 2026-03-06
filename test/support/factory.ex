@@ -102,7 +102,6 @@ defmodule Tradewinds.Factory do
     %Tradewinds.Logistics.Warehouse{
       level: 1,
       capacity: 1000,
-      delinquent: false,
       port: build(:port),
       company: build(:company)
     }

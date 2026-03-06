@@ -114,12 +114,12 @@ Time model:
 - [ ] Implement month boundary helper (idempotent monthly work guard)
 - [x] Implement daily NPC simulation `Commerce.simulate_day(day)`
   - stock drift/restocking + clamps + volatility update + idempotent guard
-- [ ] Implement net-player-flow aggregation for NPC simulation (from trade log)
+- [x] Implement net-player-flow aggregation for NPC simulation (from trade log)
 - [x] Implement monthly reset for NPC trader stance (profit/spread reset)
 - [x] Implement order expiry sweep (release/cancel logic TBD)
 - [x] Implement monthly company upkeep calculation (ships + warehouses)
 - [x] Implement monthly upkeep processing function (delinquency flags, dormant/evict rules)
-- [ ] Implement ship construction function `Shipyards.produce_ships(current_tick)`
+- [x] Implement ship construction function `Shipyards.produce_ships(current_tick)`
   - Produce at day boundary (every 24 ticks), idempotent via `last_produced_day`
 - [ ] Implement quote expiry sweep (drop or mark expired quotes > `expires_tick`)
 - [ ] Implement maturity execution job (Oban scheduled at `maturity_tick`)
@@ -128,20 +128,20 @@ Time model:
 
 ## Milestone 11 — Taxes (added at the end)
 
-- [ ] Define tax configuration model (initially “burn it” sink)
+- [x] Define tax configuration model (initially “burn it” sink)
   - At minimum: per-port bps for `npc_trade`, `market_trade`, `ship_purchase`, `warehouse_upgrade`
-- [ ] Implement shared tax calculator helper (integer rounding rule)
-- [ ] Apply tax to NPC trader instant buy/sell
+- [x] Implement shared tax calculator helper (integer rounding rule)
+- [x] Apply tax to NPC trader instant buy/sell
   - Additional ledger outflow entry with `reason="tax"` and metadata
-- [ ] Apply tax to market fills (order book settlement)
-- [ ] Apply tax to ship purchases
-- [ ] Apply tax to warehouse upgrades
+- [x] Apply tax to market fills (order book settlement)
+- [x] Apply tax to ship purchases
+- [x] Apply tax to warehouse upgrades
 - [ ] Add reporting hooks (optional): accumulate tax burned totals for debugging
 
-## Milestone 12 — Bankrupcy
+## Milestone 12 — Bankruptcy
 
-- [ ] Implement bankrupcy / freezes.
-- [ ] Bailout loans?
+- [x] Implement bankruptcy / freezes.
+- [x] Bailout loans? (Implemented as `Companies.bailout/2`)
 
 ## Milestone 13 — REST API
 

@@ -125,21 +125,22 @@ defmodule Tradewinds.CompaniesTest do
   end
 
   describe "upkeep" do
-    test "process_monthly_upkeep/2 charges treasury and resets delinquency" do
+    test "process_monthly_upkeep/2 charges treasury and handles paid state" do
       company = insert(:company, treasury: 5000)
       ship_type = insert(:ship_type, upkeep: 1000)
       # 2 ships = 2000 upkeep
       insert(:ship, company: company, ship_type: ship_type)
       insert(:ship, company: company, ship_type: ship_type)
-      
+
       # 1 warehouse at level 1, capacity 1000 = 1000/10 * 10 = 1000 upkeep
-      insert(:warehouse, company: company, level: 1, capacity: 1000, delinquent: true)
+      insert(:warehouse, company: company, level: 1, capacity: 1000)
 
       now = ~U[2026-03-06 12:00:00Z]
       assert {:ok, :paid} = Companies.process_monthly_upkeep(company.id, now)
 
       updated_co = Repo.get!(Company, company.id)
       assert updated_co.treasury == 5000 - 2000 - 1000
+      assert updated_co.status == :active
 
       # Verify ledger entries
       ship_ledger = Repo.get_by(Tradewinds.Companies.Ledger, company_id: company.id, reason: :ship_upkeep)
@@ -147,25 +148,39 @@ defmodule Tradewinds.CompaniesTest do
 
       warehouse_ledger = Repo.get_by(Tradewinds.Companies.Ledger, company_id: company.id, reason: :warehouse_upkeep)
       assert warehouse_ledger.amount == -1000
-
-      # Verify delinquency reset
-      warehouse = Repo.get_by(Tradewinds.Logistics.Warehouse, company_id: company.id)
-      assert warehouse.delinquent == false
     end
 
-    test "process_monthly_upkeep/2 marks ships dormant and warehouses delinquent if insufficient funds" do
+    test "process_monthly_upkeep/2 marks company bankrupt if insufficient funds" do
       company = insert(:company, treasury: 100)
       ship_type = insert(:ship_type, upkeep: 1000)
-      ship = insert(:ship, company: company, ship_type: ship_type, status: :docked)
-      warehouse = insert(:warehouse, company: company, level: 1, capacity: 1000, delinquent: false)
+      insert(:ship, company: company, ship_type: ship_type, status: :docked)
 
-      assert {:error, :insufficient_funds} = Companies.process_monthly_upkeep(company.id)
+      assert {:error, :bankrupt} = Companies.process_monthly_upkeep(company.id)
 
-      assert Repo.get!(Tradewinds.Fleet.Ship, ship.id).status == :dormant
-      assert Repo.get!(Tradewinds.Logistics.Warehouse, warehouse.id).delinquent == true
-      
+      assert Repo.get!(Company, company.id).status == :bankrupt
       # Treasury should be untouched
       assert Repo.get!(Company, company.id).treasury == 100
+    end
+
+    test "calculate_bailout/1 covers 3 months of upkeep" do
+      company = insert(:company)
+      ship_type = insert(:ship_type, upkeep: 1000)
+      insert(:ship, company: company, ship_type: ship_type)
+      
+      # ship upkeep (1000) + warehouse upkeep (0) = 1000
+      # 1000 * 3 = 3000
+      assert Companies.calculate_bailout(company.id) == 3000
+    end
+
+    test "bailout/2 restores status and adds treasury" do
+      company = insert(:company, treasury: 0, status: :bankrupt)
+
+      assert {:ok, updated_co} = Companies.bailout(company.id, 10000)
+      assert updated_co.status == :active
+      assert updated_co.treasury == 10000
+
+      # Verify ledger entry
+      assert Repo.get_by(Tradewinds.Companies.Ledger, company_id: company.id, reason: :bailout)
     end
   end
 end

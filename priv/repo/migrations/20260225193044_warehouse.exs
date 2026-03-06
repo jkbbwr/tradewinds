@@ -7,7 +7,6 @@ defmodule Tradewinds.Repo.Migrations.Warehouse do
       add :company_id, references(:company, on_delete: :delete_all), null: false
       add :level, :integer, null: false
       add :capacity, :integer, null: false
-      add :delinquent, :bool, null: false, default: false
       timestamps()
     end
 

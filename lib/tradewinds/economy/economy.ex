@@ -13,6 +13,23 @@ defmodule Tradewinds.Economy do
   def system_npc_id, do: @system_npc_id
 
   @doc """
+  Calculates the tax amount for a given base amount and tax rate in basis points (bps).
+  1 bps = 0.01%, so 500 bps = 5%.
+  Rounding is performed using floor to ensure we don't overcharge, but keep a minimum of 0.
+  """
+  def calculate_tax(amount, tax_rate_bps) when amount >= 0 do
+    floor(amount * tax_rate_bps / 10_000)
+  end
+
+  @doc """
+  Calculates the tax amount for a given base amount and port ID.
+  """
+  def calculate_tax_for_port(amount, port_id) do
+    port = Repo.get!(Tradewinds.World.Port, port_id)
+    calculate_tax(amount, port.tax_rate_bps)
+  end
+
+  @doc """
   Logs a trade execution.
   """
   def log_trade(attrs) do

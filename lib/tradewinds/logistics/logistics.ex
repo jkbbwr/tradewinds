@@ -39,12 +39,9 @@ defmodule Tradewinds.Logistics do
       cost = calculate_total_upkeep(company_id)
 
       if cost > 0 do
-        case Companies.record_transaction(company_id, -cost, :ship_upkeep, :ship, company_id, now) do
-          {:ok, _} -> {:ok, cost}
-          {:error, :insufficient_funds} -> set_company_warehouses_delinquent(company_id, true)
-        end
+        Companies.record_transaction(company_id, -cost, :warehouse_upkeep, :warehouse, company_id, now)
       else
-        {:ok, cost}
+        {:ok, 0}
       end
     end)
   end
@@ -99,6 +96,7 @@ defmodule Tradewinds.Logistics do
       with {:ok, warehouse} <- fetch_warehouse_for_update(warehouse_id),
            cost <- upgrade_cost(warehouse),
            now = DateTime.utc_now(),
+           tax_amount <- Tradewinds.Economy.calculate_tax_for_port(cost, warehouse.port_id),
            {:ok, _company} <-
              Tradewinds.Companies.record_transaction(
                warehouse.company_id,
@@ -107,7 +105,21 @@ defmodule Tradewinds.Logistics do
                "warehouse",
                warehouse.id,
                now
-             ) do
+             ),
+           {:ok, _company} <-
+             (if tax_amount > 0 do
+                Tradewinds.Companies.record_transaction(
+                  warehouse.company_id,
+                  -tax_amount,
+                  :tax,
+                  :warehouse,
+                  warehouse.id,
+                  now,
+                  meta: %{base_amount: cost, port_id: warehouse.port_id}
+                )
+              else
+                {:ok, :no_tax}
+              end) do
         warehouse
         |> Warehouse.update_tier_changeset(%{
           level: warehouse.level + 1,
@@ -242,15 +254,6 @@ defmodule Tradewinds.Logistics do
     else
       :ok
     end
-  end
-
-  @doc """
-  Sets all warehouses owned by a company to a specific delinquency status.
-  """
-  def set_company_warehouses_delinquent(company_id, delinquent) do
-    Warehouse
-    |> where(company_id: ^company_id)
-    |> Repo.update_all(set: [delinquent: delinquent, updated_at: DateTime.utc_now()])
   end
 
   # Stub: Rent a new warehouse for a company at a port.

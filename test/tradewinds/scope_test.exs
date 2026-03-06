@@ -33,25 +33,32 @@ defmodule Tradewinds.ScopeTest do
   end
 
   describe "authorizes?/2" do
-    test "returns :ok if company_id is in scope's company_ids" do
-      company_id = Ecto.UUID.generate()
-      scope = %Scope{company_ids: [company_id]}
+    test "returns :ok if company_id is in scope's company_ids and company is active" do
+      company = insert(:company, status: :active)
+      scope = %Scope{company_ids: [company.id]}
 
-      assert Scope.authorizes?(scope, company_id) == :ok
+      assert Scope.authorizes?(scope, company.id) == :ok
+    end
+
+    test "returns {:error, :bankrupt} if company is bankrupt" do
+      company = insert(:company, status: :bankrupt)
+      scope = %Scope{company_ids: [company.id]}
+
+      assert Scope.authorizes?(scope, company.id) == {:error, :bankrupt}
     end
 
     test "returns {:error, :unauthorized} if company_id is not in scope" do
-      company_id = Ecto.UUID.generate()
+      company = insert(:company)
       other_id = Ecto.UUID.generate()
-      scope = %Scope{company_ids: [company_id]}
+      scope = %Scope{company_ids: [company.id]}
 
       assert Scope.authorizes?(scope, other_id) == {:error, :unauthorized}
     end
 
     test "returns {:error, :unauthorized} if scope is not a Scope struct" do
-      company_id = Ecto.UUID.generate()
+      company = insert(:company)
 
-      assert Scope.authorizes?(%{company_ids: [company_id]}, company_id) ==
+      assert Scope.authorizes?(%{company_ids: [company.id]}, company.id) ==
                {:error, :unauthorized}
     end
   end

@@ -200,16 +200,32 @@ defmodule Tradewinds.Commerce do
         do: {quote_data.company_id, Tradewinds.Economy.system_npc_id()},
         else: {Tradewinds.Economy.system_npc_id(), quote_data.company_id}
 
+    tax_amount = Tradewinds.Economy.calculate_tax_for_port(quote_data.total_price, quote_data.port_id)
+
     with {:ok, _} <-
            Tradewinds.Companies.record_transaction(
              quote_data.company_id,
              amount,
-             "npc_trade",
-             "market",
-             position.id,
+             :npc_trade,
+             :market,
+             quote_data.port_id,
              now
            ),
-         :ok <- update_cargo_destinations(quote_data, destinations),
+         {:ok, _} <-
+           (if tax_amount > 0 do
+              Tradewinds.Companies.record_transaction(
+                quote_data.company_id,
+                -tax_amount,
+                :tax,
+                :market,
+                quote_data.port_id,
+                now,
+                meta: %{base_amount: quote_data.total_price, port_id: quote_data.port_id}
+              )
+            else
+              {:ok, :no_tax}
+            end),
+         {:ok, _} <- update_cargo_destinations(quote_data, destinations),
          {:ok, _} <- update_market_position(quote_data, position),
          {:ok, _} <-
            Tradewinds.Economy.log_trade(%{
@@ -228,48 +244,53 @@ defmodule Tradewinds.Commerce do
 
   # Iterates over specified destinations, adding or removing goods while validating location and ownership.
   defp update_cargo_destinations(quote_data, destinations) do
-    Enum.reduce_while(destinations, :ok, fn %{type: type, id: id, quantity: qty}, :ok ->
-      result =
-        case {quote_data.action, type} do
-          {:buy, :ship} ->
-            with {:ok, ship} <- Tradewinds.Fleet.fetch_ship(id),
-                 :ok <- validate_location(ship, quote_data.port_id),
-                 :ok <- validate_ownership(ship, quote_data.company_id),
-                 {:ok, _} <- Tradewinds.Fleet.add_cargo(id, quote_data.good_id, qty) do
-              :ok
-            end
+    result =
+      Enum.reduce_while(destinations, :ok, fn %{type: type, id: id, quantity: qty}, :ok ->
+        res =
+          case {quote_data.action, type} do
+            {:buy, :ship} ->
+              with {:ok, ship} <- Tradewinds.Fleet.fetch_ship(id),
+                   :ok <- validate_location(ship, quote_data.port_id),
+                   :ok <- validate_ownership(ship, quote_data.company_id),
+                   {:ok, _} <- Tradewinds.Fleet.add_cargo(id, quote_data.good_id, qty) do
+                :ok
+              end
 
-          {:buy, :warehouse} ->
-            with {:ok, warehouse} <- Tradewinds.Logistics.fetch_warehouse(id),
-                 :ok <- validate_location(warehouse, quote_data.port_id),
-                 :ok <- validate_ownership(warehouse, quote_data.company_id),
-                 {:ok, _} <- Tradewinds.Logistics.add_cargo(id, quote_data.good_id, qty) do
-              :ok
-            end
+            {:buy, :warehouse} ->
+              with {:ok, warehouse} <- Tradewinds.Logistics.fetch_warehouse(id),
+                   :ok <- validate_location(warehouse, quote_data.port_id),
+                   :ok <- validate_ownership(warehouse, quote_data.company_id),
+                   {:ok, _} <- Tradewinds.Logistics.add_cargo(id, quote_data.good_id, qty) do
+                :ok
+              end
 
-          {:sell, :ship} ->
-            with {:ok, ship} <- Tradewinds.Fleet.fetch_ship(id),
-                 :ok <- validate_location(ship, quote_data.port_id),
-                 :ok <- validate_ownership(ship, quote_data.company_id),
-                 {:ok, _} <- Tradewinds.Fleet.remove_cargo(id, quote_data.good_id, qty) do
-              :ok
-            end
+            {:sell, :ship} ->
+              with {:ok, ship} <- Tradewinds.Fleet.fetch_ship(id),
+                   :ok <- validate_location(ship, quote_data.port_id),
+                   :ok <- validate_ownership(ship, quote_data.company_id),
+                   {:ok, _} <- Tradewinds.Fleet.remove_cargo(id, quote_data.good_id, qty) do
+                :ok
+              end
 
-          {:sell, :warehouse} ->
-            with {:ok, warehouse} <- Tradewinds.Logistics.fetch_warehouse(id),
-                 :ok <- validate_location(warehouse, quote_data.port_id),
-                 :ok <- validate_ownership(warehouse, quote_data.company_id),
-                 {:ok, _} <- Tradewinds.Logistics.remove_cargo(id, quote_data.good_id, qty) do
-              :ok
-            end
+            {:sell, :warehouse} ->
+              with {:ok, warehouse} <- Tradewinds.Logistics.fetch_warehouse(id),
+                   :ok <- validate_location(warehouse, quote_data.port_id),
+                   :ok <- validate_ownership(warehouse, quote_data.company_id),
+                   {:ok, _} <- Tradewinds.Logistics.remove_cargo(id, quote_data.good_id, qty) do
+                :ok
+              end
+          end
+
+        case res do
+          :ok -> {:cont, :ok}
+          {:error, reason} -> {:halt, {:error, reason}}
         end
+      end)
 
-      case result do
-        :ok -> {:cont, :ok}
-        {:ok, _} -> {:cont, :ok}
-        {:error, reason} -> {:halt, {:error, reason}}
-      end
-    end)
+    case result do
+      :ok -> {:ok, :done}
+      err -> err
+    end
   end
 
   # Validates that an entity (ship/warehouse) is physically present at the requested port.
@@ -320,7 +341,7 @@ defmodule Tradewinds.Commerce do
 
   @doc """
   Runs the daily simulation for all positions of a specific trader.
-  Applies economic modifiers, computes stock drift/consumption, and updates the database.
+  Applies economic modifiers, computes stock drift/consumption, aggregates player flow, and updates the database.
   """
   def simulate_trader(trader_id, now \\ DateTime.utc_now()) do
     positions =
@@ -328,21 +349,49 @@ defmodule Tradewinds.Commerce do
       |> where([p], p.trader_id == ^trader_id)
       |> Repo.all()
 
+    # Look back 1 game day (576 seconds) for trade volume
+    start_time = DateTime.add(now, -576, :second)
+
     Repo.transact(fn ->
       Enum.each(positions, fn position ->
         modifiers = Tradewinds.Economy.get_active_modifiers(position.port_id, position.good_id, now)
 
+        # 1. Aggregate net player flow for this specific position over the last day
+        flow = Tradewinds.Economy.net_player_flow_from_npc(position.port_id, position.good_id, start_time, now)
+
+        # 2. Adjust target stock based on flow
+        # If flow > 0 (players buying), demand is high, so increase target stock.
+        # If flow < 0 (players selling), demand is low, so decrease target stock.
+        target_adjustment = floor(flow * 0.1)
+        max_adjustment = ceil(position.target_stock * 0.1)
+        clamped_adjustment = clamp(target_adjustment, -max_adjustment, max_adjustment)
+        new_target_stock = max(10, position.target_stock + clamped_adjustment)
+
+        # 3. Adjust spread based on flow intensity
+        # High flow magnitude means high volatility/demand; increase spread to capitalize.
+        # Low/zero flow decays the spread back down to encourage trading.
+        new_spread = 
+          if abs(flow) > 100 do
+            min(0.20, position.spread + 0.005)
+          else
+            max(0.05, position.spread - 0.001)
+          end
+
         new_stock =
           simulate_daily_tick(
             position.stock,
-            position.target_stock,
+            new_target_stock,
             position.supply_rate,
             position.demand_rate,
             modifiers
           )
 
         position
-        |> Tradewinds.Commerce.TraderPosition.update_stock_changeset(%{stock: new_stock})
+        |> Tradewinds.Commerce.TraderPosition.update_simulation_changeset(%{
+          stock: new_stock,
+          target_stock: new_target_stock,
+          spread: new_spread
+        })
         |> Repo.update!()
       end)
 

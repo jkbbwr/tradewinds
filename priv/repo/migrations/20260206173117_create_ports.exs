@@ -12,6 +12,7 @@ defmodule Tradewinds.Repo.Migrations.CreatePorts do
       add :name, :text, null: false
       add :shortcode, :text, null: false
       add :is_hub, :boolean, null: false, default: false
+      add :tax_rate_bps, :integer, null: false, default: 0
       add :country_id, references(:country), null: false
       timestamps()
     end

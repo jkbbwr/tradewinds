@@ -60,4 +60,16 @@ defmodule Tradewinds.Commerce.TraderPosition do
     |> validate_required([:stock])
     |> validate_number(:stock, greater_than_or_equal_to: 0)
   end
+
+  @doc """
+  Builds a changeset for the daily simulation update, which can modify stock, target_stock, and spread.
+  """
+  def update_simulation_changeset(position, attrs) do
+    position
+    |> cast(attrs, [:stock, :target_stock, :spread])
+    |> validate_required([:stock, :target_stock, :spread])
+    |> validate_number(:stock, greater_than_or_equal_to: 0)
+    |> validate_number(:target_stock, greater_than_or_equal_to: 0)
+    |> validate_number(:spread, greater_than_or_equal_to: 0.0)
+  end
 end

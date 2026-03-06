@@ -3,7 +3,7 @@ defmodule Tradewinds.Fleet.Ship do
 
   schema "ship" do
     field :name, :string
-    field :status, Ecto.Enum, values: [:docked, :traveling, :dormant]
+    field :status, Ecto.Enum, values: [:docked, :traveling]
     field :arriving_at, :utc_datetime_usec
 
     belongs_to :company, Tradewinds.Companies.Company
@@ -22,7 +22,7 @@ defmodule Tradewinds.Fleet.Ship do
     ship
     |> cast(attrs, [:name, :status, :arriving_at, :company_id, :ship_type_id, :port_id, :route_id])
     |> validate_required([:name, :status, :ship_type_id])
-    |> validate_inclusion(:status, [:docked, :traveling, :dormant])
+    |> validate_inclusion(:status, [:docked, :traveling])
     |> validate_location()
     |> check_constraint(:port_id, name: :port_xor_route)
   end

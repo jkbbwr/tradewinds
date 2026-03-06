@@ -29,6 +29,18 @@ defmodule Tradewinds.EconomyTest do
       assert log.source == :market
     end
 
+    test "calculate_tax/2 calculates correct amount" do
+      assert Economy.calculate_tax(10000, 500) == 500
+      assert Economy.calculate_tax(10000, 200) == 200
+      assert Economy.calculate_tax(5000, 500) == 250
+      assert Economy.calculate_tax(1, 100) == 0 # Rounding floor
+    end
+
+    test "calculate_tax_for_port/2 uses port's tax rate" do
+      port = insert(:port, tax_rate_bps: 300)
+      assert Economy.calculate_tax_for_port(10000, port.id) == 300
+    end
+
     test "net_player_flow_from_npc/4 aggregates correctly" do
       port = insert(:port)
       good = insert(:good)

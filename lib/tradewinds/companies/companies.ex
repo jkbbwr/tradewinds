@@ -129,50 +129,73 @@ defmodule Tradewinds.Companies do
 
   @doc """
   Processes the monthly upkeep for a company.
-  Calculates total upkeep for ships and warehouses, then attempts to deduct it from the treasury.
-  If funds are insufficient, marks warehouses as delinquent and ships as dormant.
+  Delegates to Fleet and Logistics contexts to deduct upkeep from the treasury.
+  If funds are insufficient at any point, the transaction rolls back and the company is marked as bankrupt.
   """
   def process_monthly_upkeep(company_id, now \\ DateTime.utc_now()) do
+    result =
+      Repo.transact(fn ->
+        with {:ok, _} <- Tradewinds.Fleet.process_upkeep(company_id, now),
+             {:ok, _} <- Tradewinds.Logistics.process_upkeep(company_id, now) do
+          {:ok, :paid}
+        else
+          {:error, reason} -> Repo.rollback(reason)
+        end
+      end)
+
+    case result do
+      {:ok, :paid} ->
+        {:ok, :paid}
+
+      {:error, :insufficient_funds} ->
+        set_bankrupt(company_id)
+        {:error, :bankrupt}
+
+      err ->
+        err
+    end
+  end
+
+  @doc """
+  Marks a company as bankrupt.
+  """
+  def set_bankrupt(company_id) do
+    with {:ok, company} <- fetch_company(company_id) do
+      company
+      |> Company.update_status_changeset(:bankrupt)
+      |> Repo.update()
+    end
+  end
+
+  @doc """
+  Calculates the recommended bailout amount for a company.
+  Covers 3 months worth of the current level of combined upkeep (ships + warehouses).
+  """
+  def calculate_bailout(company_id) do
     ship_upkeep = Tradewinds.Fleet.calculate_total_upkeep(company_id)
     warehouse_upkeep = Tradewinds.Logistics.calculate_total_upkeep(company_id)
-    total_upkeep = ship_upkeep + warehouse_upkeep
+    (ship_upkeep + warehouse_upkeep) * 3
+  end
 
-    if total_upkeep > 0 do
-      # We check funds first to decide whether to charge or to penalize
-      company = Repo.get!(Company, company_id)
+  @doc """
+  Administrative bailout to clear a company's bankruptcy.
+  Injects treasury funds and resets status to :active.
+  """
+  def bailout(company_id, amount) when amount >= 0 do
+    Repo.transact(fn ->
+      now = DateTime.utc_now()
 
-      if company.treasury >= total_upkeep do
-        Repo.transact(fn ->
-          if ship_upkeep > 0,
-            do: record_transaction(company_id, -ship_upkeep, :ship_upkeep, :ship, company_id, now)
-
-          if warehouse_upkeep > 0,
-            do:
-              record_transaction(
-                company_id,
-                -warehouse_upkeep,
-                :warehouse_upkeep,
-                :warehouse,
-                company_id,
-                now
-              )
-
-          Tradewinds.Logistics.set_company_warehouses_delinquent(company_id, false)
-          {:ok, :paid}
-        end)
+      with {:ok, _} <- fetch_company_for_update(company_id),
+           {:ok, company} <- record_transaction(company_id, amount, :bailout, :system, company_id, now),
+           {:ok, updated_company} <-
+             company
+             |> Company.update_status_changeset(:active)
+             |> Repo.update() do
+        {:ok, updated_company}
       else
-        {:ok, _} =
-          Repo.transact(fn ->
-            Tradewinds.Logistics.set_company_warehouses_delinquent(company_id, true)
-            Tradewinds.Fleet.set_company_ships_dormant(company_id)
-            {:ok, :penalized}
-          end)
-
-        {:error, :insufficient_funds}
+        {:error, reason} -> Repo.rollback(reason)
       end
-    else
-      {:ok, :nothing_to_pay}
-    end
+    end)
   end
 
   @doc """

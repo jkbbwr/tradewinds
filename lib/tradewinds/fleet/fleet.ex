@@ -50,12 +50,9 @@ defmodule Tradewinds.Fleet do
       cost = calculate_total_upkeep(company_id)
 
       if cost > 0 do
-        case Companies.record_transaction(company_id, -cost, :ship_upkeep, :ship, company_id, now) do
-          {:ok, _} -> {:ok, cost}
-          {:error, :insufficient_funds} -> set_company_ships_dormant(company_id)
-        end
+        Companies.record_transaction(company_id, -cost, :ship_upkeep, :ship, company_id, now)
       else
-        {:ok, cost}
+        {:ok, 0}
       end
     end)
   end
@@ -132,16 +129,6 @@ defmodule Tradewinds.Fleet do
 
       {:ok, seconds}
     end
-  end
-
-  @doc """
-  Sets all ships owned by a company to :dormant status.
-  Used when upkeep cannot be paid.
-  """
-  def set_company_ships_dormant(company_id) do
-    Ship
-    |> where(company_id: ^company_id)
-    |> Repo.update_all(set: [status: :dormant, updated_at: DateTime.utc_now()])
   end
 
   @doc """

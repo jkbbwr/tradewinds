@@ -5,7 +5,6 @@ defmodule Tradewinds.Logistics.Warehouse do
   schema "warehouse" do
     field :level, :integer
     field :capacity, :integer
-    field :delinquent, :boolean, default: false
 
     belongs_to :port, Tradewinds.World.Port
     belongs_to :company, Tradewinds.Companies.Company
@@ -19,7 +18,7 @@ defmodule Tradewinds.Logistics.Warehouse do
   """
   def create_changeset(warehouse, attrs) do
     warehouse
-    |> cast(attrs, [:level, :capacity, :delinquent, :port_id, :company_id])
+    |> cast(attrs, [:level, :capacity, :port_id, :company_id])
     |> validate_required([:level, :capacity, :port_id, :company_id])
     |> validate_number(:level, greater_than: 0)
     |> validate_number(:capacity, greater_than: 0)

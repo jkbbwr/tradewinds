@@ -21,11 +21,16 @@ defmodule Tradewinds.Scope do
   @doc """
   Validates whether the current scope (representing the player's session)
   has permission to act on behalf of the given company ID.
-  Returns `:ok` or `{:error, :unauthorized}`.
+  Enforces that the company must be in an :active status.
+  Returns :ok, {:error, :unauthorized}, or {:error, :bankrupt}.
   """
   def authorizes?(%__MODULE__{company_ids: company_ids}, company_id) do
     if company_id in company_ids do
-      :ok
+      case Tradewinds.Companies.fetch_company(company_id) do
+        {:ok, %{status: :active}} -> :ok
+        {:ok, %{status: :bankrupt}} -> {:error, :bankrupt}
+        _ -> {:error, :unauthorized}
+      end
     else
       {:error, :unauthorized}
     end

@@ -8,6 +8,7 @@ defmodule Tradewinds.Repo.Migrations.CreateCompanies do
       add :treasury, :integer, null: false
       add :home_port_id, references(:port), null: false
       add :reputation, :integer, null: false, default: 1000
+      add :status, :text, null: false, default: "active"
       timestamps()
     end
 

@@ -6,6 +6,7 @@ defmodule Tradewinds.Companies.Company do
     field :ticker, :string
     field :treasury, :integer
     field :reputation, :integer, default: 1000
+    field :status, Ecto.Enum, values: [:active, :bankrupt], default: :active
 
     belongs_to :home_port, Tradewinds.World.Port
     has_many :directors, Tradewinds.Companies.Director
@@ -19,13 +20,22 @@ defmodule Tradewinds.Companies.Company do
   """
   def create_changeset(company, attrs) do
     company
-    |> cast(attrs, [:name, :ticker, :treasury, :reputation, :home_port_id])
+    |> cast(attrs, [:name, :ticker, :treasury, :reputation, :home_port_id, :status])
     |> validate_required([:name, :ticker, :treasury, :home_port_id])
     |> validate_length(:ticker, max: 5)
     |> validate_number(:reputation, greater_than: 0)
     |> unique_constraint(:name)
     |> unique_constraint(:ticker)
     |> foreign_key_constraint(:home_port_id)
+  end
+
+  @doc """
+  Builds a changeset for updating the company status.
+  """
+  def update_status_changeset(company, status) do
+    company
+    |> cast(%{status: status}, [:status])
+    |> validate_required([:status])
   end
 
   @doc """

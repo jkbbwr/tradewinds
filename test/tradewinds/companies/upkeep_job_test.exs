@@ -13,7 +13,7 @@ defmodule Tradewinds.Companies.UpkeepJobTest do
     base_time = ~U[2026-03-01 12:00:00Z]
     job = %Oban.Job{args: %{"company_id" => company.id}, scheduled_at: base_time}
 
-    assert {:ok, _} = UpkeepJob.perform(job)
+    assert :ok = UpkeepJob.perform(job)
 
     # 1. Verify upkeep was paid
     updated_co = Repo.get!(Tradewinds.Companies.Company, company.id)

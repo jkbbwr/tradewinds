@@ -140,6 +140,7 @@ defmodule Tradewinds.Market do
 
   defp execute_successful_trade(ctx) do
     now = DateTime.utc_now()
+    tax_amount = Tradewinds.Economy.calculate_tax_for_port(ctx.total_value, ctx.order.port_id)
 
     with {:ok, _} <-
            Companies.record_transaction(
@@ -151,6 +152,20 @@ defmodule Tradewinds.Market do
              now
            ),
          {:ok, _} <-
+           (if tax_amount > 0 do
+              Companies.record_transaction(
+                ctx.buyer_id,
+                -tax_amount,
+                :tax,
+                :order,
+                ctx.order.id,
+                now,
+                meta: %{base_amount: ctx.total_value, port_id: ctx.order.port_id}
+              )
+            else
+              {:ok, :no_tax}
+            end),
+         {:ok, _} <-
            Companies.record_transaction(
              ctx.seller_id,
              ctx.total_value,
@@ -159,6 +174,20 @@ defmodule Tradewinds.Market do
              ctx.order.id,
              now
            ),
+         {:ok, _} <-
+           (if tax_amount > 0 do
+              Companies.record_transaction(
+                ctx.seller_id,
+                -tax_amount,
+                :tax,
+                :order,
+                ctx.order.id,
+                now,
+                meta: %{base_amount: ctx.total_value, port_id: ctx.order.port_id}
+              )
+            else
+              {:ok, :no_tax}
+            end),
          {:ok, _} <-
            Logistics.remove_cargo(ctx.seller_warehouse_id, ctx.order.good_id, ctx.quantity),
          {:ok, _} <- Logistics.add_cargo(ctx.buyer_warehouse_id, ctx.order.good_id, ctx.quantity),

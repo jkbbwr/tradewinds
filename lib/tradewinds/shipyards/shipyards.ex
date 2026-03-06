@@ -68,9 +68,12 @@ defmodule Tradewinds.Shipyards do
   def purchase_ship(%Scope{} = scope, company_id, shipyard_id, ship_type_id) do
     Repo.transact(fn ->
       with :ok <- Scope.authorizes?(scope, company_id),
+           {:ok, shipyard} <- fetch_shipyard(shipyard_id),
            {:ok, inventory} <- fetch_inventory_for_update(shipyard_id, ship_type_id),
            {:ok, ship} <- Fleet.assign_ship(inventory.ship_id, company_id),
            {:ok, _inventory} <- Repo.delete(inventory),
+           now = DateTime.utc_now(),
+           tax_amount <- Tradewinds.Economy.calculate_tax_for_port(inventory.cost, shipyard.port_id),
            {:ok, _company} <-
              Companies.record_transaction(
                company_id,
@@ -78,8 +81,22 @@ defmodule Tradewinds.Shipyards do
                :ship_purchase,
                :ship,
                inventory.ship_id,
-               DateTime.utc_now()
-             ) do
+               now
+             ),
+           {:ok, _company} <-
+             (if tax_amount > 0 do
+                Companies.record_transaction(
+                  company_id,
+                  -tax_amount,
+                  :tax,
+                  :ship,
+                  inventory.ship_id,
+                  now,
+                  meta: %{base_amount: inventory.cost, port_id: shipyard.port_id}
+                )
+              else
+                {:ok, :no_tax}
+              end) do
         {:ok, ship}
       else
         {:error, reason} -> Repo.rollback(reason)
