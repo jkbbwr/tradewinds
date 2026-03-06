@@ -319,6 +319,36 @@ defmodule Tradewinds.Commerce do
   end
 
   @doc """
+  Runs the daily simulation for all positions of a specific trader.
+  Applies economic modifiers, computes stock drift/consumption, and updates the database.
+  """
+  def simulate_trader(trader_id, now \\ DateTime.utc_now()) do
+    positions =
+      Tradewinds.Commerce.TraderPosition
+      |> where([p], p.trader_id == ^trader_id)
+      |> Repo.all()
+
+    Repo.transact(fn ->
+      Enum.each(positions, fn position ->
+        modifiers = Tradewinds.Economy.get_active_modifiers(position.port_id, position.good_id, now)
+
+        new_stock =
+          simulate_daily_tick(
+            position.stock,
+            position.target_stock,
+            position.supply_rate,
+            position.demand_rate,
+            modifiers
+          )
+
+        position
+        |> Tradewinds.Commerce.TraderPosition.update_stock_changeset(%{stock: new_stock})
+        |> Repo.update!()
+      end)
+    end)
+  end
+
+  @doc """
   Calculates the base market price based on elasticity and how far stock deviates from the target.
   """
   def base_market_price(current_stock, target_stock, base_price, elasticity) do

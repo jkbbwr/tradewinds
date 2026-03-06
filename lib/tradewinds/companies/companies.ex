@@ -128,6 +128,54 @@ defmodule Tradewinds.Companies do
   end
 
   @doc """
+  Processes the monthly upkeep for a company.
+  Calculates total upkeep for ships and warehouses, then attempts to deduct it from the treasury.
+  If funds are insufficient, marks warehouses as delinquent and ships as dormant.
+  """
+  def process_monthly_upkeep(company_id, now \\ DateTime.utc_now()) do
+    ship_upkeep = Tradewinds.Fleet.calculate_total_upkeep(company_id)
+    warehouse_upkeep = Tradewinds.Logistics.calculate_total_upkeep(company_id)
+    total_upkeep = ship_upkeep + warehouse_upkeep
+
+    if total_upkeep > 0 do
+      # We check funds first to decide whether to charge or to penalize
+      company = Repo.get!(Company, company_id)
+
+      if company.treasury >= total_upkeep do
+        Repo.transact(fn ->
+          if ship_upkeep > 0,
+            do: record_transaction(company_id, -ship_upkeep, :ship_upkeep, :ship, company_id, now)
+
+          if warehouse_upkeep > 0,
+            do:
+              record_transaction(
+                company_id,
+                -warehouse_upkeep,
+                :warehouse_upkeep,
+                :warehouse,
+                company_id,
+                now
+              )
+
+          Tradewinds.Logistics.set_company_warehouses_delinquent(company_id, false)
+          {:ok, :paid}
+        end)
+      else
+        {:ok, _} =
+          Repo.transact(fn ->
+            Tradewinds.Logistics.set_company_warehouses_delinquent(company_id, true)
+            Tradewinds.Fleet.set_company_ships_dormant(company_id)
+            {:ok, :penalized}
+          end)
+
+        {:error, :insufficient_funds}
+      end
+    else
+      {:ok, :nothing_to_pay}
+    end
+  end
+
+  @doc """
   Atomically updates a company's reputation by a given delta.
   """
   def update_reputation(company_id, delta) do

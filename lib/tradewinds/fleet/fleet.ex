@@ -10,6 +10,7 @@ defmodule Tradewinds.Fleet do
   alias Tradewinds.Fleet.ShipCargo
   alias Tradewinds.Scope
   alias Tradewinds.World
+  alias Tradewinds.Companies
 
   @doc """
   Initiates travel for a docked ship along a specific route.
@@ -21,7 +22,6 @@ defmodule Tradewinds.Fleet do
          {:ok, route} <- World.fetch_route_by_id(route_id),
          :ok <- check_ship_at_route_origin(ship, route),
          {:ok, seconds} <- transit_time(ship_id, route_id) do
-      
       now = DateTime.utc_now()
       arrival_time = DateTime.add(now, seconds, :second)
 
@@ -43,6 +43,21 @@ defmodule Tradewinds.Fleet do
         end
       end)
     end
+  end
+
+  def process_upkeep(company_id, now) do
+    Repo.transact(fn ->
+      cost = calculate_total_upkeep(company_id)
+
+      if cost > 0 do
+        case Companies.record_transaction(company_id, -cost, :ship_upkeep, :ship, company_id, now) do
+          {:ok, _} -> {:ok, cost}
+          {:error, :insufficient_funds} -> set_company_ships_dormant(company_id)
+        end
+      else
+        {:ok, cost}
+      end
+    end)
   end
 
   # Validates that a ship is currently docked at a port.
@@ -117,6 +132,16 @@ defmodule Tradewinds.Fleet do
 
       {:ok, seconds}
     end
+  end
+
+  @doc """
+  Sets all ships owned by a company to :dormant status.
+  Used when upkeep cannot be paid.
+  """
+  def set_company_ships_dormant(company_id) do
+    Ship
+    |> where(company_id: ^company_id)
+    |> Repo.update_all(set: [status: :dormant, updated_at: DateTime.utc_now()])
   end
 
   @doc """
@@ -209,6 +234,19 @@ defmodule Tradewinds.Fleet do
       {_id, sum} -> {:ok, sum || 0}
       nil -> {:error, :ship_not_found}
     end
+  end
+
+  @doc """
+  Calculates the total monthly upkeep cost for all ships owned by a company.
+  """
+  def calculate_total_upkeep(company_id) do
+    query =
+      from s in Ship,
+        where: s.company_id == ^company_id,
+        join: st in assoc(s, :ship_type),
+        select: sum(st.upkeep)
+
+    Repo.one(query) || 0
   end
 
   @doc """

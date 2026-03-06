@@ -176,4 +176,20 @@ defmodule Tradewinds.Factory do
       volatility_modifier: 10_000
     }
   end
+
+  def order_factory do
+    %Tradewinds.Market.Order{
+      company: build(:company),
+      port: build(:port),
+      good: build(:good),
+      side: :buy,
+      price: 100,
+      total: 10,
+      remaining: 10,
+      created_at: DateTime.utc_now(),
+      expires_at: DateTime.add(DateTime.utc_now(), 1, :day),
+      posted_reputation: 1000,
+      status: :open
+    }
+  end
 end

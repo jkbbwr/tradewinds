@@ -29,7 +29,12 @@ defmodule TradewindsWeb.Router do
     scope "/dev" do
       pipe_through [:fetch_session, :protect_from_forgery]
 
-      live_dashboard "/dashboard", metrics: TradewindsWeb.Telemetry
+      live_dashboard "/dashboard",
+        metrics: TradewindsWeb.Telemetry,
+        additional_pages: [
+          oban: Oban.LiveDashboard
+        ]
+
       forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
   end

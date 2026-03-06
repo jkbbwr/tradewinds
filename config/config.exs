@@ -10,7 +10,14 @@ import Config
 config :tradewinds, Oban,
   engine: Oban.Engines.Basic,
   notifier: Oban.Notifiers.Postgres,
-  queues: [default: 10],
+  queues: [default: 10, traders: 10, sweeps: 5],
+  plugins: [
+    {Oban.Plugins.Cron,
+     crontab: [
+       # Runs every 5 minutes
+       {"*/5 * * * *", Tradewinds.Market.SweepExpiredJob}
+     ]}
+  ],
   repo: Tradewinds.Repo
 
 config :tradewinds,

@@ -7,6 +7,7 @@ defmodule Tradewinds.Logistics do
   import Ecto.Query, warn: false
   alias Tradewinds.Repo
   alias Tradewinds.Scope
+  alias Tradewinds.Companies
   alias Tradewinds.Logistics.Warehouse
   alias Tradewinds.Logistics.WarehouseInventory
 
@@ -29,6 +30,21 @@ defmodule Tradewinds.Logistics do
           on_conflict: from(i in WarehouseInventory, update: [inc: [quantity: ^quantity]]),
           conflict_target: [:warehouse_id, :good_id]
         )
+      end
+    end)
+  end
+
+  def process_upkeep(company_id, now) do
+    Repo.transact(fn ->
+      cost = calculate_total_upkeep(company_id)
+
+      if cost > 0 do
+        case Companies.record_transaction(company_id, -cost, :ship_upkeep, :ship, company_id, now) do
+          {:ok, _} -> {:ok, cost}
+          {:error, :insufficient_funds} -> set_company_warehouses_delinquent(company_id, true)
+        end
+      else
+        {:ok, cost}
       end
     end)
   end
@@ -61,6 +77,17 @@ defmodule Tradewinds.Logistics do
     with {:ok, warehouse} <- fetch_warehouse(warehouse_id) do
       {:ok, upkeep_cost(warehouse)}
     end
+  end
+
+  @doc """
+  Calculates the total monthly upkeep cost for all warehouses owned by a company.
+  """
+  def calculate_total_upkeep(company_id) do
+    # We fetch all warehouses because the cost is non-linear (depends on level and capacity)
+    Warehouse
+    |> where(company_id: ^company_id)
+    |> Repo.all()
+    |> Enum.reduce(0, fn warehouse, acc -> acc + upkeep_cost(warehouse) end)
   end
 
   @doc """
@@ -215,6 +242,15 @@ defmodule Tradewinds.Logistics do
     else
       :ok
     end
+  end
+
+  @doc """
+  Sets all warehouses owned by a company to a specific delinquency status.
+  """
+  def set_company_warehouses_delinquent(company_id, delinquent) do
+    Warehouse
+    |> where(company_id: ^company_id)
+    |> Repo.update_all(set: [delinquent: delinquent, updated_at: DateTime.utc_now()])
   end
 
   # Stub: Rent a new warehouse for a company at a port.

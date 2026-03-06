@@ -50,4 +50,14 @@ defmodule Tradewinds.Commerce.TraderPosition do
     |> validate_number(:stock, greater_than_or_equal_to: 0)
     |> validate_number(:target_stock, greater_than_or_equal_to: 0)
   end
+
+  @doc """
+  Builds a changeset for updating the stock amount.
+  """
+  def update_stock_changeset(position, attrs) do
+    position
+    |> cast(attrs, [:stock])
+    |> validate_required([:stock])
+    |> validate_number(:stock, greater_than_or_equal_to: 0)
+  end
 end

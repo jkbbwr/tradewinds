@@ -123,4 +123,49 @@ defmodule Tradewinds.CompaniesTest do
       assert reloaded_company.treasury == 100
     end
   end
+
+  describe "upkeep" do
+    test "process_monthly_upkeep/2 charges treasury and resets delinquency" do
+      company = insert(:company, treasury: 5000)
+      ship_type = insert(:ship_type, upkeep: 1000)
+      # 2 ships = 2000 upkeep
+      insert(:ship, company: company, ship_type: ship_type)
+      insert(:ship, company: company, ship_type: ship_type)
+      
+      # 1 warehouse at level 1, capacity 1000 = 1000/10 * 10 = 1000 upkeep
+      insert(:warehouse, company: company, level: 1, capacity: 1000, delinquent: true)
+
+      now = ~U[2026-03-06 12:00:00Z]
+      assert {:ok, :paid} = Companies.process_monthly_upkeep(company.id, now)
+
+      updated_co = Repo.get!(Company, company.id)
+      assert updated_co.treasury == 5000 - 2000 - 1000
+
+      # Verify ledger entries
+      ship_ledger = Repo.get_by(Tradewinds.Companies.Ledger, company_id: company.id, reason: :ship_upkeep)
+      assert ship_ledger.amount == -2000
+
+      warehouse_ledger = Repo.get_by(Tradewinds.Companies.Ledger, company_id: company.id, reason: :warehouse_upkeep)
+      assert warehouse_ledger.amount == -1000
+
+      # Verify delinquency reset
+      warehouse = Repo.get_by(Tradewinds.Logistics.Warehouse, company_id: company.id)
+      assert warehouse.delinquent == false
+    end
+
+    test "process_monthly_upkeep/2 marks ships dormant and warehouses delinquent if insufficient funds" do
+      company = insert(:company, treasury: 100)
+      ship_type = insert(:ship_type, upkeep: 1000)
+      ship = insert(:ship, company: company, ship_type: ship_type, status: :docked)
+      warehouse = insert(:warehouse, company: company, level: 1, capacity: 1000, delinquent: false)
+
+      assert {:error, :insufficient_funds} = Companies.process_monthly_upkeep(company.id)
+
+      assert Repo.get!(Tradewinds.Fleet.Ship, ship.id).status == :dormant
+      assert Repo.get!(Tradewinds.Logistics.Warehouse, warehouse.id).delinquent == true
+      
+      # Treasury should be untouched
+      assert Repo.get!(Company, company.id).treasury == 100
+    end
+  end
 end
