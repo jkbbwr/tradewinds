@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content={get_csrf_token()} />
+    <title>Tradewinds</title>
+    <style>
+      body { font-family: sans-serif; padding: 2rem; line-height: 1.5; }
+      .container { max-width: 800px; margin: 0 auto; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/gh/phoenixframework/phoenix@v1.7.10/priv/static/phoenix.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/phoenixframework/phoenix_live_view@v0.20.2/priv/static/phoenix_live_view.min.js"></script>
+    <script>
+      let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
+      let liveSocket = new window.LiveView.LiveSocket("/live", window.Phoenix.Socket, {params: {_csrf_token: csrfToken}})
+      liveSocket.connect()
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <%= @inner_content %>
+    </div>
+  </body>
+</html>

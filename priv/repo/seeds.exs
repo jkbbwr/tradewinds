@@ -531,3 +531,6 @@ for port <- ports do
     })
   end
 end
+
+# Kickstart background jobs
+Tradewinds.Jobs.kickstart()

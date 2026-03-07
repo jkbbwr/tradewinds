@@ -5,8 +5,22 @@ defmodule TradewindsWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :browser do
+    plug :accepts, ["html"]
+    plug :fetch_session
+    plug :put_root_layout, html: {TradewindsWeb.Layouts, :root}
+    plug :protect_from_forgery
+    plug :put_secure_browser_headers
+  end
+
   pipeline :auth do
     plug TradewindsWeb.Plugs.Auth
+  end
+
+  scope "/admin", TradewindsWeb do
+    pipe_through :browser
+
+    live "/setup", AdminSetupLive, :index
   end
 
   scope "/api/v1", TradewindsWeb do

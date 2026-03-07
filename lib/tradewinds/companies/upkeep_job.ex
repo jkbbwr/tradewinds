@@ -1,6 +1,6 @@
 defmodule Tradewinds.Companies.UpkeepJob do
   use Oban.Worker,
-    queue: :default,
+    queue: :company,
     unique: [period: 600, states: [:available, :scheduled, :executing]]
 
   # 1 game month = 30 days = 720 ticks. 1 tick = 24 seconds. 720 * 24 = 17280 seconds.
@@ -17,6 +17,7 @@ defmodule Tradewinds.Companies.UpkeepJob do
         %{company_id: company_id}
         |> new(scheduled_at: next_time)
         |> Oban.insert!()
+
         :ok
 
       {:error, :bankrupt} ->
@@ -24,6 +25,7 @@ defmodule Tradewinds.Companies.UpkeepJob do
         %{company_id: company_id}
         |> new(scheduled_at: next_time)
         |> Oban.insert!()
+
         :ok
 
       err ->
