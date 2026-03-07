@@ -191,4 +191,16 @@ defmodule Tradewinds.Factory do
       status: :open
     }
   end
+
+  def company_ledger_factory do
+    %Tradewinds.Companies.Ledger{
+      company: build(:company),
+      occurred_at: DateTime.utc_now(),
+      amount: 100,
+      reason: :npc_trade,
+      reference_type: :market,
+      reference_id: Ecto.UUID.generate(),
+      idempotency_key: sequence(:idempotency_key, &"key-#{&1}")
+    }
+  end
 end

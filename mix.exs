@@ -54,9 +54,10 @@ defmodule Tradewinds.MixProject do
       {:bandit, "~> 1.5"},
       {:argon2_elixir, "~> 4.1"},
       {:ecto_cursor, "~> 0.1.5"},
-      {:ex_machina, "~> 2.8", only: :test},
       {:oban, "~> 2.20"},
       {:oban_live_dashboard, "~> 0.2.0"},
+      {:goal, "~> 1.1"},
+      {:ex_machina, "~> 2.8", only: :test},
       {:igniter, "~> 0.7.2", only: :dev},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:mox, "~> 1.1", only: :test}

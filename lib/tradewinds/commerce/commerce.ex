@@ -9,67 +9,82 @@ defmodule Tradewinds.Commerce do
   import Ecto.Query
 
   @doc """
-  Generates a signed, stateless quote for a company to buy or sell goods from/to a trader.
-  Applies active economic shocks to base price and volatility.
-  Returns `{:ok, token, quote_data}` or `{:error, reason}`.
+  Generates a signed, stateless quote for a company to buy or sell goods from/to
+  a trader. Applies active economic shocks to base price and volatility. Returns
+  `{:ok, token, quote_data}` or `{:error, reason}`.
   """
-  def generate_quote(company_id, port_id, good_id, action, quantity)
+  def generate_quote(
+        %Tradewinds.Scope{} = scope,
+        company_id,
+        port_id,
+        good_id,
+        action,
+        quantity
+      )
       when action in [:buy, :sell] and is_integer(quantity) and quantity > 0 do
-    query =
-      from p in Tradewinds.Commerce.TraderPosition,
-        where: p.port_id == ^port_id and p.good_id == ^good_id,
-        preload: [:good]
-
-    case Repo.one(query) do
-      nil ->
-        {:error, :not_found}
-
-      position ->
-        if action == :buy and quantity > position.stock do
-          {:error, :insufficient_stock}
-        else
-          now = DateTime.utc_now()
-          modifiers = Tradewinds.Economy.get_active_modifiers(port_id, good_id, now)
-
-          base_price = round(position.good.base_price * modifiers.price)
-
-          market_price =
-            base_market_price(
-              position.stock,
-              position.target_stock,
-              base_price,
-              position.elasticity
-            )
-
-          final_base_price = apply_volatility_jitter(market_price, modifiers.volatility)
-
-          {ask, bid} = quotes(final_base_price, position.spread)
-
-          quote_price = if action == :buy, do: ask, else: bid
-          impact_action = if action == :buy, do: :ask, else: :bid
-
-          final_unit_price =
-            apply_slippage(impact_action, quote_price, quantity, position.stock)
-            |> clamp_price(base_price)
-
-          quote_data = %{
-            company_id: company_id,
-            port_id: port_id,
-            good_id: good_id,
-            action: action,
-            quantity: quantity,
-            unit_price: final_unit_price,
-            total_price: final_unit_price * quantity,
-            market_price: final_base_price,
-            spread: position.spread,
-            timestamp: DateTime.to_iso8601(now)
-          }
-
-          token = Phoenix.Token.sign(TradewindsWeb.Endpoint, "trader_quote", quote_data)
-          {:ok, token, quote_data}
-        end
+    with :ok <- Tradewinds.Scope.authorizes?(scope, company_id),
+         %Tradewinds.Commerce.TraderPosition{} = position <-
+           Repo.one(
+             from p in Tradewinds.Commerce.TraderPosition,
+               where: p.port_id == ^port_id and p.good_id == ^good_id,
+               preload: [:good]
+           ) || {:error, :not_found},
+         :ok <- ensure_available_stock(position, action, quantity),
+         now <- DateTime.utc_now(),
+         modifiers <-
+           Tradewinds.Economy.get_active_modifiers(port_id, good_id, now),
+         base_price <- round(position.good.base_price * modifiers.price),
+         market_price <-
+           base_market_price(
+             position.stock,
+             position.target_stock,
+             base_price,
+             position.elasticity
+           ),
+         final_base_price <-
+           apply_volatility_jitter(market_price, modifiers.volatility),
+         {ask, bid} <- quotes(final_base_price, position.spread),
+         {quote_price, impact_action} <-
+           quote_price_and_action(action, ask, bid),
+         final_unit_price <-
+           apply_slippage(
+             impact_action,
+             quote_price,
+             quantity,
+             position.stock
+           )
+           |> clamp_price(base_price),
+         quote_data <-
+           %{
+             company_id: company_id,
+             port_id: port_id,
+             good_id: good_id,
+             action: action,
+             quantity: quantity,
+             unit_price: final_unit_price,
+             total_price: final_unit_price * quantity,
+             market_price: final_base_price,
+             spread: position.spread,
+             timestamp: DateTime.to_iso8601(now)
+           },
+         token <-
+           Phoenix.Token.sign(TradewindsWeb.Endpoint, "trader_quote", quote_data) do
+      {:ok, token, quote_data}
     end
   end
+
+  defp ensure_available_stock(
+         %Tradewinds.Commerce.TraderPosition{stock: stock},
+         :buy,
+         quantity
+       )
+       when quantity > stock,
+       do: {:error, :insufficient_stock}
+
+  defp ensure_available_stock(_position, _action, _quantity), do: :ok
+
+  defp quote_price_and_action(:buy, ask, _bid), do: {ask, :ask}
+  defp quote_price_and_action(:sell, _ask, bid), do: {bid, :bid}
 
   @doc """
   Verifies a trader quote token.
@@ -84,8 +99,9 @@ defmodule Tradewinds.Commerce do
   Executes a previously signed quote atomically.
   Distributes or withdraws the goods across multiple specified `destinations` (ships/warehouses).
   """
-  def execute_quote(token, destinations) when is_list(destinations) do
+  def execute_quote(%Tradewinds.Scope{} = scope, token, destinations) when is_list(destinations) do
     with {:ok, quote_data} <- verify_quote(token),
+         :ok <- Tradewinds.Scope.authorizes?(scope, quote_data.company_id),
          :ok <- validate_destinations_total(quote_data, destinations) do
       # Decode the timestamp back to DateTime
       {:ok, quote_timestamp, _} = DateTime.from_iso8601(quote_data.timestamp)
@@ -106,58 +122,71 @@ defmodule Tradewinds.Commerce do
   Calculates and executes a trade immediately in one atomic step without requiring a signed quote.
   Applies all economic shocks dynamically before execution.
   """
-  def execute_immediate(company_id, port_id, good_id, action, destinations)
+  def execute_immediate(
+        %Tradewinds.Scope{} = scope,
+        company_id,
+        port_id,
+        good_id,
+        action,
+        destinations
+      )
       when action in [:buy, :sell] and is_list(destinations) do
     total_qty = Enum.reduce(destinations, 0, fn %{quantity: qty}, acc -> acc + qty end)
 
     if total_qty <= 0 do
       {:error, :invalid_quantity}
     else
-      Repo.transact(fn ->
-        with {:ok, position} <- fetch_position_for_update(port_id, good_id),
-             :ok <-
-               validate_trade_execution(%{action: action, quantity: total_qty}, position, destinations) do
-          now = DateTime.utc_now()
-          modifiers = Tradewinds.Economy.get_active_modifiers(port_id, good_id, now)
+      with :ok <- Tradewinds.Scope.authorizes?(scope, company_id) do
+        Repo.transact(fn ->
+          with {:ok, position} <- fetch_position_for_update(port_id, good_id),
+               :ok <-
+                 validate_trade_execution(
+                   %{action: action, quantity: total_qty},
+                   position,
+                   destinations
+                 ) do
+            now = DateTime.utc_now()
+            modifiers = Tradewinds.Economy.get_active_modifiers(port_id, good_id, now)
 
-          base_price = round(position.good.base_price * modifiers.price)
+            base_price = round(position.good.base_price * modifiers.price)
 
-          market_price =
-            base_market_price(
-              position.stock,
-              position.target_stock,
-              base_price,
-              position.elasticity
-            )
+            market_price =
+              base_market_price(
+                position.stock,
+                position.target_stock,
+                base_price,
+                position.elasticity
+              )
 
-          final_base_price = apply_volatility_jitter(market_price, modifiers.volatility)
+            final_base_price = apply_volatility_jitter(market_price, modifiers.volatility)
 
-          {ask, bid} = quotes(final_base_price, position.spread)
+            {ask, bid} = quotes(final_base_price, position.spread)
 
-          quote_price = if action == :buy, do: ask, else: bid
-          impact_action = if action == :buy, do: :ask, else: :bid
+            quote_price = if action == :buy, do: ask, else: bid
+            impact_action = if action == :buy, do: :ask, else: :bid
 
-          final_unit_price =
-            apply_slippage(impact_action, quote_price, total_qty, position.stock)
-            |> clamp_price(base_price)
+            final_unit_price =
+              apply_slippage(impact_action, quote_price, total_qty, position.stock)
+              |> clamp_price(base_price)
 
-          quote_data = %{
-            company_id: company_id,
-            port_id: port_id,
-            good_id: good_id,
-            action: action,
-            quantity: total_qty,
-            unit_price: final_unit_price,
-            total_price: final_unit_price * total_qty,
-            market_price: final_base_price,
-            spread: position.spread
-          }
+            quote_data = %{
+              company_id: company_id,
+              port_id: port_id,
+              good_id: good_id,
+              action: action,
+              quantity: total_qty,
+              unit_price: final_unit_price,
+              total_price: final_unit_price * total_qty,
+              market_price: final_base_price,
+              spread: position.spread
+            }
 
-          perform_execution(quote_data, position, destinations, now)
-        else
-          {:error, reason} -> Repo.rollback(reason)
-        end
-      end)
+            perform_execution(quote_data, position, destinations, now)
+          else
+            {:error, reason} -> Repo.rollback(reason)
+          end
+        end)
+      end
     end
   end
 
@@ -193,14 +222,16 @@ defmodule Tradewinds.Commerce do
 
   # The core atomic execution block. Charges the treasury, moves cargo, updates NPC stock, and writes a trade log.
   defp perform_execution(quote_data, position, destinations, now) do
-    amount = if quote_data.action == :buy, do: -quote_data.total_price, else: quote_data.total_price
+    amount =
+      if quote_data.action == :buy, do: -quote_data.total_price, else: quote_data.total_price
 
     {buyer_id, seller_id} =
       if quote_data.action == :buy,
         do: {quote_data.company_id, Tradewinds.Economy.system_npc_id()},
         else: {Tradewinds.Economy.system_npc_id(), quote_data.company_id}
 
-    tax_amount = Tradewinds.Economy.calculate_tax_for_port(quote_data.total_price, quote_data.port_id)
+    tax_amount =
+      Tradewinds.Economy.calculate_tax_for_port(quote_data.total_price, quote_data.port_id)
 
     with {:ok, _} <-
            Tradewinds.Companies.record_transaction(
@@ -327,7 +358,13 @@ defmodule Tradewinds.Commerce do
   Calculates the new stock after one day of simulation.
   Based on stock drift and consumption towards a target equilibrium.
   """
-  def simulate_daily_tick(current_stock, target_stock, supply_rate, demand_rate, modifiers \\ %{supply: 1.0, demand: 1.0}) do
+  def simulate_daily_tick(
+        current_stock,
+        target_stock,
+        supply_rate,
+        demand_rate,
+        modifiers \\ %{supply: 1.0, demand: 1.0}
+      ) do
     effective_supply_rate = supply_rate * modifiers.supply
     effective_demand_rate = demand_rate * modifiers.demand
 
@@ -354,10 +391,17 @@ defmodule Tradewinds.Commerce do
 
     Repo.transact(fn ->
       Enum.each(positions, fn position ->
-        modifiers = Tradewinds.Economy.get_active_modifiers(position.port_id, position.good_id, now)
+        modifiers =
+          Tradewinds.Economy.get_active_modifiers(position.port_id, position.good_id, now)
 
         # 1. Aggregate net player flow for this specific position over the last day
-        flow = Tradewinds.Economy.net_player_flow_from_npc(position.port_id, position.good_id, start_time, now)
+        flow =
+          Tradewinds.Economy.net_player_flow_from_npc(
+            position.port_id,
+            position.good_id,
+            start_time,
+            now
+          )
 
         # 2. Adjust target stock based on flow
         # If flow > 0 (players buying), demand is high, so increase target stock.
@@ -370,7 +414,7 @@ defmodule Tradewinds.Commerce do
         # 3. Adjust spread based on flow intensity
         # High flow magnitude means high volatility/demand; increase spread to capitalize.
         # Low/zero flow decays the spread back down to encourage trading.
-        new_spread = 
+        new_spread =
           if abs(flow) > 100 do
             min(0.20, position.spread + 0.005)
           else
@@ -407,7 +451,7 @@ defmodule Tradewinds.Commerce do
     Tradewinds.Commerce.TraderPosition
     |> where(trader_id: ^trader_id)
     |> Repo.update_all(set: [monthly_profit: 0, updated_at: DateTime.utc_now()])
-    
+
     {:ok, :reset}
   end
 
@@ -426,7 +470,7 @@ defmodule Tradewinds.Commerce do
   def apply_volatility_jitter(market_price, vol_modifier \\ 1.0) do
     # random noise between -3% and +3%
     base_noise = :rand.uniform() * 0.06 - 0.03
-    noise = 1.0 + (base_noise * vol_modifier)
+    noise = 1.0 + base_noise * vol_modifier
     round(market_price * noise)
   end
 

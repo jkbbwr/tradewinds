@@ -157,4 +157,23 @@ defmodule Tradewinds.WorldTest do
       assert World.fetch_ship_type(Ecto.UUID.generate()) == {:error, :ship_type_not_found}
     end
   end
+
+  describe "health metrics" do
+    test "emit_stats/0 emits correct world data" do
+      country_fixture()
+      port_fixture(country_fixture(%{name: "Other"}))
+
+      :telemetry.attach("world-stats-test", [:tradewinds, :world, :stats], fn _name, measurements, _metadata, _config ->
+        send(self(), {:telemetry_event, measurements})
+      end, nil)
+
+      World.emit_stats()
+
+      assert_receive {:telemetry_event, stats}
+      assert stats.ports_count >= 1
+      assert stats.countries_count >= 1
+
+      :telemetry.detach("world-stats-test")
+    end
+  end
 end

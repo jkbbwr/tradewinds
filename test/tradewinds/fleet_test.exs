@@ -84,14 +84,19 @@ defmodule Tradewinds.FleetTest do
       assert {:ok, 240} = Fleet.transit_time(ship.id, route.id)
     end
 
-    test "transit_ship/2 starts traveling and schedules job" do
+    test "transit_ship/3 starts traveling and schedules job" do
+      player = insert(:player)
+      company = insert(:company)
+      insert(:director, company: company, player: player)
+      scope = Scope.for(player: player, company_ids: [company.id])
+
       port1 = insert(:port)
       port2 = insert(:port)
       route = insert(:route, from: port1, to: port2, distance: 100)
       ship_type = insert(:ship_type, speed: 10)
-      ship = insert(:ship, status: :docked, port: port1, ship_type: ship_type)
+      ship = insert(:ship, status: :docked, port: port1, ship_type: ship_type, company: company)
 
-      assert {:ok, updated_ship} = Fleet.transit_ship(ship.id, route.id)
+      assert {:ok, updated_ship} = Fleet.transit_ship(scope, ship.id, route.id)
       assert updated_ship.status == :traveling
       assert updated_ship.port_id == nil
       assert updated_ship.route_id == route.id
@@ -103,6 +108,20 @@ defmodule Tradewinds.FleetTest do
         worker: Tradewinds.Fleet.TransitJob,
         args: %{"ship_id" => ship.id}
       )
+    end
+
+    test "transit_ship/3 fails if unauthorized" do
+      player = insert(:player)
+      company = insert(:company)
+      # No director
+      scope = Scope.for(player: player, company_ids: [])
+
+      port1 = insert(:port)
+      port2 = insert(:port)
+      route = insert(:route, from: port1, to: port2, distance: 100)
+      ship = insert(:ship, status: :docked, port: port1, company: company)
+
+      assert {:error, :unauthorized} = Fleet.transit_ship(scope, ship.id, route.id)
     end
 
     test "dock_ship/1 docks a traveling ship" do
@@ -157,38 +176,53 @@ defmodule Tradewinds.FleetTest do
 
   describe "transfer_to_warehouse" do
     test "successfully transfers cargo" do
+      player = insert(:player)
+      company = insert(:company)
+      insert(:director, company: company, player: player)
+      scope = Scope.for(player: player, company_ids: [company.id])
+
       port = insert(:port)
-      ship = insert(:ship, status: :docked, port: port)
-      warehouse = insert(:warehouse, port: port, capacity: 1000)
+      ship = insert(:ship, status: :docked, port: port, company: company)
+      warehouse = insert(:warehouse, port: port, company: company, capacity: 1000)
       good = insert(:good)
       insert(:ship_cargo, ship: ship, good: good, quantity: 50)
 
-      assert {:ok, :transferred} = Fleet.transfer_to_warehouse(ship.id, warehouse.id, good.id, 50)
+      assert {:ok, :transferred} = Fleet.transfer_to_warehouse(scope, ship.id, warehouse.id, good.id, 50)
 
       assert {:ok, 0} = Fleet.current_cargo_total(ship.id)
       assert {:ok, 50} = Tradewinds.Logistics.current_inventory_total(warehouse.id)
     end
 
     test "fails if ship is not docked" do
+      player = insert(:player)
+      company = insert(:company)
+      insert(:director, company: company, player: player)
+      scope = Scope.for(player: player, company_ids: [company.id])
+
       port = insert(:port)
       route = insert(:route)
-      ship = insert(:ship, status: :traveling, port: nil, route: route)
+      ship = insert(:ship, status: :traveling, port: nil, route: route, company: company)
       warehouse = insert(:warehouse, port: port, capacity: 1000)
       good = insert(:good)
 
       assert {:error, :ship_not_docked} =
-               Fleet.transfer_to_warehouse(ship.id, warehouse.id, good.id, 50)
+               Fleet.transfer_to_warehouse(scope, ship.id, warehouse.id, good.id, 50)
     end
 
     test "fails if not at same port" do
+      player = insert(:player)
+      company = insert(:company)
+      insert(:director, company: company, player: player)
+      scope = Scope.for(player: player, company_ids: [company.id])
+
       port1 = insert(:port)
       port2 = insert(:port)
-      ship = insert(:ship, status: :docked, port: port1)
+      ship = insert(:ship, status: :docked, port: port1, company: company)
       warehouse = insert(:warehouse, port: port2, capacity: 1000)
       good = insert(:good)
 
       assert {:error, :not_at_same_port} =
-               Fleet.transfer_to_warehouse(ship.id, warehouse.id, good.id, 50)
+               Fleet.transfer_to_warehouse(scope, ship.id, warehouse.id, good.id, 50)
     end
   end
 end

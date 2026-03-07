@@ -21,6 +21,26 @@ defmodule TradewindsWeb.Telemetry do
 
   def metrics do
     [
+      # System Health Metrics
+      last_value("tradewinds.system.stats.oban_lag_seconds", unit: :second),
+
+      # Company Metrics
+      last_value("tradewinds.companies.stats.total_treasury"),
+      last_value("tradewinds.companies.stats.bankrupt_count"),
+
+      # Economy Metrics
+      last_value("tradewinds.economy.stats.total_tax_burned"),
+
+      # Fleet Metrics
+      last_value("tradewinds.fleet.stats.total_ships"),
+      last_value("tradewinds.fleet.stats.ships_at_sea"),
+
+      # Market Metrics
+      last_value("tradewinds.market.stats.open_orders_count"),
+
+      # World Metrics
+      last_value("tradewinds.world.stats.ports_count"),
+
       # Phoenix Metrics
       summary("phoenix.endpoint.start.system_time",
         unit: {:native, :millisecond}
@@ -87,7 +107,12 @@ defmodule TradewindsWeb.Telemetry do
     [
       # A module, function and arguments to be invoked periodically.
       # This function must call :telemetry.execute/3 and a metric must be added above.
-      # {TradewindsWeb, :count_users, []}
+      {Tradewinds, :emit_system_stats, []},
+      {Tradewinds.Companies, :emit_stats, []},
+      {Tradewinds.Economy, :emit_stats, []},
+      {Tradewinds.Fleet, :emit_stats, []},
+      {Tradewinds.Market, :emit_stats, []},
+      {Tradewinds.World, :emit_stats, []}
     ]
   end
 end

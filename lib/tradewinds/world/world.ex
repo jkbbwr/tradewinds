@@ -90,4 +90,37 @@ defmodule Tradewinds.World do
   def fetch_ship_type_by_name(name) do
     Repo.get_by(ShipType, name: name) |> Repo.ok_or(:ship_type_not_found)
   end
+
+  @doc """
+  Lists all ports in the world.
+  """
+  def list_ports do
+    Repo.all(Port)
+  end
+
+  @doc """
+  Lists all goods in the world.
+  """
+  def list_goods do
+    Repo.all(Good)
+  end
+
+  @doc """
+  Lists all ship types in the world.
+  """
+  def list_ship_types do
+    Repo.all(ShipType)
+  end
+
+  @doc """
+  Emits telemetry stats for the World context.
+  """
+  def emit_stats do
+    stats = %{
+      ports_count: Repo.aggregate(Port, :count, :id),
+      countries_count: Repo.aggregate(Country, :count, :id)
+    }
+
+    :telemetry.execute([:tradewinds, :world, :stats], stats)
+  end
 end

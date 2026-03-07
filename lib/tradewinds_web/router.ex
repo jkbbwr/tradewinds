@@ -11,6 +11,8 @@ defmodule TradewindsWeb.Router do
 
   scope "/api/v1", TradewindsWeb do
     pipe_through :api
+
+    get "/health", HealthController, :show
   end
 
   scope "/api/v1", TradewindsWeb do

@@ -91,9 +91,10 @@ defmodule Tradewinds.Logistics do
   Upgrades a warehouse to the next tier, increasing its level and capacity.
   Charges the company's treasury for the upgrade cost.
   """
-  def grow_warehouse(warehouse_id) do
+  def grow_warehouse(%Scope{} = scope, warehouse_id) do
     Repo.transact(fn ->
       with {:ok, warehouse} <- fetch_warehouse_for_update(warehouse_id),
+           :ok <- Scope.authorizes?(scope, warehouse.company_id),
            cost <- upgrade_cost(warehouse),
            now = DateTime.utc_now(),
            tax_amount <- Tradewinds.Economy.calculate_tax_for_port(cost, warehouse.port_id),
@@ -106,45 +107,71 @@ defmodule Tradewinds.Logistics do
                warehouse.id,
                now
              ),
-           {:ok, _company} <-
-             (if tax_amount > 0 do
-                Tradewinds.Companies.record_transaction(
-                  warehouse.company_id,
-                  -tax_amount,
-                  :tax,
-                  :warehouse,
-                  warehouse.id,
-                  now,
-                  meta: %{base_amount: cost, port_id: warehouse.port_id}
-                )
-              else
-                {:ok, :no_tax}
-              end) do
-        warehouse
-        |> Warehouse.update_tier_changeset(%{
-          level: warehouse.level + 1,
-          capacity: warehouse.capacity + 1000
-        })
-        |> Repo.update()
+           {:ok, _} <-
+             maybe_record_tax(
+               warehouse.company_id,
+               warehouse.port_id,
+               warehouse.id,
+               cost,
+               tax_amount,
+               now
+             ),
+           {:ok, updated} <-
+             warehouse
+             |> Warehouse.update_tier_changeset(%{
+               level: warehouse.level + 1,
+               capacity: warehouse.capacity + 1000
+             })
+             |> Repo.update() do
+        {:ok, updated}
       end
     end)
   end
+
+  defp maybe_record_tax(
+         company_id,
+         port_id,
+         warehouse_id,
+         base_amount,
+         tax_amount,
+         now
+       ) do
+    if tax_amount > 0 do
+      Tradewinds.Companies.record_transaction(
+        company_id,
+        -tax_amount,
+        :tax,
+        :warehouse,
+        warehouse_id,
+        now,
+        meta: %{base_amount: base_amount, port_id: port_id}
+      )
+    else
+      {:ok, :no_tax}
+    end
+  end
+
 
   @doc """
   Downgrades a warehouse to the previous tier, decreasing its level and capacity.
   Fails if the resulting capacity would be less than the currently stored inventory.
   """
-  def shrink_warehouse(warehouse_id) do
+  def shrink_warehouse(%Scope{} = scope, warehouse_id) do
     Repo.transact(fn ->
       with {:ok, warehouse} <- fetch_warehouse_for_update(warehouse_id),
+           :ok <- Scope.authorizes?(scope, warehouse.company_id),
            {:ok, inventory_total} <- current_inventory_total(warehouse_id),
-           :ok <- check_can_shrink(warehouse, inventory_total) do
-        warehouse
-        |> Warehouse.update_tier_changeset(%{
-          level: warehouse.level - 1,
-          capacity: warehouse.capacity - 1000
-        })
-        |> Repo.update()
+           :ok <- check_can_shrink(warehouse, inventory_total),
+           {:ok, updated} <-
+             warehouse
+             |> Warehouse.update_tier_changeset(%{
+               level: warehouse.level - 1,
+               capacity: warehouse.capacity - 1000
+             })
+             |> Repo.update() do
+        {:ok, updated}
+      else
+        {:error, reason} -> Repo.rollback(reason)
       end
     end)
   end
@@ -256,19 +283,4 @@ defmodule Tradewinds.Logistics do
     end
   end
 
-  # Stub: Rent a new warehouse for a company at a port.
-  def rent_warehouse(%Scope{} = _scope, _company_id, _port_id) do
-  end
-
-  # Stub: List all warehouses owned by a company.
-  def list_warehouses(%Scope{} = _scope, _company_id) do
-  end
-
-  # Stub: Move goods from a ship to a warehouse.
-  def deposit(%Scope{} = _scope, _warehouse_id, _good_id, _quantity) do
-  end
-
-  # Stub: Move goods from a warehouse to a ship.
-  def withdraw(%Scope{} = _scope, _warehouse_id, _good_id, _quantity) do
-  end
 end

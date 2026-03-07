@@ -212,4 +212,16 @@ defmodule Tradewinds.Companies do
       end
     end)
   end
+
+  @doc """
+  Emits telemetry stats for the Companies context.
+  """
+  def emit_stats do
+    stats = %{
+      total_treasury: Repo.aggregate(Company, :sum, :treasury) || 0,
+      bankrupt_count: Repo.aggregate(from(c in Company, where: c.status == :bankrupt), :count, :id)
+    }
+
+    :telemetry.execute([:tradewinds, :companies, :stats], stats)
+  end
 end

@@ -8,8 +8,8 @@ defmodule Tradewinds.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      TradewindsWeb.Telemetry,
       Tradewinds.Repo,
+      TradewindsWeb.Telemetry,
       {DNSCluster, query: Application.get_env(:tradewinds, :dns_cluster_query) || :ignore},
       {Oban, Application.fetch_env!(:tradewinds, Oban)},
       {Phoenix.PubSub, name: Tradewinds.PubSub},

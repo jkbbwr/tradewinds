@@ -343,4 +343,20 @@ defmodule Tradewinds.Market do
     |> Ecto.Changeset.put_change(:status, status)
     |> Repo.update()
   end
+
+  @doc """
+  Emits telemetry stats for the Market context.
+  """
+  def emit_stats do
+    stats = %{
+      open_orders_count:
+        Repo.aggregate(
+          from(o in Tradewinds.Market.Order, where: o.status == :open),
+          :count,
+          :id
+        )
+    }
+
+    :telemetry.execute([:tradewinds, :market, :stats], stats)
+  end
 end

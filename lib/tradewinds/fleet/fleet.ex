@@ -16,8 +16,9 @@ defmodule Tradewinds.Fleet do
   Initiates travel for a docked ship along a specific route.
   Sets the ship's status to `:traveling` and calculates the arrival time.
   """
-  def transit_ship(ship_id, route_id) do
+  def transit_ship(%Scope{} = scope, ship_id, route_id) do
     with {:ok, ship} <- fetch_ship(ship_id),
+         :ok <- Scope.authorizes?(scope, ship.company_id),
          :ok <- check_ship_docked(ship),
          {:ok, route} <- World.fetch_route_by_id(route_id),
          :ok <- check_ship_at_route_origin(ship, route),
@@ -281,8 +282,9 @@ defmodule Tradewinds.Fleet do
   @doc """
   Atomically transfers cargo from a docked ship to a warehouse at the same port.
   """
-  def transfer_to_warehouse(ship_id, warehouse_id, good_id, quantity) when quantity > 0 do
+  def transfer_to_warehouse(%Scope{} = scope, ship_id, warehouse_id, good_id, quantity) when quantity > 0 do
     with {:ok, ship} <- fetch_ship(ship_id),
+         :ok <- Scope.authorizes?(scope, ship.company_id),
          {:ok, warehouse} <- Tradewinds.Logistics.fetch_warehouse(warehouse_id),
          :ok <- check_ship_at_warehouse(ship, warehouse) do
       Repo.transact(fn ->
@@ -302,5 +304,17 @@ defmodule Tradewinds.Fleet do
       ship.port_id != warehouse.port_id -> {:error, :not_at_same_port}
       true -> :ok
     end
+  end
+
+  @doc """
+  Emits telemetry stats for the Fleet context.
+  """
+  def emit_stats do
+    stats = %{
+      total_ships: Repo.aggregate(Ship, :count, :id),
+      ships_at_sea: Repo.aggregate(from(s in Ship, where: s.status == :traveling), :count, :id)
+    }
+
+    :telemetry.execute([:tradewinds, :fleet, :stats], stats)
   end
 end

@@ -81,10 +81,13 @@ defmodule Tradewinds.Economy do
   """
   def net_player_flow_from_npc(port_id, good_id, start_time, end_time) do
     query =
-      from t in TradeLog,
-        where: t.port_id == ^port_id and t.good_id == ^good_id,
-        where: t.occurred_at >= ^start_time and t.occurred_at <= ^end_time,
+      from(t in TradeLog,
+        where: t.port_id == ^port_id,
+        where: t.good_id == ^good_id,
+        where: t.occurred_at >= ^start_time,
+        where: t.occurred_at <= ^end_time,
         where: t.source == :npc_trader
+      )
 
     Repo.all(query)
     |> Enum.reduce(0, fn t, acc ->
@@ -94,6 +97,19 @@ defmodule Tradewinds.Economy do
         true -> acc
       end
     end)
+  end
+
+  @doc """
+  Emits telemetry stats for the Economy context.
+  """
+  def emit_stats do
+    total_tax =
+      Tradewinds.Companies.Ledger
+      |> where(reason: :tax)
+      |> Repo.aggregate(:sum, :amount)
+      |> Kernel.then(fn val -> abs(val || 0) end)
+
+    :telemetry.execute([:tradewinds, :economy, :stats], %{total_tax_burned: total_tax})
   end
 
   @doc """

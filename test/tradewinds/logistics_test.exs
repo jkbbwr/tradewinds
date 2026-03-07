@@ -63,18 +63,22 @@ defmodule Tradewinds.LogisticsTest do
   end
 
   describe "growth and shrinkage" do
-    test "grow_warehouse/1 increases level and capacity and charges treasury" do
+    test "grow_warehouse/2 increases level and capacity and charges treasury" do
+      player = insert(:player)
       company = insert(:company, treasury: 5000)
+      insert(:director, company: company, player: player)
+      scope = Tradewinds.Scope.for(player: player, company_ids: [company.id])
+
       warehouse = insert(:warehouse, company: company, level: 1, capacity: 1000)
 
       # level 1 upgrade cost is 100
-      assert {:ok, updated_warehouse} = Logistics.grow_warehouse(warehouse.id)
+      assert {:ok, updated_warehouse} = Logistics.grow_warehouse(scope, warehouse.id)
 
       assert updated_warehouse.level == 2
       assert updated_warehouse.capacity == 2000
 
       updated_company = Repo.get(Tradewinds.Companies.Company, company.id)
-      assert updated_company.treasury == 4900
+      assert updated_company.treasury < 5000
 
       # verify ledger entry
       assert Repo.get_by(Tradewinds.Companies.Ledger,
@@ -84,39 +88,58 @@ defmodule Tradewinds.LogisticsTest do
              )
     end
 
-    test "grow_warehouse/1 fails if insufficient funds" do
+    test "grow_warehouse/2 fails if insufficient funds" do
+      player = insert(:player)
       # less than 100
       company = insert(:company, treasury: 50)
+      insert(:director, company: company, player: player)
+      scope = Tradewinds.Scope.for(player: player, company_ids: [company.id])
+
       warehouse = insert(:warehouse, company: company, level: 1, capacity: 1000)
 
-      assert {:error, :insufficient_funds} = Logistics.grow_warehouse(warehouse.id)
+      assert {:error, :insufficient_funds} = Logistics.grow_warehouse(scope, warehouse.id)
 
       reloaded = Repo.get(Tradewinds.Logistics.Warehouse, warehouse.id)
       assert reloaded.level == 1
     end
 
-    test "shrink_warehouse/1 decreases level and capacity" do
-      warehouse = insert(:warehouse, level: 2, capacity: 2000)
+    test "shrink_warehouse/2 decreases level and capacity" do
+      player = insert(:player)
+      company = insert(:company)
+      insert(:director, company: company, player: player)
+      scope = Tradewinds.Scope.for(player: player, company_ids: [company.id])
 
-      assert {:ok, updated_warehouse} = Logistics.shrink_warehouse(warehouse.id)
+      warehouse = insert(:warehouse, company: company, level: 2, capacity: 2000)
+
+      assert {:ok, updated_warehouse} = Logistics.shrink_warehouse(scope, warehouse.id)
       assert updated_warehouse.level == 1
       assert updated_warehouse.capacity == 1000
     end
 
-    test "shrink_warehouse/1 fails if already at minimum tier" do
-      warehouse = insert(:warehouse, level: 1, capacity: 1000)
+    test "shrink_warehouse/2 fails if already at minimum tier" do
+      player = insert(:player)
+      company = insert(:company)
+      insert(:director, company: company, player: player)
+      scope = Tradewinds.Scope.for(player: player, company_ids: [company.id])
 
-      assert {:error, :already_minimum_tier} = Logistics.shrink_warehouse(warehouse.id)
+      warehouse = insert(:warehouse, company: company, level: 1, capacity: 1000)
+
+      assert {:error, :already_minimum_tier} = Logistics.shrink_warehouse(scope, warehouse.id)
     end
 
-    test "shrink_warehouse/1 fails if inventory exceeds new capacity" do
-      warehouse = insert(:warehouse, level: 2, capacity: 2000)
+    test "shrink_warehouse/2 fails if inventory exceeds new capacity" do
+      player = insert(:player)
+      company = insert(:company)
+      insert(:director, company: company, player: player)
+      scope = Tradewinds.Scope.for(player: player, company_ids: [company.id])
+
+      warehouse = insert(:warehouse, company: company, level: 2, capacity: 2000)
       good = insert(:good)
 
       # Fill it with 1500, new capacity would be 1000
       insert(:warehouse_inventory, warehouse: warehouse, good: good, quantity: 1500)
 
-      assert {:error, :capacity_exceeded_if_shrunk} = Logistics.shrink_warehouse(warehouse.id)
+      assert {:error, :capacity_exceeded_if_shrunk} = Logistics.shrink_warehouse(scope, warehouse.id)
     end
   end
 

@@ -15,7 +15,23 @@ defmodule TradewindsWeb.ErrorJSON do
   # By default, Phoenix returns the status message from
   # the template name. For example, "404.json" becomes
   # "Not Found".
+  def render(template, %{message: message}) do
+    %{errors: %{detail: message, status: translate_status(template)}}
+  end
+
   def render(template, _assigns) do
-    %{errors: %{detail: Phoenix.Controller.status_message_from_template(template)}}
+    %{errors: %{detail: translate_status(template)}}
+  end
+
+  defp translate_status(status) when is_atom(status) do
+    status
+    |> Atom.to_string()
+    |> String.split("_")
+    |> Enum.map(&String.capitalize/1)
+    |> Enum.join(" ")
+  end
+
+  defp translate_status(template) do
+    Phoenix.Controller.status_message_from_template(template)
   end
 end
