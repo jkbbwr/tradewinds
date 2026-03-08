@@ -18,7 +18,7 @@ defmodule Tradewinds.Fleet do
   """
   def transit_ship(%Scope{company_id: company_id}, ship_id, route_id) do
     with {:ok, ship} <- fetch_ship(ship_id),
-         :ok <- if(ship.company_id == company_id, do: :ok, else: {:error, :unauthorized}),
+         :ok <- validate_ship_ownership(ship, company_id),
          {:ok, company} <- Tradewinds.Companies.fetch_company(company_id),
          {:ok, :active} <- Tradewinds.Companies.is_active?(company),
          :ok <- check_ship_docked(ship),
@@ -256,7 +256,7 @@ defmodule Tradewinds.Fleet do
   """
   def rename_ship(%Scope{company_id: company_id}, ship_id, new_name) do
     with {:ok, ship} <- fetch_ship(ship_id),
-         :ok <- if(ship.company_id == company_id, do: :ok, else: {:error, :unauthorized}),
+         :ok <- validate_ship_ownership(ship, company_id),
          {:ok, company} <- Tradewinds.Companies.fetch_company(company_id),
          {:ok, :active} <- Tradewinds.Companies.is_active?(company) do
       ship |> Ship.change_name_changeset(new_name) |> Repo.update()
@@ -278,7 +278,7 @@ defmodule Tradewinds.Fleet do
   """
   def transfer_ship(%Scope{company_id: company_id}, ship_id, new_company_id) do
     with {:ok, ship} <- fetch_ship(ship_id),
-         :ok <- if(ship.company_id == company_id, do: :ok, else: {:error, :unauthorized}),
+         :ok <- validate_ship_ownership(ship, company_id),
          {:ok, company} <- Tradewinds.Companies.fetch_company(company_id),
          {:ok, :active} <- Tradewinds.Companies.is_active?(company) do
       ship |> Ship.transfer_changeset(new_company_id) |> Repo.update()
@@ -290,7 +290,7 @@ defmodule Tradewinds.Fleet do
   """
   def transfer_to_warehouse(%Scope{company_id: company_id}, ship_id, warehouse_id, good_id, quantity) when quantity > 0 do
     with {:ok, ship} <- fetch_ship(ship_id),
-         :ok <- if(ship.company_id == company_id, do: :ok, else: {:error, :unauthorized}),
+         :ok <- validate_ship_ownership(ship, company_id),
          {:ok, company} <- Tradewinds.Companies.fetch_company(company_id),
          {:ok, :active} <- Tradewinds.Companies.is_active?(company),
          {:ok, warehouse} <- Tradewinds.Logistics.fetch_warehouse(warehouse_id),
@@ -314,8 +314,11 @@ defmodule Tradewinds.Fleet do
     end
   end
 
+  defp validate_ship_ownership(ship, company_id) do
+    if ship.company_id == company_id, do: :ok, else: {:error, :unauthorized}
+  end
+
   @doc """
-  Emits telemetry stats for the Fleet context.
   """
   def emit_stats do
     stats = %{

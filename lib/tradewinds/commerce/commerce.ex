@@ -101,7 +101,7 @@ defmodule Tradewinds.Commerce do
   """
   def execute_quote(%Tradewinds.Scope{company_id: company_id}, token, destinations) when is_list(destinations) do
     with {:ok, quote_data} <- verify_quote(token),
-         :ok <- if(quote_data.company_id == company_id, do: :ok, else: {:error, :unauthorized}),
+         :ok <- validate_quote_ownership(quote_data, company_id),
          {:ok, company} <- Tradewinds.Companies.fetch_company(company_id),
          {:ok, :active} <- Tradewinds.Companies.is_active?(company),
          :ok <- validate_destinations_total(quote_data, destinations) do
@@ -189,6 +189,10 @@ defmodule Tradewinds.Commerce do
           end
         end)
     end
+  end
+
+  defp validate_quote_ownership(quote_data, company_id) do
+    if quote_data.company_id == company_id, do: :ok, else: {:error, :unauthorized}
   end
 
   # Ensures the requested distribution of goods perfectly matches the quoted total quantity.

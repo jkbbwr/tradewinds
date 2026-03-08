@@ -94,7 +94,7 @@ defmodule Tradewinds.Logistics do
   def grow_warehouse(%Scope{company_id: company_id}, warehouse_id) do
     Repo.transact(fn ->
       with {:ok, warehouse} <- fetch_warehouse_for_update(warehouse_id),
-           :ok <- if(warehouse.company_id == company_id, do: :ok, else: {:error, :unauthorized}),
+           :ok <- validate_warehouse_ownership(warehouse, company_id),
            {:ok, company} <- Tradewinds.Companies.fetch_company(company_id),
            {:ok, :active} <- Tradewinds.Companies.is_active?(company),
            cost <- upgrade_cost(warehouse),
@@ -161,7 +161,7 @@ defmodule Tradewinds.Logistics do
   def shrink_warehouse(%Scope{company_id: company_id}, warehouse_id) do
     Repo.transact(fn ->
       with {:ok, warehouse} <- fetch_warehouse_for_update(warehouse_id),
-           :ok <- if(warehouse.company_id == company_id, do: :ok, else: {:error, :unauthorized}),
+           :ok <- validate_warehouse_ownership(warehouse, company_id),
            {:ok, company} <- Tradewinds.Companies.fetch_company(company_id),
            {:ok, :active} <- Tradewinds.Companies.is_active?(company),
            {:ok, inventory_total} <- current_inventory_total(warehouse_id),
@@ -287,4 +287,7 @@ defmodule Tradewinds.Logistics do
     end
   end
 
+  defp validate_warehouse_ownership(warehouse, company_id) do
+    if warehouse.company_id == company_id, do: :ok, else: {:error, :unauthorized}
+  end
 end
