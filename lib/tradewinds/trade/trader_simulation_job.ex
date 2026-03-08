@@ -1,9 +1,9 @@
-defmodule Tradewinds.Commerce.TraderSimulationJob do
+defmodule Tradewinds.Trade.TraderSimulationJob do
   use Oban.Worker,
     queue: :traders,
     unique: [period: 60, states: [:available, :scheduled, :executing]]
 
-  alias Tradewinds.Commerce
+  alias Tradewinds.Trade
   alias Tradewinds.Repo
 
   @game_day_seconds 576
@@ -14,7 +14,7 @@ defmodule Tradewinds.Commerce.TraderSimulationJob do
     next_time = DateTime.add(base_time, @game_day_seconds, :second)
 
     Repo.transact(fn ->
-      Commerce.simulate_trader(trader_id, base_time)
+      Trade.simulate_trader(trader_id, base_time)
 
       %{trader_id: trader_id}
       |> new(scheduled_at: next_time)

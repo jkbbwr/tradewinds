@@ -17,8 +17,8 @@ alias Tradewinds.World.Route
 alias Tradewinds.World.Good
 alias Tradewinds.World.ShipType
 alias Tradewinds.Shipyards.Shipyard
-alias Tradewinds.Commerce.Trader
-alias Tradewinds.Commerce.TraderPosition
+alias Tradewinds.Trade.Trader
+alias Tradewinds.Trade.TraderPosition
 
 # United Kingdom
 uk =

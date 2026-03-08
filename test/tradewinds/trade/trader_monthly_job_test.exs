@@ -1,9 +1,9 @@
-defmodule Tradewinds.Commerce.TraderMonthlyJobTest do
+defmodule Tradewinds.Trade.TraderMonthlyJobTest do
   use Tradewinds.DataCase, async: true
   use Oban.Testing, repo: Tradewinds.Repo
 
-  alias Tradewinds.Commerce.TraderMonthlyJob
-  alias Tradewinds.Commerce.TraderPosition
+  alias Tradewinds.Trade.TraderMonthlyJob
+  alias Tradewinds.Trade.TraderPosition
 
   test "perform/1 resets monthly profit and schedules next job" do
     trader = insert(:trader)

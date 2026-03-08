@@ -1,6 +1,6 @@
-defmodule Tradewinds.Commerce do
+defmodule Tradewinds.Trade do
   @moduledoc """
-  The Commerce context.
+  The Trade context.
   Handles interactions between players and NPC traders, including price calculation,
   signed quotes, immediate execution, and daily market simulations.
   """
@@ -23,9 +23,9 @@ defmodule Tradewinds.Commerce do
       when action in [:buy, :sell] and is_integer(quantity) and quantity > 0 do
     with {:ok, company} <- Tradewinds.Companies.fetch_company(company_id),
          {:ok, :active} <- Tradewinds.Companies.is_active?(company),
-         %Tradewinds.Commerce.TraderPosition{} = position <-
+         %Tradewinds.Trade.TraderPosition{} = position <-
            Repo.one(
-             from p in Tradewinds.Commerce.TraderPosition,
+             from p in Tradewinds.Trade.TraderPosition,
                where: p.port_id == ^port_id and p.good_id == ^good_id,
                preload: [:good]
            ) || {:error, :not_found},
@@ -74,7 +74,7 @@ defmodule Tradewinds.Commerce do
   end
 
   defp ensure_available_stock(
-         %Tradewinds.Commerce.TraderPosition{stock: stock},
+         %Tradewinds.Trade.TraderPosition{stock: stock},
          :buy,
          quantity
        )
@@ -208,7 +208,7 @@ defmodule Tradewinds.Commerce do
 
   # Fetches and row-locks an NPC trader position to prevent race conditions during execution.
   defp fetch_position_for_update(port_id, good_id) do
-    Tradewinds.Commerce.TraderPosition
+    Tradewinds.Trade.TraderPosition
     |> where(port_id: ^port_id, good_id: ^good_id)
     |> lock("FOR UPDATE")
     |> preload([:good])
@@ -352,7 +352,7 @@ defmodule Tradewinds.Commerce do
     profit_accrued = floor(quote_data.quantity * quote_data.market_price * quote_data.spread)
 
     position
-    |> Tradewinds.Commerce.TraderPosition.changeset(%{
+    |> Tradewinds.Trade.TraderPosition.changeset(%{
       stock: new_stock,
       monthly_profit: position.monthly_profit + profit_accrued
     })
@@ -387,7 +387,7 @@ defmodule Tradewinds.Commerce do
   """
   def simulate_trader(trader_id, now \\ DateTime.utc_now()) do
     positions =
-      Tradewinds.Commerce.TraderPosition
+      Tradewinds.Trade.TraderPosition
       |> where([p], p.trader_id == ^trader_id)
       |> Repo.all()
 
@@ -436,7 +436,7 @@ defmodule Tradewinds.Commerce do
           )
 
         position
-        |> Tradewinds.Commerce.TraderPosition.update_simulation_changeset(%{
+        |> Tradewinds.Trade.TraderPosition.update_simulation_changeset(%{
           stock: new_stock,
           target_stock: new_target_stock,
           spread: new_spread
@@ -453,7 +453,7 @@ defmodule Tradewinds.Commerce do
   This allows the trader to reassess their stance (e.g., adjust spread) in the future.
   """
   def reset_trader_stances(trader_id) do
-    Tradewinds.Commerce.TraderPosition
+    Tradewinds.Trade.TraderPosition
     |> where(trader_id: ^trader_id)
     |> Repo.update_all(set: [monthly_profit: 0, updated_at: DateTime.utc_now()])
 

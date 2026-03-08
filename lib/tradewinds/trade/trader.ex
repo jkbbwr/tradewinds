@@ -1,10 +1,10 @@
-defmodule Tradewinds.Commerce.Trader do
+defmodule Tradewinds.Trade.Trader do
   use Tradewinds.Schema
 
   schema "trader" do
     field :name, :string
 
-    has_many :positions, Tradewinds.Commerce.TraderPosition
+    has_many :positions, Tradewinds.Trade.TraderPosition
 
     timestamps()
   end

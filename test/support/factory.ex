@@ -131,13 +131,13 @@ defmodule Tradewinds.Factory do
   end
 
   def trader_factory do
-    %Tradewinds.Commerce.Trader{
+    %Tradewinds.Trade.Trader{
       name: sequence(:trader_name, &"Trader #{&1}")
     }
   end
 
   def trader_position_factory do
-    %Tradewinds.Commerce.TraderPosition{
+    %Tradewinds.Trade.TraderPosition{
       trader: build(:trader),
       port: build(:port),
       good: build(:good),

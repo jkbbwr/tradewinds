@@ -8,6 +8,7 @@ defmodule Tradewinds.Accounts do
   alias Tradewinds.Repo
   alias Tradewinds.Accounts.Player
   alias Tradewinds.Accounts.AuthToken
+  alias Tradewinds.Accounts.BannedIP
 
   ## Players
 
@@ -136,5 +137,31 @@ defmodule Tradewinds.Accounts do
   """
   def generate_token(player) do
     Phoenix.Token.sign(TradewindsWeb.Endpoint, "player auth", player.id, max_age: 24 * 60 * 60)
+  end
+
+  ## IP Banning
+
+  @doc """
+  Bans an IP address.
+  """
+  def ban_ip(ip_address, reason \\ nil) do
+    %BannedIP{}
+    |> BannedIP.changeset(%{ip_address: to_string(ip_address), reason: reason})
+    |> Repo.insert()
+  end
+
+  @doc """
+  Checks if an IP address is banned.
+  """
+  def is_ip_banned?(ip_address) do
+    ip = to_string(ip_address)
+
+    {_cache_status, banned?} =
+      Cachex.fetch(:tradewinds_cache, "banned_ip:#{ip}", fn _key ->
+        exists? = Repo.exists?(from b in BannedIP, where: b.ip_address == ^ip)
+        {:commit, exists?}
+      end)
+
+    banned?
   end
 end

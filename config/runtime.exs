@@ -24,6 +24,10 @@ config :tradewinds, TradewindsWeb.Endpoint,
   http: [port: String.to_integer(System.get_env("PORT", "4000"))]
 
 if config_env() == :prod do
+  config :tradewinds, :admin_auth,
+    username: System.fetch_env!("ADMIN_USERNAME"),
+    password: System.fetch_env!("ADMIN_PASSWORD")
+
   database_url =
     System.get_env("DATABASE_URL") ||
       raise """

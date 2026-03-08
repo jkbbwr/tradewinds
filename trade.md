@@ -1,4 +1,4 @@
-This is the final **Commerce Context Specification**, integrating the core NPC simulation, player-driven trading mechanics, and the "Fog of War" volatility to ensure a long-term, competitive meta.
+This is the final **Trade Context Specification**, integrating the core NPC simulation, player-driven trading mechanics, and the "Fog of War" volatility to ensure a long-term, competitive meta.
 
 ---
 

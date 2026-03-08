@@ -1,8 +1,8 @@
-defmodule Tradewinds.CommerceTest do
+defmodule Tradewinds.TradeTest do
   use Tradewinds.DataCase
   import Mox
   import Tradewinds.Factory
-  alias Tradewinds.Commerce
+  alias Tradewinds.Trade
   alias Tradewinds.Scope
 
   setup :verify_on_exit!
@@ -24,7 +24,7 @@ defmodule Tradewinds.CommerceTest do
       insert(:trader_position, trader: trader, port: port, good: good, stock: 100)
 
       assert {:ok, token, quote_data} =
-               Commerce.generate_quote(scope, port.id, good.id, :buy, 10)
+               Trade.generate_quote(scope, port.id, good.id, :buy, 10)
 
       assert is_binary(token)
       assert quote_data.company_id == company.id
@@ -43,12 +43,12 @@ defmodule Tradewinds.CommerceTest do
       trader = insert(:trader)
       insert(:trader_position, trader: trader, port: port, good: good, stock: 100)
 
-      {:ok, token, _} = Commerce.generate_quote(scope, port.id, good.id, :buy, 10)
-      assert {:ok, _quote_data} = Commerce.verify_quote(token)
+      {:ok, token, _} = Trade.generate_quote(scope, port.id, good.id, :buy, 10)
+      assert {:ok, _quote_data} = Trade.verify_quote(token)
     end
 
     test "verify_quote/1 fails for invalid token" do
-      assert {:error, :invalid} = Commerce.verify_quote("invalid token")
+      assert {:error, :invalid} = Trade.verify_quote("invalid token")
     end
   end
 
@@ -76,10 +76,10 @@ defmodule Tradewinds.CommerceTest do
       ship = insert(:ship, company: company, port: port, status: :docked)
 
       {:ok, token, quote_data} =
-        Commerce.generate_quote(scope, port.id, good.id, :buy, 10)
+        Trade.generate_quote(scope, port.id, good.id, :buy, 10)
 
       assert {:ok, _quote} =
-               Commerce.execute_quote(scope, token, [%{type: :ship, id: ship.id, quantity: 10}])
+               Trade.execute_quote(scope, token, [%{type: :ship, id: ship.id, quantity: 10}])
 
       # Verify company treasury decreased by total_price + tax
       tax_expected = floor(quote_data.total_price * 500 / 10000)
@@ -93,7 +93,7 @@ defmodule Tradewinds.CommerceTest do
       assert {:ok, 10} = Tradewinds.Fleet.current_cargo_total(ship.id)
 
       # Verify market stock decreased
-      updated_position = Tradewinds.Repo.get(Tradewinds.Commerce.TraderPosition, position.id)
+      updated_position = Tradewinds.Repo.get(Tradewinds.Trade.TraderPosition, position.id)
       assert updated_position.stock == 90
       assert updated_position.monthly_profit > 0
     end
@@ -108,10 +108,10 @@ defmodule Tradewinds.CommerceTest do
       trader = insert(:trader)
       insert(:trader_position, trader: trader, port: port, good: good, stock: 100)
 
-      {:ok, token, _} = Commerce.generate_quote(scope, port.id, good.id, :buy, 10)
+      {:ok, token, _} = Trade.generate_quote(scope, port.id, good.id, :buy, 10)
 
       assert {:error, :quantity_mismatch} =
-               Commerce.execute_quote(scope, token, [%{type: :ship, id: Ecto.UUID.generate(), quantity: 5}])
+               Trade.execute_quote(scope, token, [%{type: :ship, id: Ecto.UUID.generate(), quantity: 5}])
     end
 
     test "fails if ship is at wrong port", %{player: player} do
@@ -127,10 +127,10 @@ defmodule Tradewinds.CommerceTest do
 
       ship = insert(:ship, company: company, port: wrong_port, status: :docked)
 
-      {:ok, token, _} = Commerce.generate_quote(scope, port.id, good.id, :buy, 10)
+      {:ok, token, _} = Trade.generate_quote(scope, port.id, good.id, :buy, 10)
 
       assert {:error, :wrong_location} =
-               Commerce.execute_quote(scope, token, [%{type: :ship, id: ship.id, quantity: 10}])
+               Trade.execute_quote(scope, token, [%{type: :ship, id: ship.id, quantity: 10}])
     end
 
     test "successfully executes a sell quote withdrawing from a ship", %{player: player} do
@@ -156,10 +156,10 @@ defmodule Tradewinds.CommerceTest do
       Tradewinds.Fleet.add_cargo(ship.id, good.id, 10)
 
       {:ok, token, quote_data} =
-        Commerce.generate_quote(scope, port.id, good.id, :sell, 10)
+        Trade.generate_quote(scope, port.id, good.id, :sell, 10)
 
       assert {:ok, _quote} =
-               Commerce.execute_quote(scope, token, [%{type: :ship, id: ship.id, quantity: 10}])
+               Trade.execute_quote(scope, token, [%{type: :ship, id: ship.id, quantity: 10}])
 
       # Verify company treasury increased by total_price - tax
       tax_expected = floor(quote_data.total_price * 200 / 10000)
@@ -185,7 +185,7 @@ defmodule Tradewinds.CommerceTest do
       ship = insert(:ship, company: company, port: port, status: :docked)
 
       assert {:ok, _} =
-               Commerce.execute_immediate(scope, port.id, good.id, :buy, [
+               Trade.execute_immediate(scope, port.id, good.id, :buy, [
                  %{type: :ship, id: ship.id, quantity: 10}
                ])
 
@@ -200,13 +200,13 @@ defmodule Tradewinds.CommerceTest do
       # drift = (100 - 100) * 0.1 = 0
       # consumption = 100 * 0.05 = 5
       # result = 95
-      assert Commerce.simulate_daily_tick(100, 100, 0.1, 0.05) == 95
+      assert Trade.simulate_daily_tick(100, 100, 0.1, 0.05) == 95
 
       # 50 stock, 100 target, 10% supply, 5% demand
       # drift = (100 - 50) * 0.1 = 5
       # consumption = 50 * 0.05 = 2
       # result = 50 + 5 - 2 = 53
-      assert Commerce.simulate_daily_tick(50, 100, 0.1, 0.05) == 53
+      assert Trade.simulate_daily_tick(50, 100, 0.1, 0.05) == 53
     end
 
     test "simulate_trader/1 updates all positions for a trader" do
@@ -214,10 +214,10 @@ defmodule Tradewinds.CommerceTest do
       p1 = insert(:trader_position, trader: trader, stock: 100, target_stock: 100)
       p2 = insert(:trader_position, trader: trader, stock: 50, target_stock: 100)
 
-      assert {:ok, :simulated} = Commerce.simulate_trader(trader.id)
+      assert {:ok, :simulated} = Trade.simulate_trader(trader.id)
 
-      assert Repo.get(Tradewinds.Commerce.TraderPosition, p1.id).stock < 100
-      assert Repo.get(Tradewinds.Commerce.TraderPosition, p2.id).stock > 50
+      assert Repo.get(Tradewinds.Trade.TraderPosition, p1.id).stock < 100
+      assert Repo.get(Tradewinds.Trade.TraderPosition, p2.id).stock > 50
     end
   end
 end

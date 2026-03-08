@@ -1,4 +1,9 @@
 import Config
+
+config :tradewinds, :admin_auth,
+  username: "username",
+  password: "password"
+
 config :tradewinds, Oban, testing: :manual
 
 config :tradewinds,
@@ -29,6 +34,10 @@ config :tradewinds, Tradewinds.Mailer, adapter: Swoosh.Adapters.Test
 
 # Disable swoosh api client as it is only required for production adapters
 config :swoosh, :api_client, false
+
+config :tradewinds, :admin_auth,
+  username: "admin",
+  password: "password"
 
 # Print only warnings and errors during test
 config :logger, level: :warning

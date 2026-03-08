@@ -1,4 +1,4 @@
-defmodule Tradewinds.Commerce.TraderPosition do
+defmodule Tradewinds.Trade.TraderPosition do
   use Tradewinds.Schema
 
   schema "trader_position" do
@@ -10,7 +10,7 @@ defmodule Tradewinds.Commerce.TraderPosition do
     field :spread, :float
     field :monthly_profit, :integer, default: 0
 
-    belongs_to :trader, Tradewinds.Commerce.Trader
+    belongs_to :trader, Tradewinds.Trade.Trader
     belongs_to :port, Tradewinds.World.Port
     belongs_to :good, Tradewinds.World.Good
 

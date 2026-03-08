@@ -70,7 +70,7 @@ Time model:
 
 ---
 
-## Milestone 6 — Commerce (NPC trader): trader maths, instant buy/sell
+## Milestone 6 — Trade (NPC trader): trader maths, instant buy/sell
 
 - [x] Implement `npc_stock` + `npc_trader` persistence + seeding
 - [x] Implement effective supply/demand/volatility computation with active shocks
@@ -112,7 +112,7 @@ Time model:
 - [ ] Split heavy sweeps into workers (idempotent day/month guards)
 - [ ] Implement day boundary helper (idempotent daily work guard)
 - [ ] Implement month boundary helper (idempotent monthly work guard)
-- [x] Implement daily NPC simulation `Commerce.simulate_day(day)`
+- [x] Implement daily NPC simulation `Trade.simulate_day(day)`
   - stock drift/restocking + clamps + volatility update + idempotent guard
 - [x] Implement net-player-flow aggregation for NPC simulation (from trade log)
 - [x] Implement monthly reset for NPC trader stance (profit/spread reset)
@@ -150,7 +150,7 @@ Time model:
 - [ ] Implement `World` endpoints (GET ports, goods, ship types, routes)
 - [ ] Implement `Companies` endpoints (GET company profile, GET ledger history)
 - [ ] Implement `Fleet` & `Logistics` endpoints (GET ships, POST transit, POST cargo transfers)
-- [ ] Implement `Market` & `Commerce` endpoints (GET order book, POST limit orders, POST NPC trades)
+- [ ] Implement `Market` & `Trade` endpoints (GET order book, POST limit orders, POST NPC trades)
 - [ ] Ensure all API responses use consistent JSON views and error handling
 
 ---
