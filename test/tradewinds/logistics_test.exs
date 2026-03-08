@@ -209,4 +209,47 @@ defmodule Tradewinds.LogisticsTest do
       assert {:error, :inventory_not_found} = Logistics.remove_cargo(warehouse.id, good.id, 10)
     end
   end
+
+  describe "transfer_to_ship/5" do
+    test "successfully transfers cargo from warehouse to ship" do
+      player = insert(:player)
+      company = insert(:company)
+      insert(:director, company: company, player: player)
+      scope = Scope.for(player: player, company_id: company.id)
+
+      port = insert(:port)
+      warehouse = insert(:warehouse, port: port, company: company)
+      ship = insert(:ship, status: :docked, port: port, company: company, ship_type: insert(:ship_type, capacity: 100))
+      good = insert(:good)
+
+      insert(:warehouse_inventory, warehouse: warehouse, good: good, quantity: 50)
+
+      assert {:ok, :transferred} =
+               Logistics.transfer_to_ship(scope, warehouse.id, ship.id, good.id, 30)
+
+      # Check warehouse inventory
+      assert {:ok, 20} = Logistics.current_inventory_total(warehouse.id)
+
+      # Check ship inventory
+      assert {:ok, 30} = Tradewinds.Fleet.current_cargo_total(ship.id)
+    end
+
+    test "fails if ship is not at same port" do
+      player = insert(:player)
+      company = insert(:company)
+      insert(:director, company: company, player: player)
+      scope = Scope.for(player: player, company_id: company.id)
+
+      port1 = insert(:port)
+      port2 = insert(:port)
+      warehouse = insert(:warehouse, port: port1, company: company)
+      ship = insert(:ship, status: :docked, port: port2, company: company)
+      good = insert(:good)
+
+      insert(:warehouse_inventory, warehouse: warehouse, good: good, quantity: 50)
+
+      assert {:error, :not_at_same_port} =
+               Logistics.transfer_to_ship(scope, warehouse.id, ship.id, good.id, 30)
+    end
+  end
 end
