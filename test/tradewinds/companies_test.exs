@@ -11,7 +11,9 @@ defmodule Tradewinds.CompaniesTest do
       port = insert(:port)
       scope = Scope.for(player: player)
 
-      assert {:ok, company} = Companies.create(scope, "East India Company", "EIC", port.id, 10000)
+      assert {:ok, company} =
+               Companies.create(scope, "East India Company", "EIC", port.id, 10000)
+
       assert company.name == "East India Company"
       assert company.ticker == "EIC"
       assert company.treasury == 10000
@@ -31,27 +33,14 @@ defmodule Tradewinds.CompaniesTest do
       assert "can't be blank" in errors_on(changeset).name
     end
 
-    test "add_director/2 adds the current player in scope as a director" do
+    test "set_director/2 adds the given player as a director" do
       player = insert(:player)
       company = insert(:company)
 
-      # We need a scope that is authorized for this company.
-      # Since add_director/2 checks Scope.authorizes?, we simulate an existing director
-      scope = %Scope{player: player, company_ids: [company.id]}
-
-      assert {:ok, _director} = Companies.add_director(scope, company)
+      assert {:ok, _director} = Companies.set_director(company, player)
 
       # Verify player is now a director
       assert company.id in Companies.list_player_company_ids(player)
-    end
-
-    test "add_director/2 fails if the scope is not authorized for the company" do
-      player = insert(:player)
-      company = insert(:company)
-      # Empty company_ids
-      scope = Scope.for(player: player)
-
-      assert {:error, :unauthorized} = Companies.add_director(scope, company)
     end
 
     test "list_player_company_ids/1 returns ids of companies the player directs" do
@@ -143,10 +132,17 @@ defmodule Tradewinds.CompaniesTest do
       assert updated_co.status == :active
 
       # Verify ledger entries
-      ship_ledger = Repo.get_by(Tradewinds.Companies.Ledger, company_id: company.id, reason: :ship_upkeep)
+      ship_ledger =
+        Repo.get_by(Tradewinds.Companies.Ledger, company_id: company.id, reason: :ship_upkeep)
+
       assert ship_ledger.amount == -2000
 
-      warehouse_ledger = Repo.get_by(Tradewinds.Companies.Ledger, company_id: company.id, reason: :warehouse_upkeep)
+      warehouse_ledger =
+        Repo.get_by(Tradewinds.Companies.Ledger,
+          company_id: company.id,
+          reason: :warehouse_upkeep
+        )
+
       assert warehouse_ledger.amount == -1000
     end
 
@@ -166,7 +162,7 @@ defmodule Tradewinds.CompaniesTest do
       company = insert(:company)
       ship_type = insert(:ship_type, upkeep: 1000)
       insert(:ship, company: company, ship_type: ship_type)
-      
+
       # ship upkeep (1000) + warehouse upkeep (0) = 1000
       # 1000 * 3 = 3000
       assert Companies.calculate_bailout(company.id) == 3000

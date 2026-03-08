@@ -7,6 +7,10 @@
 # General application configuration
 import Config
 
+config :nostrum,
+  streamlink: false,
+  youtubedl: false
+
 config :tradewinds, Oban,
   engine: Oban.Engines.Basic,
   notifier: Oban.Notifiers.Postgres,

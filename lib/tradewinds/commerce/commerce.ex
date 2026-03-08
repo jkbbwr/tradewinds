@@ -14,15 +14,15 @@ defmodule Tradewinds.Commerce do
   `{:ok, token, quote_data}` or `{:error, reason}`.
   """
   def generate_quote(
-        %Tradewinds.Scope{} = scope,
-        company_id,
+        %Tradewinds.Scope{company_id: company_id},
         port_id,
         good_id,
         action,
         quantity
       )
       when action in [:buy, :sell] and is_integer(quantity) and quantity > 0 do
-    with :ok <- Tradewinds.Scope.authorizes?(scope, company_id),
+    with {:ok, company} <- Tradewinds.Companies.fetch_company(company_id),
+         {:ok, :active} <- Tradewinds.Companies.is_active?(company),
          %Tradewinds.Commerce.TraderPosition{} = position <-
            Repo.one(
              from p in Tradewinds.Commerce.TraderPosition,
@@ -99,9 +99,11 @@ defmodule Tradewinds.Commerce do
   Executes a previously signed quote atomically.
   Distributes or withdraws the goods across multiple specified `destinations` (ships/warehouses).
   """
-  def execute_quote(%Tradewinds.Scope{} = scope, token, destinations) when is_list(destinations) do
+  def execute_quote(%Tradewinds.Scope{company_id: company_id}, token, destinations) when is_list(destinations) do
     with {:ok, quote_data} <- verify_quote(token),
-         :ok <- Tradewinds.Scope.authorizes?(scope, quote_data.company_id),
+         :ok <- if(quote_data.company_id == company_id, do: :ok, else: {:error, :unauthorized}),
+         {:ok, company} <- Tradewinds.Companies.fetch_company(company_id),
+         {:ok, :active} <- Tradewinds.Companies.is_active?(company),
          :ok <- validate_destinations_total(quote_data, destinations) do
       # Decode the timestamp back to DateTime
       {:ok, quote_timestamp, _} = DateTime.from_iso8601(quote_data.timestamp)
@@ -123,8 +125,7 @@ defmodule Tradewinds.Commerce do
   Applies all economic shocks dynamically before execution.
   """
   def execute_immediate(
-        %Tradewinds.Scope{} = scope,
-        company_id,
+        %Tradewinds.Scope{company_id: company_id},
         port_id,
         good_id,
         action,
@@ -136,9 +137,10 @@ defmodule Tradewinds.Commerce do
     if total_qty <= 0 do
       {:error, :invalid_quantity}
     else
-      with :ok <- Tradewinds.Scope.authorizes?(scope, company_id) do
-        Repo.transact(fn ->
-          with {:ok, position} <- fetch_position_for_update(port_id, good_id),
+      Repo.transact(fn ->
+          with {:ok, company} <- Tradewinds.Companies.fetch_company(company_id),
+               {:ok, :active} <- Tradewinds.Companies.is_active?(company),
+               {:ok, position} <- fetch_position_for_update(port_id, good_id),
                :ok <-
                  validate_trade_execution(
                    %{action: action, quantity: total_qty},
@@ -186,7 +188,6 @@ defmodule Tradewinds.Commerce do
             {:error, reason} -> Repo.rollback(reason)
           end
         end)
-      end
     end
   end
 

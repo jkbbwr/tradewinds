@@ -15,7 +15,7 @@ defmodule Tradewinds.Companies do
   @doc """
   Creates a new company and automatically assigns the calling player as its first director.
   """
-  def create(%Scope{} = scope, name, ticker, home_port_id, treasury \\ 10000) do
+  def create(%Scope{player: player}, name, ticker, home_port_id, treasury \\ 10000) do
     Repo.transact(fn ->
       with changeset <-
              Company.create_changeset(%Company{}, %{
@@ -25,8 +25,8 @@ defmodule Tradewinds.Companies do
                treasury: treasury
              }),
            {:ok, company} <- Repo.insert(changeset),
-           scope <- Scope.put_company_id(scope, company.id),
-           {:ok, _director} <- add_director(scope, company) do
+           {:ok, _director} <- set_director(company, player) do
+        Cachex.put(:tradewinds_cache, "company_status:#{company.id}", :active)
         {:ok, company}
       end
     end)
@@ -35,12 +35,10 @@ defmodule Tradewinds.Companies do
   @doc """
   Assigns an existing player (via scope) as a director to a company.
   """
-  def add_director(%Scope{} = scope, %Company{} = company) do
-    with :ok <- Scope.authorizes?(scope, company.id) do
-      %Director{}
-      |> Director.create_changeset(%{company_id: company.id, player_id: scope.player.id})
-      |> Repo.insert()
-    end
+  def set_director(%Company{} = company, %Player{} = player) do
+    %Director{}
+    |> Director.create_changeset(%{company_id: company.id, player_id: player.id})
+    |> Repo.insert()
   end
 
   @doc """
@@ -51,6 +49,13 @@ defmodule Tradewinds.Companies do
     |> Ecto.assoc(:directorships)
     |> select([d], d.company_id)
     |> Repo.all()
+  end
+
+  def player_is_director?(%Player{id: player_id}, company_id) do
+    Repo.exists?(
+      from d in Director,
+        where: d.player_id == ^player_id and d.company_id == ^company_id
+    )
   end
 
   @doc """
@@ -91,6 +96,14 @@ defmodule Tradewinds.Companies do
         {:error, reason} -> Repo.rollback(reason)
       end
     end)
+  end
+
+  def is_active?(company) do
+    if company.status == :active do
+      {:ok, :active}
+    else
+      {:error, :bankrupt}
+    end
   end
 
   # Updates the cached treasury balance on the company record.
@@ -160,7 +173,8 @@ defmodule Tradewinds.Companies do
   Marks a company as bankrupt.
   """
   def set_bankrupt(company_id) do
-    with {:ok, company} <- fetch_company(company_id) do
+    with {:ok, company} <- fetch_company(company_id),
+         {:ok, :active} <- is_active?(company) do
       company
       |> Company.update_status_changeset(:bankrupt)
       |> Repo.update()
@@ -185,12 +199,14 @@ defmodule Tradewinds.Companies do
     Repo.transact(fn ->
       now = DateTime.utc_now()
 
-      with {:ok, _} <- fetch_company_for_update(company_id),
-           {:ok, company} <- record_transaction(company_id, amount, :bailout, :system, company_id, now),
+      with {:ok, _company} <- fetch_company_for_update(company_id),
+           {:ok, company} <-
+             record_transaction(company_id, amount, :bailout, :system, company_id, now),
            {:ok, updated_company} <-
              company
              |> Company.update_status_changeset(:active)
              |> Repo.update() do
+        Cachex.put(:tradewinds_cache, "company_status:#{company_id}", :active)
         {:ok, updated_company}
       else
         {:error, reason} -> Repo.rollback(reason)
@@ -204,6 +220,7 @@ defmodule Tradewinds.Companies do
   def update_reputation(company_id, delta) do
     Repo.transact(fn ->
       with {:ok, company} <- fetch_company_for_update(company_id),
+           {:ok, :active} <- is_active?(company),
            {:ok, updated_company} <-
              company
              |> Company.update_reputation_changeset(delta)
@@ -219,7 +236,8 @@ defmodule Tradewinds.Companies do
   def emit_stats do
     stats = %{
       total_treasury: Repo.aggregate(Company, :sum, :treasury) || 0,
-      bankrupt_count: Repo.aggregate(from(c in Company, where: c.status == :bankrupt), :count, :id)
+      bankrupt_count:
+        Repo.aggregate(from(c in Company, where: c.status == :bankrupt), :count, :id)
     }
 
     :telemetry.execute([:tradewinds, :companies, :stats], stats)

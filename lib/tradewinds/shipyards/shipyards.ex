@@ -65,9 +65,10 @@ defmodule Tradewinds.Shipyards do
   Atomically purchases a ship from a shipyard, assigning it to the company 
   and deducting the cost from the company's treasury.
   """
-  def purchase_ship(%Scope{} = scope, company_id, shipyard_id, ship_type_id) do
+  def purchase_ship(%Scope{company_id: company_id}, shipyard_id, ship_type_id) do
     Repo.transact(fn ->
-      with :ok <- Scope.authorizes?(scope, company_id),
+      with {:ok, company} <- Companies.fetch_company(company_id),
+           {:ok, :active} <- Companies.is_active?(company),
            {:ok, shipyard} <- fetch_shipyard(shipyard_id),
            {:ok, inventory} <- fetch_inventory_for_update(shipyard_id, ship_type_id),
            {:ok, ship} <- Fleet.assign_ship(inventory.ship_id, company_id),

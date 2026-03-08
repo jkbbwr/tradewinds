@@ -78,29 +78,15 @@ defmodule Tradewinds.ShipyardsTest do
 
       shipyard = insert(:shipyard)
       ship_type = insert(:ship_type)
-      # Create a ship associated with the shipyard inventory
-      # The ship itself is created but belongs to no company initially? Or maybe a generic owner?
-      # Factory sets company for ship, but for inventory ship, it might not be owned by the purchasing company yet.
-      # Let's create a ship owned by no one (nil company_id maybe? or the shipyard owner if that existed)
-      # Schema says ship belongs_to company. Is it nullable?
-      # Let's check Ship schema.
-
-      # Assuming company_id is required, maybe it belongs to a system company or null?
-      # Let's check Ship schema again.
-
-      # Temporarily owned by company so insert works
-      ship = insert(:ship, company: company)
-      # Actually in purchase_ship logic:
-      # {:ok, ship} <- Fleet.assign_ship(inventory.ship_id, company_id)
-      # This re-assigns the ship.
+      ship = insert(:ship)
 
       inventory =
         insert(:inventory, shipyard: shipyard, ship_type: ship_type, ship: ship, cost: 2000)
 
-      scope = Scope.for(player: player, company_ids: [company.id])
+      scope = Scope.for(player: player, company_id: company.id)
 
       assert {:ok, purchased_ship} =
-               Shipyards.purchase_ship(scope, company.id, shipyard.id, ship_type.id)
+               Shipyards.purchase_ship(scope, shipyard.id, ship_type.id)
 
       assert purchased_ship.id == ship.id
       assert purchased_ship.company_id == company.id
@@ -125,29 +111,13 @@ defmodule Tradewinds.ShipyardsTest do
       ship = insert(:ship, company: company)
       insert(:inventory, shipyard: shipyard, ship_type: ship_type, ship: ship, cost: 2000)
 
-      scope = Scope.for(player: player, company_ids: [company.id])
+      scope = Scope.for(player: player, company_id: company.id)
 
       assert {:error, :insufficient_funds} =
-               Shipyards.purchase_ship(scope, company.id, shipyard.id, ship_type.id)
+               Shipyards.purchase_ship(scope, shipyard.id, ship_type.id)
 
       # Verify inventory still exists
       assert Repo.aggregate(Inventory, :count) == 1
-    end
-
-    test "fails if unauthorized" do
-      player = insert(:player)
-      company = insert(:company, treasury: 5000)
-      # Player not director
-
-      shipyard = insert(:shipyard)
-      ship_type = insert(:ship_type)
-      ship = insert(:ship, company: company)
-      insert(:inventory, shipyard: shipyard, ship_type: ship_type, ship: ship, cost: 2000)
-
-      scope = Scope.for(player: player, company_ids: [])
-
-      assert {:error, :unauthorized} =
-               Shipyards.purchase_ship(scope, company.id, shipyard.id, ship_type.id)
     end
 
     test "fails if out of stock" do
@@ -159,10 +129,10 @@ defmodule Tradewinds.ShipyardsTest do
       ship_type = insert(:ship_type)
       # No inventory
 
-      scope = Scope.for(player: player, company_ids: [company.id])
+      scope = Scope.for(player: player, company_id: company.id)
 
       assert {:error, :inventory_not_found} =
-               Shipyards.purchase_ship(scope, company.id, shipyard.id, ship_type.id)
+               Shipyards.purchase_ship(scope, shipyard.id, ship_type.id)
     end
   end
 end

@@ -57,6 +57,8 @@ defmodule Tradewinds.MixProject do
       {:oban, "~> 2.20"},
       {:oban_live_dashboard, "~> 0.2.0"},
       {:goal, "~> 1.1"},
+      {:cachex, "~> 4.0"},
+      {:hammer, "~> 7.0"},
       {:nosedrum, github: "jchristgit/nosedrum", override: true},
       {:nostrum, github: "Kraigie/nostrum", override: true},
       {:ex_machina, "~> 2.8", only: :test},

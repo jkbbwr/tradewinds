@@ -15,6 +15,7 @@ defmodule TradewindsWeb.Router do
 
   pipeline :auth do
     plug TradewindsWeb.Plugs.Auth
+    plug TradewindsWeb.Plugs.CompanyContext
   end
 
   scope "/admin", TradewindsWeb do

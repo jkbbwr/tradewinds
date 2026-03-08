@@ -91,10 +91,12 @@ defmodule Tradewinds.Logistics do
   Upgrades a warehouse to the next tier, increasing its level and capacity.
   Charges the company's treasury for the upgrade cost.
   """
-  def grow_warehouse(%Scope{} = scope, warehouse_id) do
+  def grow_warehouse(%Scope{company_id: company_id}, warehouse_id) do
     Repo.transact(fn ->
       with {:ok, warehouse} <- fetch_warehouse_for_update(warehouse_id),
-           :ok <- Scope.authorizes?(scope, warehouse.company_id),
+           :ok <- if(warehouse.company_id == company_id, do: :ok, else: {:error, :unauthorized}),
+           {:ok, company} <- Tradewinds.Companies.fetch_company(company_id),
+           {:ok, :active} <- Tradewinds.Companies.is_active?(company),
            cost <- upgrade_cost(warehouse),
            now = DateTime.utc_now(),
            tax_amount <- Tradewinds.Economy.calculate_tax_for_port(cost, warehouse.port_id),
@@ -156,10 +158,12 @@ defmodule Tradewinds.Logistics do
   Downgrades a warehouse to the previous tier, decreasing its level and capacity.
   Fails if the resulting capacity would be less than the currently stored inventory.
   """
-  def shrink_warehouse(%Scope{} = scope, warehouse_id) do
+  def shrink_warehouse(%Scope{company_id: company_id}, warehouse_id) do
     Repo.transact(fn ->
       with {:ok, warehouse} <- fetch_warehouse_for_update(warehouse_id),
-           :ok <- Scope.authorizes?(scope, warehouse.company_id),
+           :ok <- if(warehouse.company_id == company_id, do: :ok, else: {:error, :unauthorized}),
+           {:ok, company} <- Tradewinds.Companies.fetch_company(company_id),
+           {:ok, :active} <- Tradewinds.Companies.is_active?(company),
            {:ok, inventory_total} <- current_inventory_total(warehouse_id),
            :ok <- check_can_shrink(warehouse, inventory_total),
            {:ok, updated} <-

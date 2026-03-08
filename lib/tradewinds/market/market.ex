@@ -20,10 +20,10 @@ defmodule Tradewinds.Market do
   @doc """
   Posts a new order to the order book.
   """
-  def post_order(%Scope{} = scope, company_id, port_id, good_id, side, price, total) do
+  def post_order(%Scope{company_id: company_id}, port_id, good_id, side, price, total) do
     Repo.transact(fn ->
-      with :ok <- Scope.authorizes?(scope, company_id),
-           {:ok, company} <- Companies.fetch_company(company_id),
+      with {:ok, company} <- Companies.fetch_company(company_id),
+           {:ok, :active} <- Companies.is_active?(company),
            :ok <- check_posting_threshold(company),
            {:ok, order} <- create_order(company, port_id, good_id, side, price, total),
            {:ok, _} <- deduct_listing_fee(company, order.id) do
@@ -36,6 +36,7 @@ defmodule Tradewinds.Market do
 
   defp create_order(company, port_id, good_id, side, price, total) do
     now = DateTime.utc_now()
+
     # Assuming @listing_expiry_hours is in game hours, map it to real seconds if needed, or if real time, just add hours.
     # In the new model, 1 game hour = 1 real hour? Or we can just use real hours. Let's add hours.
     expires_at = DateTime.add(now, @listing_expiry_hours, :hour)
@@ -75,10 +76,11 @@ defmodule Tradewinds.Market do
   @doc """
   Cancels an open order.
   """
-  def cancel_order(%Scope{} = scope, company_id, order_id) do
+  def cancel_order(%Scope{company_id: company_id}, order_id) do
     Repo.transact(fn ->
-      with :ok <- Scope.authorizes?(scope, company_id),
-           {:ok, order} <- fetch_order_for_update(order_id),
+      with {:ok, order} <- fetch_order_for_update(order_id),
+           {:ok, company} <- Companies.fetch_company(company_id),
+           {:ok, :active} <- Companies.is_active?(company),
            :ok <- validate_order_ownership(order, company_id),
            :ok <- validate_order_status(order) do
         order
@@ -93,10 +95,11 @@ defmodule Tradewinds.Market do
   @doc """
   Fills an order (Taker action).
   """
-  def fill_order(%Scope{} = scope, taker_company_id, order_id, quantity) do
+  def fill_order(%Scope{company_id: taker_company_id}, order_id, quantity) do
     result =
       Repo.transact(fn ->
-        with :ok <- Scope.authorizes?(scope, taker_company_id),
+        with {:ok, taker_company} <- Companies.fetch_company(taker_company_id),
+             {:ok, :active} <- Companies.is_active?(taker_company),
              {:ok, order} <- fetch_order_for_update(order_id),
              :ok <- validate_order_status(order),
              :ok <- validate_quantity(order, quantity),

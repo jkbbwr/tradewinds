@@ -14,7 +14,7 @@ defmodule TradewindsWeb.AdminSetupLive do
     <h1>Tradewinds Admin Setup</h1>
     <div style="border: 1px solid #ddd; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
         <h2>Background Jobs Kickstart</h2>
-        
+
         <%= if @error do %>
           <div style="background: #f8d7da; color: #721c24; padding: 1rem; border-radius: 4px; margin-bottom: 1rem;">
             <strong>Error!</strong> <%= @error %>
@@ -59,11 +59,11 @@ defmodule TradewindsWeb.AdminSetupLive do
     require Logger
     Logger.info("Admin manually triggered system kickstart via LiveView")
 
-    case Jobs.kickstart() do
-      {:ok, _} ->
-        {:noreply, assign_stats(socket) |> assign(:error, nil)}
-
-      {:error, reason} ->
+    try do
+      Jobs.kickstart()
+      {:noreply, assign_stats(socket) |> assign(:error, nil)}
+    rescue
+      reason ->
         Logger.error("Kickstart failed: #{inspect(reason)}")
         {:noreply, assign(socket, :error, "Failed to kickstart: #{inspect(reason)}")}
     end

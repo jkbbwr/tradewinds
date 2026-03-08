@@ -13,7 +13,7 @@ defmodule Tradewinds.Application do
       {DNSCluster, query: Application.get_env(:tradewinds, :dns_cluster_query) || :ignore},
       {Oban, Application.fetch_env!(:tradewinds, Oban)},
       {Phoenix.PubSub, name: Tradewinds.PubSub},
-
+      {Cachex, [:tradewinds_cache]},
       # Start to serve requests, typically the last entry
       TradewindsWeb.Endpoint
     ]

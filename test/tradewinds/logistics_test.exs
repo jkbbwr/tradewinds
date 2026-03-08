@@ -3,6 +3,7 @@ defmodule Tradewinds.LogisticsTest do
 
   alias Tradewinds.Logistics
   alias Tradewinds.Logistics.WarehouseInventory
+  alias Tradewinds.Scope
 
   describe "warehouses" do
     test "fetch_warehouse/1 returns the warehouse" do
@@ -67,7 +68,7 @@ defmodule Tradewinds.LogisticsTest do
       player = insert(:player)
       company = insert(:company, treasury: 5000)
       insert(:director, company: company, player: player)
-      scope = Tradewinds.Scope.for(player: player, company_ids: [company.id])
+      scope = Scope.for(player: player, company_id: company.id)
 
       warehouse = insert(:warehouse, company: company, level: 1, capacity: 1000)
 
@@ -93,7 +94,7 @@ defmodule Tradewinds.LogisticsTest do
       # less than 100
       company = insert(:company, treasury: 50)
       insert(:director, company: company, player: player)
-      scope = Tradewinds.Scope.for(player: player, company_ids: [company.id])
+      scope = Scope.for(player: player, company_id: company.id)
 
       warehouse = insert(:warehouse, company: company, level: 1, capacity: 1000)
 
@@ -107,7 +108,7 @@ defmodule Tradewinds.LogisticsTest do
       player = insert(:player)
       company = insert(:company)
       insert(:director, company: company, player: player)
-      scope = Tradewinds.Scope.for(player: player, company_ids: [company.id])
+      scope = Scope.for(player: player, company_id: company.id)
 
       warehouse = insert(:warehouse, company: company, level: 2, capacity: 2000)
 
@@ -120,7 +121,7 @@ defmodule Tradewinds.LogisticsTest do
       player = insert(:player)
       company = insert(:company)
       insert(:director, company: company, player: player)
-      scope = Tradewinds.Scope.for(player: player, company_ids: [company.id])
+      scope = Scope.for(player: player, company_id: company.id)
 
       warehouse = insert(:warehouse, company: company, level: 1, capacity: 1000)
 
@@ -131,7 +132,7 @@ defmodule Tradewinds.LogisticsTest do
       player = insert(:player)
       company = insert(:company)
       insert(:director, company: company, player: player)
-      scope = Tradewinds.Scope.for(player: player, company_ids: [company.id])
+      scope = Scope.for(player: player, company_id: company.id)
 
       warehouse = insert(:warehouse, company: company, level: 2, capacity: 2000)
       good = insert(:good)

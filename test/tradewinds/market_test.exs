@@ -24,7 +24,7 @@ defmodule Tradewinds.MarketTest do
     # Remove the dummy cargo used to trigger creation
     Logistics.remove_cargo(warehouse.warehouse_id, warehouse.good_id, 1)
 
-    scope = Scope.for(player: player)
+    scope = Scope.for(player: player, company_id: company.id)
     good = insert(:good)
     port = home_port
 
@@ -38,7 +38,7 @@ defmodule Tradewinds.MarketTest do
       good: good,
       port: port
     } do
-      assert {:ok, order} = Market.post_order(scope, company.id, port.id, good.id, :sell, 100, 10)
+      assert {:ok, order} = Market.post_order(scope, port.id, good.id, :sell, 100, 10)
       assert order.status == :open
       assert order.remaining == 10
       assert order.posted_reputation == company.reputation
@@ -58,27 +58,27 @@ defmodule Tradewinds.MarketTest do
       Companies.update_reputation(company.id, -900)
 
       assert {:error, :reputation_too_low} =
-               Market.post_order(scope, company.id, port.id, good.id, :sell, 100, 10)
+               Market.post_order(scope, port.id, good.id, :sell, 100, 10)
     end
   end
 
   describe "canceling orders" do
-    test "cancels an open order successfully", %{scope: scope, company: company, good: good, port: port} do
-      {:ok, order} = Market.post_order(scope, company.id, port.id, good.id, :sell, 100, 10)
+    test "cancels an open order successfully", %{scope: scope, good: good, port: port} do
+      {:ok, order} = Market.post_order(scope, port.id, good.id, :sell, 100, 10)
       
-      assert {:ok, cancelled_order} = Market.cancel_order(scope, company.id, order.id)
+      assert {:ok, cancelled_order} = Market.cancel_order(scope, order.id)
       assert cancelled_order.status == :cancelled
     end
 
-    test "fails if order does not belong to company", %{scope: scope, company: company, good: good, port: port} do
-      {:ok, order} = Market.post_order(scope, company.id, port.id, good.id, :sell, 100, 10)
+    test "fails if order does not belong to company", %{scope: scope, good: good, port: port} do
+      {:ok, order} = Market.post_order(scope, port.id, good.id, :sell, 100, 10)
 
       other_player = insert(:player)
       other_company = insert(:company, home_port: port)
       insert(:director, company: other_company, player: other_player)
-      other_scope = Scope.for(player: other_player)
+      other_scope = Scope.for(player: other_player, company_id: other_company.id)
 
-      assert {:error, :unauthorized_order} = Market.cancel_order(other_scope, other_company.id, order.id)
+      assert {:error, :unauthorized_order} = Market.cancel_order(other_scope, order.id)
       
       # Order should still be open
       assert Repo.get(Tradewinds.Market.Order, order.id).status == :open
@@ -101,13 +101,13 @@ defmodule Tradewinds.MarketTest do
       taker_company = insert(:company, home_port: port, treasury: 5000, reputation: 1000)
       insert(:director, company: taker_company, player: taker_player)
       insert(:warehouse, company: taker_company, port: port)
-      taker_scope = Scope.for(player: taker_player)
+      taker_scope = Scope.for(player: taker_player, company_id: taker_company.id)
 
       # Post order
-      {:ok, order} = Market.post_order(scope, seller_company.id, port.id, good.id, :sell, 100, 10)
+      {:ok, order} = Market.post_order(scope, port.id, good.id, :sell, 100, 10)
 
       # Fill order
-      assert {:ok, updated_order} = Market.fill_order(taker_scope, taker_company.id, order.id, 5)
+      assert {:ok, updated_order} = Market.fill_order(taker_scope, order.id, 5)
       assert updated_order.remaining == 5
       assert updated_order.status == :open
 
@@ -149,14 +149,14 @@ defmodule Tradewinds.MarketTest do
       taker_company = insert(:company, home_port: port, treasury: 5000)
       insert(:director, company: taker_company, player: taker_player)
       insert(:warehouse, company: taker_company, port: port)
-      taker_scope = Scope.for(player: taker_player)
+      taker_scope = Scope.for(player: taker_player, company_id: taker_company.id)
 
       # Post order
-      {:ok, order} = Market.post_order(scope, seller_company.id, port.id, good.id, :sell, 100, 10)
+      {:ok, order} = Market.post_order(scope, port.id, good.id, :sell, 100, 10)
 
       # Try to fill (Seller has 0 goods)
       assert {:ok, {:trade_voided, :inventory_not_found, offender_id}} =
-               Market.fill_order(taker_scope, taker_company.id, order.id, 5)
+               Market.fill_order(taker_scope, order.id, 5)
 
       assert offender_id == seller_company.id
 
@@ -175,22 +175,21 @@ defmodule Tradewinds.MarketTest do
   describe "sorting and blended price" do
     test "list_orders/3 sorts by price and reputation", %{
       scope: scope,
-      company: company1,
       good: good,
       port: port
     } do
       # Company 1: Rep 1000
-      Market.post_order(scope, company1.id, port.id, good.id, :sell, 100, 10)
+      Market.post_order(scope, port.id, good.id, :sell, 100, 10)
 
       # Company 2: Rep 1200, same price
       player2 = insert(:player)
       company2 = insert(:company, reputation: 1200)
       insert(:director, company: company2, player: player2)
-      scope2 = Scope.for(player: player2)
-      Market.post_order(scope2, company2.id, port.id, good.id, :sell, 100, 10)
+      scope2 = Scope.for(player: player2, company_id: company2.id)
+      Market.post_order(scope2, port.id, good.id, :sell, 100, 10)
 
       # Company 3: Rep 1000, higher price
-      Market.post_order(scope, company1.id, port.id, good.id, :sell, 110, 10)
+      Market.post_order(scope, port.id, good.id, :sell, 110, 10)
 
       orders = Market.list_orders(port.id, good.id, :sell)
 
@@ -203,12 +202,11 @@ defmodule Tradewinds.MarketTest do
 
     test "calculate_blended_price/4 handles multi-level fills", %{
       scope: scope,
-      company: company,
       good: good,
       port: port
     } do
-      Market.post_order(scope, company.id, port.id, good.id, :sell, 100, 10)
-      Market.post_order(scope, company.id, port.id, good.id, :sell, 200, 10)
+      Market.post_order(scope, port.id, good.id, :sell, 100, 10)
+      Market.post_order(scope, port.id, good.id, :sell, 200, 10)
 
       # Buy 15: (10 * 100 + 5 * 200) / 15 = (1000 + 1000) / 15 = 2000 / 15 = 133.33
       assert {:ok, price} = Market.calculate_blended_price(port.id, good.id, :sell, 15)

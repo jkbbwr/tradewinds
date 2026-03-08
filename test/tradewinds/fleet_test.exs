@@ -25,7 +25,7 @@ defmodule Tradewinds.FleetTest do
       ship = insert(:ship, company: company, name: "Old Name")
 
       # Correctly construct scope
-      scope = Scope.for(player: player, company_ids: [company.id])
+      scope = Scope.for(player: player, company_id: company.id)
 
       assert {:ok, updated_ship} = Fleet.rename_ship(scope, ship.id, "New Name")
       assert updated_ship.name == "New Name"
@@ -37,7 +37,7 @@ defmodule Tradewinds.FleetTest do
       ship = insert(:ship, company: other_company)
 
       # Not authorized
-      scope = Scope.for(player: player, company_ids: [])
+      scope = Scope.for(player: player)
 
       assert {:error, :unauthorized} = Fleet.rename_ship(scope, ship.id, "New Name")
     end
@@ -57,7 +57,7 @@ defmodule Tradewinds.FleetTest do
       ship = insert(:ship, company: company)
       new_company = insert(:company)
 
-      scope = Scope.for(player: player, company_ids: [company.id])
+      scope = Scope.for(player: player, company_id: company.id)
 
       assert {:ok, updated_ship} = Fleet.transfer_ship(scope, ship.id, new_company.id)
       assert updated_ship.company_id == new_company.id
@@ -69,7 +69,7 @@ defmodule Tradewinds.FleetTest do
       ship = insert(:ship, company: other_company)
       new_company = insert(:company)
 
-      scope = Scope.for(player: player, company_ids: [])
+      scope = Scope.for(player: player)
 
       assert {:error, :unauthorized} = Fleet.transfer_ship(scope, ship.id, new_company.id)
     end
@@ -88,7 +88,7 @@ defmodule Tradewinds.FleetTest do
       player = insert(:player)
       company = insert(:company)
       insert(:director, company: company, player: player)
-      scope = Scope.for(player: player, company_ids: [company.id])
+      scope = Scope.for(player: player, company_id: company.id)
 
       port1 = insert(:port)
       port2 = insert(:port)
@@ -114,7 +114,7 @@ defmodule Tradewinds.FleetTest do
       player = insert(:player)
       company = insert(:company)
       # No director
-      scope = Scope.for(player: player, company_ids: [])
+      scope = Scope.for(player: player)
 
       port1 = insert(:port)
       port2 = insert(:port)
@@ -179,7 +179,7 @@ defmodule Tradewinds.FleetTest do
       player = insert(:player)
       company = insert(:company)
       insert(:director, company: company, player: player)
-      scope = Scope.for(player: player, company_ids: [company.id])
+      scope = Scope.for(player: player, company_id: company.id)
 
       port = insert(:port)
       ship = insert(:ship, status: :docked, port: port, company: company)
@@ -197,7 +197,7 @@ defmodule Tradewinds.FleetTest do
       player = insert(:player)
       company = insert(:company)
       insert(:director, company: company, player: player)
-      scope = Scope.for(player: player, company_ids: [company.id])
+      scope = Scope.for(player: player, company_id: company.id)
 
       port = insert(:port)
       route = insert(:route)
@@ -213,7 +213,7 @@ defmodule Tradewinds.FleetTest do
       player = insert(:player)
       company = insert(:company)
       insert(:director, company: company, player: player)
-      scope = Scope.for(player: player, company_ids: [company.id])
+      scope = Scope.for(player: player, company_id: company.id)
 
       port1 = insert(:port)
       port2 = insert(:port)

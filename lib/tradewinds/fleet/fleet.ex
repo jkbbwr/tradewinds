@@ -16,9 +16,11 @@ defmodule Tradewinds.Fleet do
   Initiates travel for a docked ship along a specific route.
   Sets the ship's status to `:traveling` and calculates the arrival time.
   """
-  def transit_ship(%Scope{} = scope, ship_id, route_id) do
+  def transit_ship(%Scope{company_id: company_id}, ship_id, route_id) do
     with {:ok, ship} <- fetch_ship(ship_id),
-         :ok <- Scope.authorizes?(scope, ship.company_id),
+         :ok <- if(ship.company_id == company_id, do: :ok, else: {:error, :unauthorized}),
+         {:ok, company} <- Tradewinds.Companies.fetch_company(company_id),
+         {:ok, :active} <- Tradewinds.Companies.is_active?(company),
          :ok <- check_ship_docked(ship),
          {:ok, route} <- World.fetch_route_by_id(route_id),
          :ok <- check_ship_at_route_origin(ship, route),
@@ -252,9 +254,11 @@ defmodule Tradewinds.Fleet do
   @doc """
   Renames a ship, enforcing scope authorization to ensure the caller owns the company.
   """
-  def rename_ship(%Scope{} = scope, ship_id, new_name) do
+  def rename_ship(%Scope{company_id: company_id}, ship_id, new_name) do
     with {:ok, ship} <- fetch_ship(ship_id),
-         :ok <- Scope.authorizes?(scope, ship.company_id) do
+         :ok <- if(ship.company_id == company_id, do: :ok, else: {:error, :unauthorized}),
+         {:ok, company} <- Tradewinds.Companies.fetch_company(company_id),
+         {:ok, :active} <- Tradewinds.Companies.is_active?(company) do
       ship |> Ship.change_name_changeset(new_name) |> Repo.update()
     end
   end
@@ -272,9 +276,11 @@ defmodule Tradewinds.Fleet do
   @doc """
   Transfers a ship to another company, enforcing scope authorization on the current owner.
   """
-  def transfer_ship(%Scope{} = scope, ship_id, new_company_id) do
+  def transfer_ship(%Scope{company_id: company_id}, ship_id, new_company_id) do
     with {:ok, ship} <- fetch_ship(ship_id),
-         :ok <- Scope.authorizes?(scope, ship.company_id) do
+         :ok <- if(ship.company_id == company_id, do: :ok, else: {:error, :unauthorized}),
+         {:ok, company} <- Tradewinds.Companies.fetch_company(company_id),
+         {:ok, :active} <- Tradewinds.Companies.is_active?(company) do
       ship |> Ship.transfer_changeset(new_company_id) |> Repo.update()
     end
   end
@@ -282,9 +288,11 @@ defmodule Tradewinds.Fleet do
   @doc """
   Atomically transfers cargo from a docked ship to a warehouse at the same port.
   """
-  def transfer_to_warehouse(%Scope{} = scope, ship_id, warehouse_id, good_id, quantity) when quantity > 0 do
+  def transfer_to_warehouse(%Scope{company_id: company_id}, ship_id, warehouse_id, good_id, quantity) when quantity > 0 do
     with {:ok, ship} <- fetch_ship(ship_id),
-         :ok <- Scope.authorizes?(scope, ship.company_id),
+         :ok <- if(ship.company_id == company_id, do: :ok, else: {:error, :unauthorized}),
+         {:ok, company} <- Tradewinds.Companies.fetch_company(company_id),
+         {:ok, :active} <- Tradewinds.Companies.is_active?(company),
          {:ok, warehouse} <- Tradewinds.Logistics.fetch_warehouse(warehouse_id),
          :ok <- check_ship_at_warehouse(ship, warehouse) do
       Repo.transact(fn ->

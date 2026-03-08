@@ -3,6 +3,7 @@ defmodule Tradewinds.CommerceTest do
   import Mox
   import Tradewinds.Factory
   alias Tradewinds.Commerce
+  alias Tradewinds.Scope
 
   setup :verify_on_exit!
 
@@ -12,10 +13,10 @@ defmodule Tradewinds.CommerceTest do
   end
 
   describe "quotes" do
-    test "generate_quote/6 creates a valid signed token and quote data", %{player: player} do
+    test "generate_quote/5 creates a valid signed token and quote data", %{player: player} do
       company = insert(:company)
       insert(:director, company: company, player: player)
-      scope = Tradewinds.Scope.for(player: player)
+      scope = Scope.for(player: player, company_id: company.id)
 
       port = insert(:port)
       good = insert(:good)
@@ -23,7 +24,7 @@ defmodule Tradewinds.CommerceTest do
       insert(:trader_position, trader: trader, port: port, good: good, stock: 100)
 
       assert {:ok, token, quote_data} =
-               Commerce.generate_quote(scope, company.id, port.id, good.id, :buy, 10)
+               Commerce.generate_quote(scope, port.id, good.id, :buy, 10)
 
       assert is_binary(token)
       assert quote_data.company_id == company.id
@@ -35,14 +36,14 @@ defmodule Tradewinds.CommerceTest do
     test "verify_quote/1 verifies a valid token", %{player: player} do
       company = insert(:company)
       insert(:director, company: company, player: player)
-      scope = Tradewinds.Scope.for(player: player)
+      scope = Scope.for(player: player, company_id: company.id)
 
       port = insert(:port)
       good = insert(:good)
       trader = insert(:trader)
       insert(:trader_position, trader: trader, port: port, good: good, stock: 100)
 
-      {:ok, token, _} = Commerce.generate_quote(scope, company.id, port.id, good.id, :buy, 10)
+      {:ok, token, _} = Commerce.generate_quote(scope, port.id, good.id, :buy, 10)
       assert {:ok, _quote_data} = Commerce.verify_quote(token)
     end
 
@@ -55,7 +56,7 @@ defmodule Tradewinds.CommerceTest do
     test "successfully executes buy trade with tax", %{player: player} do
       company = insert(:company, treasury: 10_000)
       insert(:director, company: company, player: player)
-      scope = Tradewinds.Scope.for(player: player)
+      scope = Scope.for(player: player, company_id: company.id)
 
       port = insert(:port, tax_rate_bps: 500) # 5% tax
       good = insert(:good, base_price: 100)
@@ -75,7 +76,7 @@ defmodule Tradewinds.CommerceTest do
       ship = insert(:ship, company: company, port: port, status: :docked)
 
       {:ok, token, quote_data} =
-        Commerce.generate_quote(scope, company.id, port.id, good.id, :buy, 10)
+        Commerce.generate_quote(scope, port.id, good.id, :buy, 10)
 
       assert {:ok, _quote} =
                Commerce.execute_quote(scope, token, [%{type: :ship, id: ship.id, quantity: 10}])
@@ -100,14 +101,14 @@ defmodule Tradewinds.CommerceTest do
     test "fails if destinations total quantity doesn't match quote", %{player: player} do
       company = insert(:company)
       insert(:director, company: company, player: player)
-      scope = Tradewinds.Scope.for(player: player)
+      scope = Scope.for(player: player, company_id: company.id)
 
       port = insert(:port)
       good = insert(:good)
       trader = insert(:trader)
       insert(:trader_position, trader: trader, port: port, good: good, stock: 100)
 
-      {:ok, token, _} = Commerce.generate_quote(scope, company.id, port.id, good.id, :buy, 10)
+      {:ok, token, _} = Commerce.generate_quote(scope, port.id, good.id, :buy, 10)
 
       assert {:error, :quantity_mismatch} =
                Commerce.execute_quote(scope, token, [%{type: :ship, id: Ecto.UUID.generate(), quantity: 5}])
@@ -116,16 +117,17 @@ defmodule Tradewinds.CommerceTest do
     test "fails if ship is at wrong port", %{player: player} do
       company = insert(:company, treasury: 10_000)
       insert(:director, company: company, player: player)
-      scope = Tradewinds.Scope.for(player: player)
+      scope = Scope.for(player: player, company_id: company.id)
 
       port = insert(:port)
       wrong_port = insert(:port)
       good = insert(:good)
       trader = insert(:trader)
       insert(:trader_position, trader: trader, port: port, good: good, stock: 100)
+
       ship = insert(:ship, company: company, port: wrong_port, status: :docked)
 
-      {:ok, token, _} = Commerce.generate_quote(scope, company.id, port.id, good.id, :buy, 10)
+      {:ok, token, _} = Commerce.generate_quote(scope, port.id, good.id, :buy, 10)
 
       assert {:error, :wrong_location} =
                Commerce.execute_quote(scope, token, [%{type: :ship, id: ship.id, quantity: 10}])
@@ -134,7 +136,7 @@ defmodule Tradewinds.CommerceTest do
     test "successfully executes a sell quote withdrawing from a ship", %{player: player} do
       company = insert(:company, treasury: 10_000)
       insert(:director, company: company, player: player)
-      scope = Tradewinds.Scope.for(player: player)
+      scope = Scope.for(player: player, company_id: company.id)
 
       port = insert(:port, tax_rate_bps: 200) # 2% tax
       good = insert(:good, base_price: 100)
@@ -154,7 +156,7 @@ defmodule Tradewinds.CommerceTest do
       Tradewinds.Fleet.add_cargo(ship.id, good.id, 10)
 
       {:ok, token, quote_data} =
-        Commerce.generate_quote(scope, company.id, port.id, good.id, :sell, 10)
+        Commerce.generate_quote(scope, port.id, good.id, :sell, 10)
 
       assert {:ok, _quote} =
                Commerce.execute_quote(scope, token, [%{type: :ship, id: ship.id, quantity: 10}])
@@ -169,20 +171,21 @@ defmodule Tradewinds.CommerceTest do
     end
   end
 
-  describe "execute_immediate/6" do
+  describe "execute_immediate/5" do
     test "successfully executes buy trade without prior quote", %{player: player} do
       company = insert(:company, treasury: 10_000)
       insert(:director, company: company, player: player)
-      scope = Tradewinds.Scope.for(player: player)
+      scope = Scope.for(player: player, company_id: company.id)
 
       port = insert(:port)
       good = insert(:good, base_price: 100)
       trader = insert(:trader)
       insert(:trader_position, trader: trader, port: port, good: good, stock: 100)
+
       ship = insert(:ship, company: company, port: port, status: :docked)
 
       assert {:ok, _} =
-               Commerce.execute_immediate(scope, company.id, port.id, good.id, :buy, [
+               Commerce.execute_immediate(scope, port.id, good.id, :buy, [
                  %{type: :ship, id: ship.id, quantity: 10}
                ])
 
