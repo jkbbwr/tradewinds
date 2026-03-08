@@ -5,6 +5,7 @@ defmodule Tradewinds.Repo.Migrations.Players do
     create table(:player) do
       add :name, :text, null: false
       add :email, :text, null: false
+      add :discord_id, :text
       add :password_hash, :text, null: false
       add :enabled, :boolean, null: false, default: false
       timestamps()

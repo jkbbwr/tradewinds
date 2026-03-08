@@ -4,6 +4,7 @@ defmodule Tradewinds.Accounts.Player do
   schema "player" do
     field :name, :string
     field :email, :string
+    field :discord_id, :string
     field :password, :string, virtual: true
     field :password_hash, :string
     field :enabled, :boolean, default: false
@@ -28,11 +29,12 @@ defmodule Tradewinds.Accounts.Player do
   """
   def create_changeset(player, attrs) do
     player
-    |> cast(attrs, [:name, :email, :password])
+    |> cast(attrs, [:name, :email, :password, :discord_id])
     |> validate_required([:name, :email, :password])
     |> validate_format(:email, ~r/^[^\s@]+@[^\s@]+\.[^\s@]+$/)
     |> validate_length(:password, min: 8)
     |> unique_constraint(:email)
+    |> unique_constraint(:discord_id)
     |> prepare_changes(&hash_password/1)
   end
 

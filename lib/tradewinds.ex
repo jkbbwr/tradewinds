@@ -35,7 +35,11 @@ defmodule Tradewinds do
       nil ->
         0
 
-      min_scheduled ->
+      %NaiveDateTime{} = min_scheduled ->
+        diff = DateTime.diff(now, DateTime.from_naive!(min_scheduled, "Etc/UTC"), :second)
+        max(0, diff)
+
+      %DateTime{} = min_scheduled ->
         diff = DateTime.diff(now, min_scheduled, :second)
         max(0, diff)
     end
