@@ -25,7 +25,11 @@ defmodule Tradewinds.Companies do
                treasury: treasury
              }),
            {:ok, company} <- Repo.insert(changeset),
-           {:ok, _director} <- set_director(company, player) do
+           {:ok, _director} <- set_director(company, player),
+           {:ok, _job} <-
+             %{company_id: company.id}
+             |> Tradewinds.Companies.UpkeepJob.new(schedule_in: 17280)
+             |> Oban.insert() do
         Cachex.put(:tradewinds_cache, "company_status:#{company.id}", :active)
         {:ok, company}
       end
