@@ -21,7 +21,7 @@ defmodule Tradewinds.Trade.TraderMonthlyJobTest do
 
     # 2. Verify next job is scheduled (17280 seconds = 1 game month after base_time)
     expected_next_time = DateTime.add(base_time, 17280, :second)
-    
+
     assert_enqueued(
       worker: TraderMonthlyJob,
       args: %{"trader_id" => trader.id},

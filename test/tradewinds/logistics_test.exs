@@ -140,7 +140,8 @@ defmodule Tradewinds.LogisticsTest do
       # Fill it with 1500, new capacity would be 1000
       insert(:warehouse_inventory, warehouse: warehouse, good: good, quantity: 1500)
 
-      assert {:error, :capacity_exceeded_if_shrunk} = Logistics.shrink_warehouse(scope, warehouse.id)
+      assert {:error, :capacity_exceeded_if_shrunk} =
+               Logistics.shrink_warehouse(scope, warehouse.id)
     end
   end
 
@@ -219,7 +220,15 @@ defmodule Tradewinds.LogisticsTest do
 
       port = insert(:port)
       warehouse = insert(:warehouse, port: port, company: company)
-      ship = insert(:ship, status: :docked, port: port, company: company, ship_type: insert(:ship_type, capacity: 100))
+
+      ship =
+        insert(:ship,
+          status: :docked,
+          port: port,
+          company: company,
+          ship_type: insert(:ship_type, capacity: 100)
+        )
+
       good = insert(:good)
 
       insert(:warehouse_inventory, warehouse: warehouse, good: good, quantity: 50)

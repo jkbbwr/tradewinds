@@ -100,7 +100,7 @@ defmodule Tradewinds.FleetTest do
       assert updated_ship.status == :traveling
       assert updated_ship.port_id == nil
       assert updated_ship.route_id == route.id
-      
+
       diff = DateTime.diff(updated_ship.arriving_at, DateTime.utc_now(), :second)
       assert diff in 235..245
 
@@ -126,7 +126,14 @@ defmodule Tradewinds.FleetTest do
 
     test "dock_ship/1 docks a traveling ship" do
       route = insert(:route)
-      ship = insert(:ship, status: :traveling, port: nil, route: route, arriving_at: ~U[2026-03-06 00:00:00Z])
+
+      ship =
+        insert(:ship,
+          status: :traveling,
+          port: nil,
+          route: route,
+          arriving_at: ~U[2026-03-06 00:00:00Z]
+        )
 
       assert {:ok, updated_ship} = Fleet.dock_ship(ship.id)
       assert updated_ship.status == :docked
@@ -187,7 +194,8 @@ defmodule Tradewinds.FleetTest do
       good = insert(:good)
       insert(:ship_cargo, ship: ship, good: good, quantity: 50)
 
-      assert {:ok, :transferred} = Fleet.transfer_to_warehouse(scope, ship.id, warehouse.id, good.id, 50)
+      assert {:ok, :transferred} =
+               Fleet.transfer_to_warehouse(scope, ship.id, warehouse.id, good.id, 50)
 
       assert {:ok, 0} = Fleet.current_cargo_total(ship.id)
       assert {:ok, 50} = Tradewinds.Logistics.current_inventory_total(warehouse.id)

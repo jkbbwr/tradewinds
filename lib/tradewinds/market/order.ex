@@ -74,6 +74,9 @@ defmodule Tradewinds.Market.Order do
     order
     |> cast(%{remaining: new_remaining}, [:remaining])
     |> validate_required([:remaining])
-    |> validate_number(:remaining, greater_than_or_equal_to: 0, less_than_or_equal_to: order.total)
+    |> validate_number(:remaining,
+      greater_than_or_equal_to: 0,
+      less_than_or_equal_to: order.total
+    )
   end
 end

@@ -163,9 +163,14 @@ defmodule Tradewinds.WorldTest do
       country_fixture()
       port_fixture(country_fixture(%{name: "Other"}))
 
-      :telemetry.attach("world-stats-test", [:tradewinds, :world, :stats], fn _name, measurements, _metadata, _config ->
-        send(self(), {:telemetry_event, measurements})
-      end, nil)
+      :telemetry.attach(
+        "world-stats-test",
+        [:tradewinds, :world, :stats],
+        fn _name, measurements, _metadata, _config ->
+          send(self(), {:telemetry_event, measurements})
+        end,
+        nil
+      )
 
       World.emit_stats()
 

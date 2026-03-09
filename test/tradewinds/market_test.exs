@@ -65,7 +65,7 @@ defmodule Tradewinds.MarketTest do
   describe "canceling orders" do
     test "cancels an open order successfully", %{scope: scope, good: good, port: port} do
       {:ok, order} = Market.post_order(scope, port.id, good.id, :sell, 100, 10)
-      
+
       assert {:ok, cancelled_order} = Market.cancel_order(scope, order.id)
       assert cancelled_order.status == :cancelled
     end
@@ -79,7 +79,7 @@ defmodule Tradewinds.MarketTest do
       other_scope = Scope.for(player: other_player, company_id: other_company.id)
 
       assert {:error, :unauthorized_order} = Market.cancel_order(other_scope, order.id)
-      
+
       # Order should still be open
       assert Repo.get(Tradewinds.Market.Order, order.id).status == :open
     end

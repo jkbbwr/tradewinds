@@ -28,7 +28,8 @@ defmodule Tradewinds.Jobs do
   def kickstarted? do
     query =
       from j in "oban_jobs",
-        where: j.worker in ["Tradewinds.Trade.TraderSimulationJob", "Tradewinds.Companies.UpkeepJob"],
+        where:
+          j.worker in ["Tradewinds.Trade.TraderSimulationJob", "Tradewinds.Companies.UpkeepJob"],
         limit: 1,
         select: j.id
 

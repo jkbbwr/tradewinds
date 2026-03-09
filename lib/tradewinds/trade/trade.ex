@@ -99,7 +99,8 @@ defmodule Tradewinds.Trade do
   Executes a previously signed quote atomically.
   Distributes or withdraws the goods across multiple specified `destinations` (ships/warehouses).
   """
-  def execute_quote(%Tradewinds.Scope{company_id: company_id}, token, destinations) when is_list(destinations) do
+  def execute_quote(%Tradewinds.Scope{company_id: company_id}, token, destinations)
+      when is_list(destinations) do
     with {:ok, quote_data} <- verify_quote(token),
          :ok <- validate_quote_ownership(quote_data, company_id),
          {:ok, company} <- Tradewinds.Companies.fetch_company(company_id),
@@ -138,56 +139,56 @@ defmodule Tradewinds.Trade do
       {:error, :invalid_quantity}
     else
       Repo.transact(fn ->
-          with {:ok, company} <- Tradewinds.Companies.fetch_company(company_id),
-               {:ok, :active} <- Tradewinds.Companies.is_active?(company),
-               {:ok, position} <- fetch_position_for_update(port_id, good_id),
-               :ok <-
-                 validate_trade_execution(
-                   %{action: action, quantity: total_qty},
-                   position,
-                   destinations
-                 ) do
-            now = DateTime.utc_now()
-            modifiers = Tradewinds.Economy.get_active_modifiers(port_id, good_id, now)
+        with {:ok, company} <- Tradewinds.Companies.fetch_company(company_id),
+             {:ok, :active} <- Tradewinds.Companies.is_active?(company),
+             {:ok, position} <- fetch_position_for_update(port_id, good_id),
+             :ok <-
+               validate_trade_execution(
+                 %{action: action, quantity: total_qty},
+                 position,
+                 destinations
+               ) do
+          now = DateTime.utc_now()
+          modifiers = Tradewinds.Economy.get_active_modifiers(port_id, good_id, now)
 
-            base_price = round(position.good.base_price * modifiers.price)
+          base_price = round(position.good.base_price * modifiers.price)
 
-            market_price =
-              base_market_price(
-                position.stock,
-                position.target_stock,
-                base_price,
-                position.elasticity
-              )
+          market_price =
+            base_market_price(
+              position.stock,
+              position.target_stock,
+              base_price,
+              position.elasticity
+            )
 
-            final_base_price = apply_volatility_jitter(market_price, modifiers.volatility)
+          final_base_price = apply_volatility_jitter(market_price, modifiers.volatility)
 
-            {ask, bid} = quotes(final_base_price, position.spread)
+          {ask, bid} = quotes(final_base_price, position.spread)
 
-            quote_price = if action == :buy, do: ask, else: bid
-            impact_action = if action == :buy, do: :ask, else: :bid
+          quote_price = if action == :buy, do: ask, else: bid
+          impact_action = if action == :buy, do: :ask, else: :bid
 
-            final_unit_price =
-              apply_slippage(impact_action, quote_price, total_qty, position.stock)
-              |> clamp_price(base_price)
+          final_unit_price =
+            apply_slippage(impact_action, quote_price, total_qty, position.stock)
+            |> clamp_price(base_price)
 
-            quote_data = %{
-              company_id: company_id,
-              port_id: port_id,
-              good_id: good_id,
-              action: action,
-              quantity: total_qty,
-              unit_price: final_unit_price,
-              total_price: final_unit_price * total_qty,
-              market_price: final_base_price,
-              spread: position.spread
-            }
+          quote_data = %{
+            company_id: company_id,
+            port_id: port_id,
+            good_id: good_id,
+            action: action,
+            quantity: total_qty,
+            unit_price: final_unit_price,
+            total_price: final_unit_price * total_qty,
+            market_price: final_base_price,
+            spread: position.spread
+          }
 
-            perform_execution(quote_data, position, destinations, now)
-          else
-            {:error, reason} -> Repo.rollback(reason)
-          end
-        end)
+          perform_execution(quote_data, position, destinations, now)
+        else
+          {:error, reason} -> Repo.rollback(reason)
+        end
+      end)
     end
   end
 

@@ -13,7 +13,7 @@ defmodule Tradewinds.Market.SweepExpiredJobTest do
 
     # 1. Expired order
     expired = insert(:order, expires_at: yesterday, status: :open)
-    
+
     # 2. Still open order
     open = insert(:order, expires_at: tomorrow, status: :open)
 

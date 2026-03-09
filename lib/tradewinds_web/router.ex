@@ -5,6 +5,7 @@ defmodule TradewindsWeb.Router do
     plug :accepts, ["json"]
     plug TradewindsWeb.Plugs.IPBan
     plug TradewindsWeb.Plugs.RateLimiter
+    plug OpenApiSpex.Plug.PutApiSpec, module: TradewindsWeb.ApiSpec
   end
 
   pipeline :browser do
@@ -36,6 +37,13 @@ defmodule TradewindsWeb.Router do
     pipe_through [:browser, :admin_auth]
 
     live "/setup", AdminSetupLive, :index
+  end
+
+  scope "/api" do
+    pipe_through :api
+
+    get "/openapi", OpenApiSpex.Plug.RenderSpec, []
+    get "/swaggerui", OpenApiSpex.Plug.SwaggerUI, path: "/api/openapi"
   end
 
   scope "/api/v1/auth", TradewindsWeb do

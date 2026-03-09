@@ -288,7 +288,14 @@ defmodule Tradewinds.Fleet do
   @doc """
   Atomically transfers cargo from a docked ship to a warehouse at the same port.
   """
-  def transfer_to_warehouse(%Scope{company_id: company_id}, ship_id, warehouse_id, good_id, quantity) when quantity > 0 do
+  def transfer_to_warehouse(
+        %Scope{company_id: company_id},
+        ship_id,
+        warehouse_id,
+        good_id,
+        quantity
+      )
+      when quantity > 0 do
     with {:ok, ship} <- fetch_ship(ship_id),
          :ok <- validate_ship_ownership(ship, company_id),
          {:ok, company} <- Tradewinds.Companies.fetch_company(company_id),

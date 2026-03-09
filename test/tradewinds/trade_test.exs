@@ -58,7 +58,8 @@ defmodule Tradewinds.TradeTest do
       insert(:director, company: company, player: player)
       scope = Scope.for(player: player, company_id: company.id)
 
-      port = insert(:port, tax_rate_bps: 500) # 5% tax
+      # 5% tax
+      port = insert(:port, tax_rate_bps: 500)
       good = insert(:good, base_price: 100)
       trader = insert(:trader)
 
@@ -111,7 +112,9 @@ defmodule Tradewinds.TradeTest do
       {:ok, token, _} = Trade.generate_quote(scope, port.id, good.id, :buy, 10)
 
       assert {:error, :quantity_mismatch} =
-               Trade.execute_quote(scope, token, [%{type: :ship, id: Ecto.UUID.generate(), quantity: 5}])
+               Trade.execute_quote(scope, token, [
+                 %{type: :ship, id: Ecto.UUID.generate(), quantity: 5}
+               ])
     end
 
     test "fails if ship is at wrong port", %{player: player} do
@@ -138,7 +141,8 @@ defmodule Tradewinds.TradeTest do
       insert(:director, company: company, player: player)
       scope = Scope.for(player: player, company_id: company.id)
 
-      port = insert(:port, tax_rate_bps: 200) # 2% tax
+      # 2% tax
+      port = insert(:port, tax_rate_bps: 200)
       good = insert(:good, base_price: 100)
       trader = insert(:trader)
 

@@ -10,7 +10,7 @@ defmodule Tradewinds.Shipyards.ProductionJobTest do
     shipyard = insert(:shipyard)
     # Ensure at least one ship type exists
     insert(:ship_type)
-    
+
     base_time = ~U[2026-03-06 12:00:00Z]
     job = %Oban.Job{args: %{"shipyard_id" => shipyard.id}, scheduled_at: base_time}
 
@@ -19,7 +19,7 @@ defmodule Tradewinds.Shipyards.ProductionJobTest do
     # 1. Verify ships were produced (min stock of 2 for each ship type)
     inventory = Repo.all(Inventory)
     assert length(inventory) >= 2
-    
+
     # Verify ships actually created and unowned
     ships = Repo.all(Ship)
     assert length(ships) >= 2
@@ -28,7 +28,7 @@ defmodule Tradewinds.Shipyards.ProductionJobTest do
 
     # 2. Verify next job is scheduled (4032 seconds = 1 game week after base_time)
     expected_next_time = DateTime.add(base_time, 4032, :second)
-    
+
     assert_enqueued(
       worker: ProductionJob,
       args: %{"shipyard_id" => shipyard.id},

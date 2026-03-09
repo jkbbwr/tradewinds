@@ -92,8 +92,10 @@ defmodule Tradewinds.Economy do
     Repo.all(query)
     |> Enum.reduce(0, fn t, acc ->
       cond do
-        t.seller_id == @system_npc_id -> acc + t.quantity # Player bought from NPC
-        t.buyer_id == @system_npc_id -> acc - t.quantity # Player sold to NPC
+        # Player bought from NPC
+        t.seller_id == @system_npc_id -> acc + t.quantity
+        # Player sold to NPC
+        t.buyer_id == @system_npc_id -> acc - t.quantity
         true -> acc
       end
     end)

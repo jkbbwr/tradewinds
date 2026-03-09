@@ -14,7 +14,7 @@ defmodule TradewindsWeb.Plugs.RateLimiter do
 
   def call(conn, %{scale: scale, limit: limit}) do
     ip = conn.remote_ip |> :inet.ntoa() |> to_string()
-    
+
     # We use limit and scale in the key so that different limits (e.g. auth vs global) 
     # get tracked in separate buckets.
     id = "ip:#{ip}:#{limit}:#{scale}"

@@ -74,7 +74,8 @@ defmodule Tradewinds.Shipyards do
            {:ok, ship} <- Fleet.assign_ship(inventory.ship_id, company_id),
            {:ok, _inventory} <- Repo.delete(inventory),
            now = DateTime.utc_now(),
-           tax_amount <- Tradewinds.Economy.calculate_tax_for_port(inventory.cost, shipyard.port_id),
+           tax_amount <-
+             Tradewinds.Economy.calculate_tax_for_port(inventory.cost, shipyard.port_id),
            {:ok, _company} <-
              Companies.record_transaction(
                company_id,

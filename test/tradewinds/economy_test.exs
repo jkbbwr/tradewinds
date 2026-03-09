@@ -33,7 +33,8 @@ defmodule Tradewinds.EconomyTest do
       assert Economy.calculate_tax(10000, 500) == 500
       assert Economy.calculate_tax(10000, 200) == 200
       assert Economy.calculate_tax(5000, 500) == 250
-      assert Economy.calculate_tax(1, 100) == 0 # Rounding floor
+      # Rounding floor
+      assert Economy.calculate_tax(1, 100) == 0
     end
 
     test "calculate_tax_for_port/2 uses port's tax rate" do

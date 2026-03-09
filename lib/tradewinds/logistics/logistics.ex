@@ -40,7 +40,14 @@ defmodule Tradewinds.Logistics do
       cost = calculate_total_upkeep(company_id)
 
       if cost > 0 do
-        Companies.record_transaction(company_id, -cost, :warehouse_upkeep, :warehouse, company_id, now)
+        Companies.record_transaction(
+          company_id,
+          -cost,
+          :warehouse_upkeep,
+          :warehouse,
+          company_id,
+          now
+        )
       else
         {:ok, 0}
       end
@@ -153,7 +160,6 @@ defmodule Tradewinds.Logistics do
       {:ok, :no_tax}
     end
   end
-
 
   @doc """
   Downgrades a warehouse to the previous tier, decreasing its level and capacity.
