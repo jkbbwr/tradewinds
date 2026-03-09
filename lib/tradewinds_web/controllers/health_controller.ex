@@ -1,13 +1,14 @@
 defmodule TradewindsWeb.HealthController do
   use TradewindsWeb, :controller
   use OpenApiSpex.ControllerSpecs
+  alias TradewindsWeb.Schemas.HealthResponse
 
   operation :show,
     summary: "Health Check",
     description: "Returns the health status of the application, including database connectivity and Oban job lag.",
     responses: [
-      ok: {"Healthy", "application/json", %OpenApiSpex.Schema{type: :object}},
-      service_unavailable: {"Unhealthy", "application/json", %OpenApiSpex.Schema{type: :object}}
+      ok: {"Healthy", "application/json", HealthResponse},
+      service_unavailable: {"Unhealthy", "application/json", HealthResponse}
     ]
 
   def show(conn, _params) do
