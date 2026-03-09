@@ -16,12 +16,13 @@ defmodule Tradewinds.Accounts do
   Registers a new player with the given name, email, and password.
   Returns `{:ok, player}` or `{:error, changeset}`.
   """
-  def register(name, email, password) do
+  def register(name, email, password, discord_id \\ nil) do
     %Player{}
     |> Player.create_changeset(%{
       name: name,
       email: email,
-      password: password
+      password: password,
+      discord_id: discord_id
     })
     |> Repo.insert()
   end
@@ -158,7 +159,7 @@ defmodule Tradewinds.Accounts do
 
     {_cache_status, banned?} =
       Cachex.fetch(:tradewinds_cache, "banned_ip:#{ip}", fn _key ->
-        exists? = Repo.exists?(from b in BannedIP, where: b.ip_address == ^ip)
+        exists? = Repo.exists?(from(b in BannedIP, where: b.ip_address == ^ip))
         {:commit, exists?}
       end)
 

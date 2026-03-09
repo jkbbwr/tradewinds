@@ -13,7 +13,16 @@ defmodule TradewindsWeb.ApiSpec do
         title: "Tradewinds API",
         version: "1.0"
       },
-      paths: Paths.from_router(Router)
+      paths: Paths.from_router(Router),
+      components: %OpenApiSpex.Components{
+        securitySchemes: %{
+          "bearerAuth" => %OpenApiSpex.SecurityScheme{
+            type: "http",
+            scheme: "bearer",
+            bearerFormat: "JWT"
+          }
+        }
+      }
     }
     |> OpenApiSpex.resolve_schema_modules()
   end

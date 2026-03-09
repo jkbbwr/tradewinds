@@ -5,7 +5,8 @@ defmodule TradewindsWeb.HealthController do
 
   operation :show,
     summary: "Health Check",
-    description: "Returns the health status of the application, including database connectivity and Oban job lag.",
+    description:
+      "Returns the health status of the application, including database connectivity and Oban job lag.",
     responses: [
       ok: {"Healthy", "application/json", HealthResponse},
       service_unavailable: {"Unhealthy", "application/json", HealthResponse}

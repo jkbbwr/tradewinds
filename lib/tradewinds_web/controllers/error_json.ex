@@ -3,6 +3,10 @@ defmodule TradewindsWeb.ErrorJSON do
     %{errors: %{detail: "Not Found"}}
   end
 
+  def render("unauthorized.json", %{}) do
+    %{errors: %{detail: "Unauthorized"}}
+  end
+
   def render("500.json", %{}) do
     %{errors: %{detail: "Internal Server Error"}}
   end

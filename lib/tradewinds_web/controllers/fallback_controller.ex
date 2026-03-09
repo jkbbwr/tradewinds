@@ -1,7 +1,7 @@
 defmodule TradewindsWeb.FallbackController do
   use TradewindsWeb, :controller
 
-  def call(conn, {:error, :unauthorized}) do
+  def call(conn, {:error, reason}) when reason in [:unauthorized, :email_not_found, :player_not_enabled] do
     conn
     |> put_status(:unauthorized)
     |> put_view(TradewindsWeb.ErrorJSON)

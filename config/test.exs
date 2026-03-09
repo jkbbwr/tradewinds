@@ -42,6 +42,9 @@ config :tradewinds, :admin_auth,
 # Print only warnings and errors during test
 config :logger, level: :warning
 
+# Disable rate limiting during tests
+config :tradewinds, :rate_limit_enabled, false
+
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
 

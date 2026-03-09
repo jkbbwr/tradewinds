@@ -13,21 +13,25 @@ defmodule TradewindsWeb.Plugs.RateLimiter do
   end
 
   def call(conn, %{scale: scale, limit: limit}) do
-    ip = conn.remote_ip |> :inet.ntoa() |> to_string()
+    if Application.get_env(:tradewinds, :rate_limit_enabled, true) do
+      ip = conn.remote_ip |> :inet.ntoa() |> to_string()
 
-    # We use limit and scale in the key so that different limits (e.g. auth vs global) 
-    # get tracked in separate buckets.
-    id = "ip:#{ip}:#{limit}:#{scale}"
+      # We use limit and scale in the key so that different limits (e.g. auth vs global) 
+      # get tracked in separate buckets.
+      id = "ip:#{ip}:#{limit}:#{scale}"
 
-    case Tradewinds.RateLimit.hit(id, scale, limit) do
-      {:allow, _count} ->
-        conn
+      case Tradewinds.RateLimit.hit(id, scale, limit) do
+        {:allow, _count} ->
+          conn
 
-      {:deny, _limit} ->
-        conn
-        |> put_status(:too_many_requests)
-        |> Phoenix.Controller.json(%{error: "Rate limit exceeded. Try again later."})
-        |> halt()
+        {:deny, _limit} ->
+          conn
+          |> put_status(:too_many_requests)
+          |> Phoenix.Controller.json(%{error: "Rate limit exceeded. Try again later."})
+          |> halt()
+      end
+    else
+      conn
     end
   end
 end
