@@ -4,7 +4,7 @@ defmodule TradewindsWeb.AuthController do
   use OpenApiSpex.ControllerSpecs
 
   alias Tradewinds.Accounts
-  alias TradewindsWeb.Schemas.{LoginRequest, LoginResponse, RegisterRequest, RegisterResponse}
+  alias TradewindsWeb.Schemas.{LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, ChangesetResponse, ErrorResponse}
 
   action_fallback(TradewindsWeb.FallbackController)
 
@@ -22,7 +22,7 @@ defmodule TradewindsWeb.AuthController do
     responses: [
       created: {"Player created", "application/json", RegisterResponse},
       unprocessable_entity:
-        {"Validation error", "application/json", %OpenApiSpex.Schema{type: :object}}
+        {"Validation error", "application/json", ChangesetResponse}
     ]
   )
 
@@ -48,10 +48,9 @@ defmodule TradewindsWeb.AuthController do
     responses: [
       ok: {"Successful login", "application/json", LoginResponse},
       unauthorized:
-        {"Invalid credentials or disabled account", "application/json",
-         %OpenApiSpex.Schema{type: :object}},
+        {"Invalid credentials or disabled account", "application/json", ErrorResponse},
       unprocessable_entity:
-        {"Validation error", "application/json", %OpenApiSpex.Schema{type: :object}}
+        {"Validation error", "application/json", ChangesetResponse}
     ]
   )
 
@@ -71,7 +70,7 @@ defmodule TradewindsWeb.AuthController do
     responses: [
       no_content: "Token successfully revoked",
       unauthorized:
-        {"Invalid or expired token", "application/json", %OpenApiSpex.Schema{type: :object}}
+        {"Invalid or expired token", "application/json", ErrorResponse}
     ]
   )
 
@@ -81,7 +80,20 @@ defmodule TradewindsWeb.AuthController do
     send_resp(conn, :no_content, "")
   end
 
+  operation(:me,
+    summary: "Get current player profile",
+    description: "Returns the profile of the currently authenticated player.",
+    security: [%{"bearerAuth" => []}],
+    responses: [
+      ok: {"Current player", "application/json", RegisterResponse},
+      unauthorized:
+        {"Invalid or expired token", "application/json", ErrorResponse}
+    ]
+  )
+
   def me(conn, _params) do
-    send_resp(conn, 501, "Not Implemented")
+    conn
+    |> put_status(:ok)
+    |> render(:player, player: conn.assigns.token.player)
   end
 end

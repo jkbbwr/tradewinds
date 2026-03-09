@@ -100,4 +100,25 @@ defmodule TradewindsWeb.AuthControllerTest do
       assert json_response(conn, 401)
     end
   end
+
+  describe "GET /api/v1/me" do
+    setup %{conn: conn} do
+      {:ok, player} = Accounts.register("Kibb", "kibb@example.com", "password123")
+      {:ok, _player} = Accounts.enable(player)
+      {:ok, auth_token} = Accounts.authenticate("kibb@example.com", "password123")
+      conn = put_req_header(conn, "authorization", "Bearer #{auth_token.token}")
+      %{player: player, auth_token: auth_token, conn: conn}
+    end
+
+    test "returns the authenticated player", %{conn: conn, player: player} do
+      conn = get(conn, ~p"/api/v1/me")
+      assert %{"id" => id, "name" => "Kibb"} = json_response(conn, 200)["data"]
+      assert id == player.id
+    end
+
+    test "fails with no token", %{} do
+      conn = Phoenix.ConnTest.build_conn() |> get(~p"/api/v1/me")
+      assert json_response(conn, 401)
+    end
+  end
 end
