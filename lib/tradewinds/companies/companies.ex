@@ -46,6 +46,15 @@ defmodule Tradewinds.Companies do
   end
 
   @doc """
+  Retrieves a list of companies that a given player is authorized to act on behalf of.
+  """
+  def list_player_companies(%Scope{player: player}) do
+    player
+    |> Ecto.assoc(:companies)
+    |> Repo.all()
+  end
+
+  @doc """
   Retrieves a list of company IDs that a given player is authorized to act on behalf of.
   """
   def list_player_company_ids(%Player{} = player) do
