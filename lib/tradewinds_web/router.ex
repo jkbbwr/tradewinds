@@ -25,7 +25,7 @@ defmodule TradewindsWeb.Router do
   end
 
   pipeline :strict_rate_limits do
-    plug TradewindsWeb.Plugs.RateLimiter, limit: 5, scale: 60_000
+    plug TradewindsWeb.Plugs.RateLimiter, limit: 10, scale: 60_000
   end
 
   pipeline :admin_auth do
