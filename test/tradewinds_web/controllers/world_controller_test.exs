@@ -67,6 +67,14 @@ defmodule TradewindsWeb.WorldControllerTest do
     end
   end
 
+  describe "GET /api/v1/world/routes" do
+    test "lists routes", %{conn: conn} do
+      conn = get(conn, ~p"/api/v1/world/routes")
+      data = json_response(conn, 200)["data"]
+      assert length(data) > 0
+    end
+  end
+
   describe "GET /api/v1/world/routes/:id" do
     test "gets a route", %{conn: conn, route: route} do
       conn = get(conn, ~p"/api/v1/world/routes/#{route.id}")

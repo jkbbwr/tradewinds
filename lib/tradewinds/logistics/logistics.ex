@@ -96,6 +96,36 @@ defmodule Tradewinds.Logistics do
   end
 
   @doc """
+  Purchases a new level 1 warehouse at a specific port.
+  """
+  def create_warehouse(%Scope{company_id: company_id}, port_id) do
+    cost = 100 # Base cost for level 1
+
+    Repo.transact(fn ->
+      with {:ok, company} <- Tradewinds.Companies.fetch_company(company_id),
+           {:ok, :active} <- Tradewinds.Companies.is_active?(company),
+           now = DateTime.utc_now(),
+           tax_amount = Tradewinds.Economy.calculate_tax_for_port(cost, port_id),
+           {:ok, _} <-
+             Tradewinds.Companies.record_transaction(
+               company_id,
+               -cost,
+               :warehouse_purchase,
+               :warehouse,
+               Ecto.UUID.generate(),
+               now
+             ),
+           {:ok, _} <- maybe_record_tax(company_id, port_id, Ecto.UUID.generate(), cost, tax_amount, now),
+           warehouse = %Warehouse{},
+           attrs = %{level: 1, capacity: 1000, port_id: port_id, company_id: company_id},
+           changeset = Warehouse.create_changeset(warehouse, attrs),
+           {:ok, inserted_warehouse} <- Repo.insert(changeset) do
+        {:ok, inserted_warehouse}
+      end
+    end)
+  end
+
+  @doc """
   Upgrades a warehouse to the next tier, increasing its level and capacity.
   Charges the company's treasury for the upgrade cost.
   """

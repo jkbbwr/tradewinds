@@ -96,6 +96,7 @@ defmodule TradewindsWeb.Router do
     get "/ship-types", WorldController, :ship_types
     get "/ship-types/:id", WorldController, :ship_type
 
+    get "/routes", WorldController, :routes
     get "/routes/:id", WorldController, :route
 
     get "/events", EventController, :world_events
@@ -121,6 +122,7 @@ defmodule TradewindsWeb.Router do
     pipe_through [:api, :auth, :company_context]
 
     get "/", WarehouseController, :warehouses
+    post "/", WarehouseController, :create
     get "/:warehouse_id", WarehouseController, :warehouse
     post "/:warehouse_id/grow", WarehouseController, :grow
     post "/:warehouse_id/shrink", WarehouseController, :shrink

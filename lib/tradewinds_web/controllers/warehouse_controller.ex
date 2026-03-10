@@ -7,12 +7,50 @@ defmodule TradewindsWeb.WarehouseController do
   alias TradewindsWeb.Schemas.{
     WarehousesResponse,
     WarehouseResponse,
+    CreateWarehouseRequest,
     TransferToShipRequest,
     ErrorResponse,
     ChangesetResponse
   }
 
   action_fallback TradewindsWeb.FallbackController
+
+  # -- Create --
+
+  defparams :create do
+    required(:port_id, :string, format: :uuid)
+  end
+
+  operation(:create,
+    summary: "Purchase a new warehouse",
+    description: "Purchases a level 1 warehouse at a specific port.",
+    security: [%{"bearerAuth" => []}],
+    parameters: [
+      %OpenApiSpex.Parameter{
+        name: "tradewinds-company-id",
+        in: :header,
+        required: true,
+        schema: %OpenApiSpex.Schema{type: :string, format: :uuid},
+        description: "Company ID"
+      }
+    ],
+    request_body: {"Warehouse details", "application/json", CreateWarehouseRequest},
+    responses: [
+      created: {"Warehouse created successfully", "application/json", WarehouseResponse},
+      unprocessable_entity: {"Validation error", "application/json", ChangesetResponse},
+      unauthorized: {"Invalid or expired token", "application/json", ErrorResponse},
+      forbidden: {"Insufficient funds or unauthorized", "application/json", ErrorResponse}
+    ]
+  )
+
+  def create(conn, params) do
+    with {:ok, valid} <- validate(:create, params),
+         {:ok, warehouse} <- Logistics.create_warehouse(conn.assigns.scope, valid.port_id) do
+      conn
+      |> put_status(:created)
+      |> render(:show, warehouse: warehouse)
+    end
+  end
 
   # -- Warehouses --
 

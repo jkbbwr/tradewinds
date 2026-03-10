@@ -1,14 +1,14 @@
 defmodule TradewindsWeb.Schemas.PortsResponse do
   require OpenApiSpex
-  alias OpenApiSpex.Schema
 
   OpenApiSpex.schema(%{
     title: "PortsResponse",
     description: "Response schema for a list of ports.",
     type: :object,
     properties: %{
-      data: %Schema{type: :array, items: TradewindsWeb.Schemas.Port}
+      data: %OpenApiSpex.Schema{type: :array, items: TradewindsWeb.Schemas.Port},
+      metadata: TradewindsWeb.Schemas.PageMetadata
     },
-    required: [:data]
+    required: [:data, :metadata]
   })
 end

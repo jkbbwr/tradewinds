@@ -94,8 +94,11 @@ defmodule Tradewinds.World do
   @doc """
   Lists all ports in the world.
   """
-  def list_ports do
-    Repo.all(Port)
+  def list_ports(cursor_opts \\ []) do
+    opts = Keyword.merge([cursor_fields: [inserted_at: :asc, id: :asc], limit: 50], cursor_opts)
+    Port
+    |> order_by(asc: :inserted_at, asc: :id)
+    |> Repo.paginate(opts)
   end
 
   @doc """
@@ -110,6 +113,16 @@ defmodule Tradewinds.World do
   """
   def list_ship_types do
     Repo.all(ShipType)
+  end
+
+  @doc """
+  Lists all routes in the world.
+  """
+  def list_routes(cursor_opts \\ []) do
+    opts = Keyword.merge([cursor_fields: [inserted_at: :asc, id: :asc], limit: 50], cursor_opts)
+    Route
+    |> order_by(asc: :inserted_at, asc: :id)
+    |> Repo.paginate(opts)
   end
 
   @doc """

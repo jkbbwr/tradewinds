@@ -1,5 +1,6 @@
 defmodule TradewindsWeb.WorldController do
   use TradewindsWeb, :controller
+  use Goal
   use OpenApiSpex.ControllerSpecs
 
   alias Tradewinds.World
@@ -10,6 +11,7 @@ defmodule TradewindsWeb.WorldController do
     GoodResponse,
     ShipTypesResponse,
     ShipTypeResponse,
+    RoutesResponse,
     RouteResponse,
     ErrorResponse
   }
@@ -18,17 +20,31 @@ defmodule TradewindsWeb.WorldController do
 
   # -- Ports --
 
+  defparams :ports do
+    optional(:after, :string)
+    optional(:before, :string)
+    optional(:limit, :integer, min: 1, max: 100)
+  end
+
   operation(:ports,
     summary: "List ports",
     description: "Returns a list of all ports in the world.",
+    parameters: [
+      after: [in: :query, description: "Cursor for next page", type: :string],
+      before: [in: :query, description: "Cursor for previous page", type: :string],
+      limit: [in: :query, description: "Number of items per page", type: :integer]
+    ],
     responses: [
       ok: {"List of ports", "application/json", PortsResponse}
     ]
   )
 
-  def ports(conn, _params) do
-    ports = World.list_ports()
-    render(conn, :ports, ports: ports)
+  def ports(conn, params) do
+    with {:ok, valid} <- validate(:ports, params) do
+      opts = Map.take(valid, [:after, :before, :limit]) |> Map.to_list()
+      page = World.list_ports(opts)
+      render(conn, :ports, page: page)
+    end
   end
 
   operation(:port,
@@ -115,7 +131,34 @@ defmodule TradewindsWeb.WorldController do
     end
   end
 
-  # -- Route --
+  # -- Routes --
+
+  defparams :routes do
+    optional(:after, :string)
+    optional(:before, :string)
+    optional(:limit, :integer, min: 1, max: 100)
+  end
+
+  operation(:routes,
+    summary: "List routes",
+    description: "Returns a list of all routes in the world.",
+    parameters: [
+      after: [in: :query, description: "Cursor for next page", type: :string],
+      before: [in: :query, description: "Cursor for previous page", type: :string],
+      limit: [in: :query, description: "Number of items per page", type: :integer]
+    ],
+    responses: [
+      ok: {"List of routes", "application/json", RoutesResponse}
+    ]
+  )
+
+  def routes(conn, params) do
+    with {:ok, valid} <- validate(:routes, params) do
+      opts = Map.take(valid, [:after, :before, :limit]) |> Map.to_list()
+      page = World.list_routes(opts)
+      render(conn, :routes, page: page)
+    end
+  end
 
   operation(:route,
     summary: "Get route details",

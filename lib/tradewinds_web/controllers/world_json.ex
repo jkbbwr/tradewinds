@@ -1,6 +1,13 @@
 defmodule TradewindsWeb.WorldJSON do
-  def ports(%{ports: ports}) do
-    %{data: for(port <- ports, do: port_data(port))}
+  def ports(%{page: page}) do
+    %{
+      data: for(port <- page.entries, do: port_data(port)),
+      metadata: %{
+        after: page.metadata.after,
+        before: page.metadata.before,
+        limit: page.metadata.limit
+      }
+    }
   end
 
   def port(%{port: port}) do
@@ -21,6 +28,17 @@ defmodule TradewindsWeb.WorldJSON do
 
   def ship_type(%{ship_type: ship_type}) do
     %{data: ship_type_data(ship_type)}
+  end
+
+  def routes(%{page: page}) do
+    %{
+      data: for(route <- page.entries, do: route_data(route)),
+      metadata: %{
+        after: page.metadata.after,
+        before: page.metadata.before,
+        limit: page.metadata.limit
+      }
+    }
   end
 
   def route(%{route: route}) do
