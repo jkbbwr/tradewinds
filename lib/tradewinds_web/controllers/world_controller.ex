@@ -24,6 +24,8 @@ defmodule TradewindsWeb.WorldController do
     optional(:after, :string)
     optional(:before, :string)
     optional(:limit, :integer, min: 1, max: 100)
+    optional(:country_id, :string, format: :uuid)
+    optional(:is_hub, :boolean)
   end
 
   operation(:ports,
@@ -32,7 +34,9 @@ defmodule TradewindsWeb.WorldController do
     parameters: [
       after: [in: :query, description: "Cursor for next page", type: :string],
       before: [in: :query, description: "Cursor for previous page", type: :string],
-      limit: [in: :query, description: "Number of items per page", type: :integer]
+      limit: [in: :query, description: "Number of items per page", type: :integer],
+      country_id: [in: :query, description: "Filter by country ID", type: :string],
+      is_hub: [in: :query, description: "Filter by hub status", type: :boolean]
     ],
     responses: [
       ok: {"List of ports", "application/json", PortsResponse}
@@ -41,8 +45,7 @@ defmodule TradewindsWeb.WorldController do
 
   def ports(conn, params) do
     with {:ok, valid} <- validate(:ports, params) do
-      opts = Map.take(valid, [:after, :before, :limit]) |> Map.to_list()
-      page = World.list_ports(opts)
+      page = World.list_ports(valid)
       render(conn, :ports, page: page)
     end
   end
@@ -67,17 +70,26 @@ defmodule TradewindsWeb.WorldController do
 
   # -- Goods --
 
+  defparams :goods do
+    optional(:category, :string)
+  end
+
   operation(:goods,
     summary: "List goods",
     description: "Returns a list of all tradeable goods.",
+    parameters: [
+      category: [in: :query, description: "Filter by category", type: :string]
+    ],
     responses: [
       ok: {"List of goods", "application/json", GoodsResponse}
     ]
   )
 
-  def goods(conn, _params) do
-    goods = World.list_goods()
-    render(conn, :goods, goods: goods)
+  def goods(conn, params) do
+    with {:ok, valid} <- validate(:goods, params) do
+      goods = World.list_goods(valid)
+      render(conn, :goods, goods: goods)
+    end
   end
 
   operation(:good,
@@ -137,6 +149,8 @@ defmodule TradewindsWeb.WorldController do
     optional(:after, :string)
     optional(:before, :string)
     optional(:limit, :integer, min: 1, max: 100)
+    optional(:from_id, :string, format: :uuid)
+    optional(:to_id, :string, format: :uuid)
   end
 
   operation(:routes,
@@ -145,7 +159,9 @@ defmodule TradewindsWeb.WorldController do
     parameters: [
       after: [in: :query, description: "Cursor for next page", type: :string],
       before: [in: :query, description: "Cursor for previous page", type: :string],
-      limit: [in: :query, description: "Number of items per page", type: :integer]
+      limit: [in: :query, description: "Number of items per page", type: :integer],
+      from_id: [in: :query, description: "Filter by origin port", type: :string],
+      to_id: [in: :query, description: "Filter by destination port", type: :string]
     ],
     responses: [
       ok: {"List of routes", "application/json", RoutesResponse}
@@ -154,8 +170,7 @@ defmodule TradewindsWeb.WorldController do
 
   def routes(conn, params) do
     with {:ok, valid} <- validate(:routes, params) do
-      opts = Map.take(valid, [:after, :before, :limit]) |> Map.to_list()
-      page = World.list_routes(opts)
+      page = World.list_routes(valid)
       render(conn, :routes, page: page)
     end
   end

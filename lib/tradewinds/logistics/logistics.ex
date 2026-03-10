@@ -242,8 +242,12 @@ defmodule Tradewinds.Logistics do
   @doc """
   Lists all warehouses owned by the company within the given scope.
   """
-  def list_warehouses(%Scope{company_id: company_id}, cursor_opts \\ []) do
-    opts = Keyword.merge([cursor_fields: [inserted_at: :desc, id: :desc], limit: 50], cursor_opts)
+  def list_warehouses(%Scope{company_id: company_id}, params \\ %{}) do
+    opts =
+      params
+      |> Map.take([:after, :before, :limit])
+      |> Map.to_list()
+      |> Keyword.merge(cursor_fields: [inserted_at: :desc, id: :desc], limit: 50)
 
     Warehouse
     |> where(company_id: ^company_id)

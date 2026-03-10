@@ -22,7 +22,7 @@ defmodule TradewindsWeb.CompanyControllerTest do
     end
 
     test "returns list of companies where player is a director", %{conn: conn, player: player} do
-      port = Enum.at(World.list_ports(), 0)
+      port = Enum.at(World.list_ports().entries, 0)
 
       scope = Tradewinds.Scope.for_player(player)
       {:ok, _c1} = Companies.create(scope, "Company 1", "CMP1", port.id)
@@ -44,7 +44,7 @@ defmodule TradewindsWeb.CompanyControllerTest do
 
   describe "POST /api/v1/companies" do
     test "creates a new company successfully", %{conn: conn} do
-      port = Enum.at(World.list_ports(), 0)
+      port = Enum.at(World.list_ports().entries, 0)
 
       conn =
         post(conn, ~p"/api/v1/companies", %{
@@ -58,7 +58,7 @@ defmodule TradewindsWeb.CompanyControllerTest do
     end
 
     test "fails with validation error if ticker is too long", %{conn: conn} do
-      port = Enum.at(World.list_ports(), 0)
+      port = Enum.at(World.list_ports().entries, 0)
 
       conn =
         post(conn, ~p"/api/v1/companies", %{
@@ -73,7 +73,7 @@ defmodule TradewindsWeb.CompanyControllerTest do
 
   describe "GET /api/v1/company" do
     setup %{conn: conn, player: player} do
-      port = Enum.at(World.list_ports(), 0)
+      port = Enum.at(World.list_ports().entries, 0)
       scope = Tradewinds.Scope.for_player(player)
       {:ok, company} = Companies.create(scope, "Test Company", "TEST1", port.id)
 
@@ -111,7 +111,7 @@ defmodule TradewindsWeb.CompanyControllerTest do
 
   describe "GET /api/v1/company/economy" do
     setup %{conn: conn, player: player} do
-      port = Enum.at(World.list_ports(), 0)
+      port = Enum.at(World.list_ports().entries, 0)
       scope = Tradewinds.Scope.for_player(player)
       {:ok, company} = Companies.create(scope, "Economy Co", "ECON1", port.id)
 
@@ -136,7 +136,7 @@ defmodule TradewindsWeb.CompanyControllerTest do
 
   describe "GET /api/v1/company/ledger" do
     setup %{conn: conn, player: player} do
-      port = Enum.at(World.list_ports(), 0)
+      port = Enum.at(World.list_ports().entries, 0)
       scope = Tradewinds.Scope.for_player(player)
       {:ok, company} = Companies.create(scope, "Ledger Co", "LEDG1", port.id)
 

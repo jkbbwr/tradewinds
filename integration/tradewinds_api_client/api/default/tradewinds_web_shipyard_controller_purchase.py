@@ -1,0 +1,222 @@
+from http import HTTPStatus
+from typing import Any
+from urllib.parse import quote
+from uuid import UUID
+
+import httpx
+
+from ... import errors
+from ...client import AuthenticatedClient, Client
+from ...models.changeset_response import ChangesetResponse
+from ...models.error_response import ErrorResponse
+from ...models.purchase_ship_request import PurchaseShipRequest
+from ...models.ship_response import ShipResponse
+from ...types import UNSET, Response, Unset
+
+
+def _get_kwargs(
+    shipyard_id: str,
+    *,
+    body: PurchaseShipRequest | Unset = UNSET,
+    tradewinds_company_id: UUID,
+) -> dict[str, Any]:
+    headers: dict[str, Any] = {}
+    headers["tradewinds-company-id"] = tradewinds_company_id
+
+    _kwargs: dict[str, Any] = {
+        "method": "post",
+        "url": "/api/v1/shipyards/{shipyard_id}/purchase".format(
+            shipyard_id=quote(str(shipyard_id), safe=""),
+        ),
+    }
+
+    if not isinstance(body, Unset):
+        _kwargs["json"] = body.to_dict()
+
+    headers["Content-Type"] = "application/json"
+
+    _kwargs["headers"] = headers
+    return _kwargs
+
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> ChangesetResponse | ErrorResponse | ShipResponse | None:
+    if response.status_code == 200:
+        response_200 = ShipResponse.from_dict(response.json())
+
+        return response_200
+
+    if response.status_code == 401:
+        response_401 = ErrorResponse.from_dict(response.json())
+
+        return response_401
+
+    if response.status_code == 403:
+        response_403 = ErrorResponse.from_dict(response.json())
+
+        return response_403
+
+    if response.status_code == 404:
+        response_404 = ErrorResponse.from_dict(response.json())
+
+        return response_404
+
+    if response.status_code == 422:
+        response_422 = ChangesetResponse.from_dict(response.json())
+
+        return response_422
+
+    if client.raise_on_unexpected_status:
+        raise errors.UnexpectedStatus(response.status_code, response.content)
+    else:
+        return None
+
+
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[ChangesetResponse | ErrorResponse | ShipResponse]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    shipyard_id: str,
+    *,
+    client: AuthenticatedClient,
+    body: PurchaseShipRequest | Unset = UNSET,
+    tradewinds_company_id: UUID,
+) -> Response[ChangesetResponse | ErrorResponse | ShipResponse]:
+    """Purchase a ship
+
+     Purchases a ship from the shipyard inventory for the current company.
+
+    Args:
+        shipyard_id (str):
+        tradewinds_company_id (UUID):
+        body (PurchaseShipRequest | Unset): Request schema to purchase a ship from a shipyard.
+
+    Raises:
+        errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+    Returns:
+        Response[ChangesetResponse | ErrorResponse | ShipResponse]
+    """
+
+    kwargs = _get_kwargs(
+        shipyard_id=shipyard_id,
+        body=body,
+        tradewinds_company_id=tradewinds_company_id,
+    )
+
+    response = client.get_httpx_client().request(
+        **kwargs,
+    )
+
+    return _build_response(client=client, response=response)
+
+
+def sync(
+    shipyard_id: str,
+    *,
+    client: AuthenticatedClient,
+    body: PurchaseShipRequest | Unset = UNSET,
+    tradewinds_company_id: UUID,
+) -> ChangesetResponse | ErrorResponse | ShipResponse | None:
+    """Purchase a ship
+
+     Purchases a ship from the shipyard inventory for the current company.
+
+    Args:
+        shipyard_id (str):
+        tradewinds_company_id (UUID):
+        body (PurchaseShipRequest | Unset): Request schema to purchase a ship from a shipyard.
+
+    Raises:
+        errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+    Returns:
+        ChangesetResponse | ErrorResponse | ShipResponse
+    """
+
+    return sync_detailed(
+        shipyard_id=shipyard_id,
+        client=client,
+        body=body,
+        tradewinds_company_id=tradewinds_company_id,
+    ).parsed
+
+
+async def asyncio_detailed(
+    shipyard_id: str,
+    *,
+    client: AuthenticatedClient,
+    body: PurchaseShipRequest | Unset = UNSET,
+    tradewinds_company_id: UUID,
+) -> Response[ChangesetResponse | ErrorResponse | ShipResponse]:
+    """Purchase a ship
+
+     Purchases a ship from the shipyard inventory for the current company.
+
+    Args:
+        shipyard_id (str):
+        tradewinds_company_id (UUID):
+        body (PurchaseShipRequest | Unset): Request schema to purchase a ship from a shipyard.
+
+    Raises:
+        errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+    Returns:
+        Response[ChangesetResponse | ErrorResponse | ShipResponse]
+    """
+
+    kwargs = _get_kwargs(
+        shipyard_id=shipyard_id,
+        body=body,
+        tradewinds_company_id=tradewinds_company_id,
+    )
+
+    response = await client.get_async_httpx_client().request(**kwargs)
+
+    return _build_response(client=client, response=response)
+
+
+async def asyncio(
+    shipyard_id: str,
+    *,
+    client: AuthenticatedClient,
+    body: PurchaseShipRequest | Unset = UNSET,
+    tradewinds_company_id: UUID,
+) -> ChangesetResponse | ErrorResponse | ShipResponse | None:
+    """Purchase a ship
+
+     Purchases a ship from the shipyard inventory for the current company.
+
+    Args:
+        shipyard_id (str):
+        tradewinds_company_id (UUID):
+        body (PurchaseShipRequest | Unset): Request schema to purchase a ship from a shipyard.
+
+    Raises:
+        errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+    Returns:
+        ChangesetResponse | ErrorResponse | ShipResponse
+    """
+
+    return (
+        await asyncio_detailed(
+            shipyard_id=shipyard_id,
+            client=client,
+            body=body,
+            tradewinds_company_id=tradewinds_company_id,
+        )
+    ).parsed

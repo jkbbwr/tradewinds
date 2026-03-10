@@ -41,8 +41,7 @@ defmodule TradewindsWeb.TradeController do
 
   def trader_positions(conn, params) do
     with {:ok, valid} <- validate(:trader_positions, params) do
-      opts = Map.take(valid, [:after, :before, :limit]) |> Map.to_list()
-      page = Trade.list_trader_positions(valid.port_id, opts)
+      page = Trade.list_trader_positions(valid.port_id, valid)
       render(conn, :trader_positions, page: page)
     end
   end

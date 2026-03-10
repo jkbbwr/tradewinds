@@ -94,9 +94,18 @@ defmodule Tradewinds.World do
   @doc """
   Lists all ports in the world.
   """
-  def list_ports(cursor_opts \\ []) do
-    opts = Keyword.merge([cursor_fields: [inserted_at: :asc, id: :asc], limit: 50], cursor_opts)
-    Port
+  def list_ports(params \\ %{}) do
+    opts =
+      params
+      |> Map.take([:after, :before, :limit])
+      |> Map.to_list()
+      |> Keyword.merge(cursor_fields: [inserted_at: :asc, id: :asc], limit: 50)
+    
+    query = Port
+    query = if country_id = params[:country_id], do: where(query, country_id: ^country_id), else: query
+    query = if not is_nil(is_hub = params[:is_hub]), do: where(query, is_hub: ^is_hub), else: query
+
+    query
     |> order_by(asc: :inserted_at, asc: :id)
     |> Repo.paginate(opts)
   end
@@ -104,8 +113,10 @@ defmodule Tradewinds.World do
   @doc """
   Lists all goods in the world.
   """
-  def list_goods do
-    Repo.all(Good)
+  def list_goods(params \\ %{}) do
+    query = Good
+    query = if category = params[:category], do: where(query, category: ^category), else: query
+    Repo.all(query)
   end
 
   @doc """
@@ -118,9 +129,18 @@ defmodule Tradewinds.World do
   @doc """
   Lists all routes in the world.
   """
-  def list_routes(cursor_opts \\ []) do
-    opts = Keyword.merge([cursor_fields: [inserted_at: :asc, id: :asc], limit: 50], cursor_opts)
-    Route
+  def list_routes(params \\ %{}) do
+    opts =
+      params
+      |> Map.take([:after, :before, :limit])
+      |> Map.to_list()
+      |> Keyword.merge(cursor_fields: [inserted_at: :asc, id: :asc], limit: 50)
+    
+    query = Route
+    query = if from_id = params[:from_id], do: where(query, from_id: ^from_id), else: query
+    query = if to_id = params[:to_id], do: where(query, to_id: ^to_id), else: query
+
+    query
     |> order_by(asc: :inserted_at, asc: :id)
     |> Repo.paginate(opts)
   end

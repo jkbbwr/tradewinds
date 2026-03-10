@@ -265,7 +265,7 @@ defmodule Tradewinds.Market do
   @doc """
   Lists open orders for a port and good, sorted by price and reputation.
   """
-  def list_orders(port_id, good_id, side, opts \\ []) do
+  def list_orders(port_id, good_id, side, params \\ %{}) do
     order_by_price = if side == :sell, do: :asc, else: :desc
 
     query =
@@ -277,10 +277,13 @@ defmodule Tradewinds.Market do
       |> join(:inner, [o], c in Company, on: o.company_id == c.id)
       |> select([o, c], %{order: o, company_reputation: c.reputation})
 
-    if Keyword.get(opts, :paginate, false) do
+    # Paginator is used when params are present (e.g. from a controller)
+    # unless explicitly disabled. Internal calls with no params get the full list.
+    if Map.get(params, :paginate, true) and map_size(params) > 0 do
       paginator_opts =
-        opts
-        |> Keyword.delete(:paginate)
+        params
+        |> Map.take([:after, :before, :limit])
+        |> Map.to_list()
         |> Keyword.merge(cursor_fields: [price: order_by_price, id: :desc], limit: 50)
 
       query

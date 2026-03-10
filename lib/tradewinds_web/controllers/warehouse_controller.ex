@@ -84,8 +84,7 @@ defmodule TradewindsWeb.WarehouseController do
 
   def warehouses(conn, params) do
     with {:ok, valid} <- validate(:warehouses, params) do
-      opts = Map.take(valid, [:after, :before, :limit]) |> Map.to_list()
-      page = Logistics.list_warehouses(conn.assigns.scope, opts)
+      page = Logistics.list_warehouses(conn.assigns.scope, valid)
       render(conn, :index, page: page)
     end
   end

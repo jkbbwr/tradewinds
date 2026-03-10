@@ -155,9 +155,7 @@ defmodule TradewindsWeb.CompanyController do
   def ledger(conn, params) do
     with {:ok, valid} <- validate(:ledger, params) do
       company_id = conn.assigns.scope.company_id
-
-      opts = Map.take(valid, [:after, :before, :limit]) |> Map.to_list()
-      page = Companies.list_ledger(company_id, opts)
+      page = Companies.list_ledger(company_id, valid)
       render(conn, :ledger, page: page)
     end
   end

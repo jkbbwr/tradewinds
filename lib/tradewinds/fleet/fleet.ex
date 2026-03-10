@@ -248,10 +248,14 @@ defmodule Tradewinds.Fleet do
   @doc """
   Lists all ships owned by the company within the given scope.
   """
-  def list_ships(%Scope{company_id: company_id}, opts \\ []) do
-    preload = Keyword.get(opts, :preload, [])
-    cursor_opts = Keyword.drop(opts, [:preload])
-    paginator_opts = Keyword.merge([cursor_fields: [inserted_at: :desc, id: :desc], limit: 50], cursor_opts)
+  def list_ships(%Scope{company_id: company_id}, params \\ %{}) do
+    preload = Map.get(params, :preload, [])
+    
+    paginator_opts =
+      params
+      |> Map.take([:after, :before, :limit])
+      |> Map.to_list()
+      |> Keyword.merge(cursor_fields: [inserted_at: :desc, id: :desc], limit: 50)
 
     Ship
     |> where(company_id: ^company_id)

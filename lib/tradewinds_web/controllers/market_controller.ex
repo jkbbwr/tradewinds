@@ -47,9 +47,7 @@ defmodule TradewindsWeb.MarketController do
   def orders(conn, params) do
     with {:ok, valid} <- validate(:orders, params) do
       side_atom = String.to_existing_atom(valid.side)
-      opts = Map.take(valid, [:after, :before, :limit]) |> Map.to_list() |> Keyword.put(:paginate, true)
-      
-      page = Market.list_orders(valid.port_id, valid.good_id, side_atom, opts)
+      page = Market.list_orders(valid.port_id, valid.good_id, side_atom, valid)
       render(conn, :index, page: page)
     end
   end

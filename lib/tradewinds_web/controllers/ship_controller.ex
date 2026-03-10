@@ -48,8 +48,7 @@ defmodule TradewindsWeb.ShipController do
 
   def ships(conn, params) do
     with {:ok, valid} <- validate(:ships, params) do
-      opts = Map.take(valid, [:after, :before, :limit]) |> Map.to_list()
-      page = Fleet.list_ships(conn.assigns.scope, opts)
+      page = Fleet.list_ships(conn.assigns.scope, valid)
       render(conn, :index, page: page)
     end
   end
