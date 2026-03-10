@@ -5,7 +5,7 @@ defmodule Tradewinds.Repo.Migrations.CreateEconomyShocks do
     create table(:economy_shocks) do
       add :name, :text, null: false
       add :description, :text
-      add :status, :text, null: false, default: "active"
+      add :status, :text, null: false, default: "pending"
       add :port_id, references(:port)
       add :good_id, references(:good)
       add :start_time, :utc_datetime_usec, null: false
