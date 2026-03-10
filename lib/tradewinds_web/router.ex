@@ -74,11 +74,13 @@ defmodule TradewindsWeb.Router do
     post "/companies", CompanyController, :create_company
   end
 
-  scope "/api/v1", TradewindsWeb do
+  scope "/api/v1/company/", TradewindsWeb do
     pipe_through [:api, :auth, :company_context]
 
-    get "/company", CompanyController, :company
-    get "/company/economy", CompanyController, :economy
+    get "/", CompanyController, :company
+    get "/economy", CompanyController, :economy
+    get "/ledger", CompanyController, :ledger
+    get "/events", EventController, :company_events
   end
 
   scope "/api/v1/world", TradewindsWeb do
@@ -95,6 +97,8 @@ defmodule TradewindsWeb.Router do
     get "/ship-types/:id", WorldController, :ship_type
 
     get "/routes/:id", WorldController, :route
+
+    get "/events", EventController, :world_events
   end
 
   scope "/api/v1/shipyards", TradewindsWeb do
@@ -127,6 +131,12 @@ defmodule TradewindsWeb.Router do
     pipe_through [:api, :auth, :company_context]
 
     post "/:shipyard_id/purchase", ShipyardController, :purchase
+  end
+
+  scope "/api/v1/trade", TradewindsWeb do
+    pipe_through :api
+
+    get "/trader-positions", TradeController, :trader_positions
   end
 
   scope "/api/v1/trade", TradewindsWeb do

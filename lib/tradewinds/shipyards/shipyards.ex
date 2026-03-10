@@ -21,10 +21,10 @@ defmodule Tradewinds.Shipyards do
   end
 
   @doc """
-  Fetches the shipyard associated with a specific port.
+  Fetches the shipyard associated with a specific port ID.
   """
-  def fetch_shipyard_for_port(port) do
-    Repo.get_by(Shipyard, port_id: port.id)
+  def fetch_shipyard_for_port(port_id) do
+    Repo.get_by(Shipyard, port_id: port_id)
     |> Repo.ok_or(:shipyard_not_found)
   end
 

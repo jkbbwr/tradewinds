@@ -49,15 +49,19 @@ Suggested interpretation:
 No company header required.
 
 ### `POST /api/v1/auth/register`
+
 Register a new player.
 
 ### `POST /api/v1/auth/login`
+
 Authenticate a player and return a bearer token.
 
 ### `POST /api/v1/auth/revoke`
+
 Revoke the current token.
 
 Requires:
+
 - `Authorization`
 
 ---
@@ -67,12 +71,15 @@ Requires:
 Authenticated, but no company header required.
 
 ### `GET /api/v1/me`
+
 Return information about the current player/session.
 
 ### `GET /api/v1/me/companies`
+
 List companies the current player may act on behalf of.
 
 Requires:
+
 - `Authorization`
 
 ---
@@ -82,6 +89,7 @@ Requires:
 Public.
 
 ### `GET /api/v1/health`
+
 Return service health, database connectivity, queue lag, and server time.
 
 ---
@@ -89,22 +97,45 @@ Return service health, database connectivity, queue lag, and server time.
 ## Companies
 
 ### `POST /api/v1/companies`
+
 Create a new company.
 
 Requires:
+
 - `Authorization`
 
 ### `GET /api/v1/company`
+
 Return the currently selected company.
 
 Requires:
+
 - `Authorization`
 - `Tradewinds-Company-Id`
 
 ### `GET /api/v1/company/economy`
+
 Return a company economy summary such as treasury, reputation, and upkeep-related information.
 
 Requires:
+
+- `Authorization`
+- `Tradewinds-Company-Id`
+
+### `GET /api/v1/company/ledger`
+
+Return the selected company's ledger entries and transaction history.
+
+Suggested query params:
+
+- `limit`
+- `before`
+- `after`
+- `reason`
+- `reference_type`
+
+Requires:
+
 - `Authorization`
 - `Tradewinds-Company-Id`
 
@@ -115,27 +146,35 @@ Requires:
 Read-only reference data. No company header required.
 
 ### `GET /api/v1/world/ports`
+
 List ports.
 
 ### `GET /api/v1/world/ports/:id`
+
 Fetch a single port.
 
 ### `GET /api/v1/world/ports/:port_id/shipyard`
+
 Fetch the shipyard for a given port.
 
 ### `GET /api/v1/world/goods`
+
 List goods.
 
 ### `GET /api/v1/world/goods/:id`
+
 Fetch a single good.
 
 ### `GET /api/v1/world/ship-types`
+
 List ship types.
 
 ### `GET /api/v1/world/ship-types/:id`
+
 Fetch a single ship type.
 
 ### `GET /api/v1/world/routes/:id`
+
 Fetch a single route.
 
 ---
@@ -143,14 +182,17 @@ Fetch a single route.
 ## Shipyards
 
 ### `GET /api/v1/shipyards/:shipyard_id/inventory`
+
 List ships currently available for purchase at a shipyard.
 
 No company header required.
 
 ### `POST /api/v1/shipyards/:shipyard_id/purchase`
+
 Purchase a ship from a shipyard for the selected company.
 
 Requires:
+
 - `Authorization`
 - `Tradewinds-Company-Id`
 
@@ -165,12 +207,15 @@ Suggested body:
 All ship routes are company-scoped.
 
 ### `GET /api/v1/ships`
+
 List ships owned by the selected company.
 
 ### `GET /api/v1/ships/:ship_id`
+
 Fetch a single ship and its current state.
 
 ### `PATCH /api/v1/ships/:ship_id`
+
 Rename a ship.
 
 Suggested body:
@@ -178,6 +223,7 @@ Suggested body:
 - `name`
 
 ### `POST /api/v1/ships/:ship_id/transit`
+
 Send a docked ship onto a route.
 
 Suggested body:
@@ -185,6 +231,7 @@ Suggested body:
 - `route_id`
 
 ### `POST /api/v1/ships/:ship_id/transfer-to-warehouse`
+
 Move cargo from a ship into a warehouse at the same port.
 
 Suggested body:
@@ -194,6 +241,7 @@ Suggested body:
 - `quantity`
 
 Requires for all routes in this section:
+
 - `Authorization`
 - `Tradewinds-Company-Id`
 
@@ -204,18 +252,23 @@ Requires for all routes in this section:
 All warehouse routes are company-scoped.
 
 ### `GET /api/v1/warehouses`
+
 List warehouses owned by the selected company.
 
 ### `GET /api/v1/warehouses/:warehouse_id`
+
 Fetch a single warehouse and its inventory.
 
 ### `POST /api/v1/warehouses/:warehouse_id/grow`
+
 Upgrade a warehouse.
 
 ### `POST /api/v1/warehouses/:warehouse_id/shrink`
+
 Downgrade a warehouse.
 
 ### `POST /api/v1/warehouses/:warehouse_id/transfer-to-ship`
+
 Move cargo from a warehouse into a ship at the same port.
 
 Suggested body:
@@ -225,6 +278,7 @@ Suggested body:
 - `quantity`
 
 Requires for all routes in this section:
+
 - `Authorization`
 - `Tradewinds-Company-Id`
 
@@ -237,6 +291,7 @@ This namespace is for direct trading against NPC/system liquidity, distinct from
 All trade routes are company-scoped.
 
 ### `POST /api/v1/trade/quote`
+
 Generate a signed trade quote.
 
 Suggested body:
@@ -247,6 +302,7 @@ Suggested body:
 - `quantity`
 
 ### `POST /api/v1/trade/quotes/execute`
+
 Execute a previously issued quote.
 
 Suggested body:
@@ -257,6 +313,7 @@ Suggested body:
 `destinations` distributes cargo across ships and/or warehouses as supported by the application.
 
 ### `POST /api/v1/trade/execute`
+
 Execute an immediate trade without a quote.
 
 Suggested body:
@@ -267,6 +324,7 @@ Suggested body:
 - `destinations`
 
 Requires for all routes in this section:
+
 - `Authorization`
 - `Tradewinds-Company-Id`
 
@@ -277,6 +335,7 @@ Requires for all routes in this section:
 This namespace is for the player-to-player order book.
 
 ### `GET /api/v1/market/orders`
+
 List open market orders.
 
 Suggested query params:
@@ -288,6 +347,7 @@ Suggested query params:
 No company header required.
 
 ### `GET /api/v1/market/blended-price`
+
 Calculate the blended price for a requested quantity from the available order book.
 
 Suggested query params:
@@ -300,6 +360,7 @@ Suggested query params:
 No company header required.
 
 ### `POST /api/v1/market/orders`
+
 Create a new market order.
 
 Suggested body:
@@ -311,6 +372,7 @@ Suggested body:
 - `total`
 
 ### `POST /api/v1/market/orders/:order_id/fill`
+
 Fill an existing market order.
 
 Suggested body:
@@ -318,9 +380,11 @@ Suggested body:
 - `quantity`
 
 ### `DELETE /api/v1/market/orders/:order_id`
+
 Cancel an order owned by the selected company.
 
 Requires for mutating routes in this section:
+
 - `Authorization`
 - `Tradewinds-Company-Id`
 
@@ -353,6 +417,7 @@ Requires for mutating routes in this section:
 
 - `GET /api/v1/company`
 - `GET /api/v1/company/economy`
+- `GET /api/v1/company/ledger`
 - `POST /api/v1/shipyards/:shipyard_id/purchase`
 - `GET /api/v1/ships`
 - `GET /api/v1/ships/:ship_id`

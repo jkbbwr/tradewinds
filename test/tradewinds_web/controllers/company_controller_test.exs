@@ -133,4 +133,39 @@ defmodule TradewindsWeb.CompanyControllerTest do
       assert treasury == company.treasury
     end
   end
+
+  describe "GET /api/v1/company/ledger" do
+    setup %{conn: conn, player: player} do
+      port = Enum.at(World.list_ports(), 0)
+      scope = Tradewinds.Scope.for_player(player)
+      {:ok, company} = Companies.create(scope, "Ledger Co", "LEDG1", port.id)
+
+      # Record a transaction so the ledger isn't empty
+      {:ok, _company} =
+        Companies.record_transaction(
+          company.id,
+          500,
+          :market_trade,
+          :market,
+          Ecto.UUID.generate(),
+          DateTime.utc_now()
+        )
+
+      conn = put_req_header(conn, "tradewinds-company-id", company.id)
+      %{company: company, conn: conn}
+    end
+
+    test "returns ledger entries", %{conn: conn, company: company} do
+      conn = get(conn, ~p"/api/v1/company/ledger")
+
+      data = json_response(conn, 200)["data"]
+      assert length(data) > 0
+
+      entry = hd(data)
+      assert entry["amount"] == 500
+      assert entry["reason"] == "market_trade"
+      assert entry["company_id"] == company.id
+      assert entry["reference_type"] == "market"
+    end
+  end
 end

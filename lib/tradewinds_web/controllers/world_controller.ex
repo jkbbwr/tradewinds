@@ -1,33 +1,137 @@
 defmodule TradewindsWeb.WorldController do
   use TradewindsWeb, :controller
+  use OpenApiSpex.ControllerSpecs
+
+  alias Tradewinds.World
+  alias TradewindsWeb.Schemas.{
+    PortsResponse,
+    PortResponse,
+    GoodsResponse,
+    GoodResponse,
+    ShipTypesResponse,
+    ShipTypeResponse,
+    RouteResponse,
+    ErrorResponse
+  }
 
   action_fallback TradewindsWeb.FallbackController
 
+  # -- Ports --
+
+  operation(:ports,
+    summary: "List ports",
+    description: "Returns a list of all ports in the world.",
+    responses: [
+      ok: {"List of ports", "application/json", PortsResponse}
+    ]
+  )
+
   def ports(conn, _params) do
-    send_resp(conn, 501, "Not Implemented")
+    ports = World.list_ports()
+    render(conn, :ports, ports: ports)
   end
 
-  def port(conn, _params) do
-    send_resp(conn, 501, "Not Implemented")
+  operation(:port,
+    summary: "Get port details",
+    description: "Returns the details of a specific port.",
+    parameters: [
+      id: [in: :path, description: "Port ID", type: :string]
+    ],
+    responses: [
+      ok: {"Port details", "application/json", PortResponse},
+      not_found: {"Port not found", "application/json", ErrorResponse}
+    ]
+  )
+
+  def port(conn, %{"id" => id}) do
+    with {:ok, port} <- World.fetch_port(id) do
+      render(conn, :port, port: port)
+    end
   end
+
+  # -- Goods --
+
+  operation(:goods,
+    summary: "List goods",
+    description: "Returns a list of all tradeable goods.",
+    responses: [
+      ok: {"List of goods", "application/json", GoodsResponse}
+    ]
+  )
 
   def goods(conn, _params) do
-    send_resp(conn, 501, "Not Implemented")
+    goods = World.list_goods()
+    render(conn, :goods, goods: goods)
   end
 
-  def good(conn, _params) do
-    send_resp(conn, 501, "Not Implemented")
+  operation(:good,
+    summary: "Get good details",
+    description: "Returns the details of a specific good.",
+    parameters: [
+      id: [in: :path, description: "Good ID", type: :string]
+    ],
+    responses: [
+      ok: {"Good details", "application/json", GoodResponse},
+      not_found: {"Good not found", "application/json", ErrorResponse}
+    ]
+  )
+
+  def good(conn, %{"id" => id}) do
+    with {:ok, good} <- World.fetch_good(id) do
+      render(conn, :good, good: good)
+    end
   end
+
+  # -- Ship Types --
+
+  operation(:ship_types,
+    summary: "List ship types",
+    description: "Returns a list of all available ship types.",
+    responses: [
+      ok: {"List of ship types", "application/json", ShipTypesResponse}
+    ]
+  )
 
   def ship_types(conn, _params) do
-    send_resp(conn, 501, "Not Implemented")
+    ship_types = World.list_ship_types()
+    render(conn, :ship_types, ship_types: ship_types)
   end
 
-  def ship_type(conn, _params) do
-    send_resp(conn, 501, "Not Implemented")
+  operation(:ship_type,
+    summary: "Get ship type details",
+    description: "Returns the details of a specific ship type.",
+    parameters: [
+      id: [in: :path, description: "Ship Type ID", type: :string]
+    ],
+    responses: [
+      ok: {"Ship type details", "application/json", ShipTypeResponse},
+      not_found: {"Ship type not found", "application/json", ErrorResponse}
+    ]
+  )
+
+  def ship_type(conn, %{"id" => id}) do
+    with {:ok, ship_type} <- World.fetch_ship_type(id) do
+      render(conn, :ship_type, ship_type: ship_type)
+    end
   end
 
-  def route(conn, _params) do
-    send_resp(conn, 501, "Not Implemented")
+  # -- Route --
+
+  operation(:route,
+    summary: "Get route details",
+    description: "Returns the details of a specific route by ID.",
+    parameters: [
+      id: [in: :path, description: "Route ID", type: :string]
+    ],
+    responses: [
+      ok: {"Route details", "application/json", RouteResponse},
+      not_found: {"Route not found", "application/json", ErrorResponse}
+    ]
+  )
+
+  def route(conn, %{"id" => id}) do
+    with {:ok, route} <- World.fetch_route_by_id(id) do
+      render(conn, :route, route: route)
+    end
   end
 end

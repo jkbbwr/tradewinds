@@ -19,13 +19,13 @@ defmodule Tradewinds.ShipyardsTest do
     test "fetch_shipyard_for_port/1 returns the shipyard" do
       port = insert(:port)
       shipyard = insert(:shipyard, port: port)
-      assert {:ok, fetched} = Shipyards.fetch_shipyard_for_port(port)
+      assert {:ok, fetched} = Shipyards.fetch_shipyard_for_port(port.id)
       assert fetched.id == shipyard.id
     end
 
     test "fetch_shipyard_for_port/1 returns error if not found" do
       port = insert(:port)
-      assert {:error, :shipyard_not_found} = Shipyards.fetch_shipyard_for_port(port)
+      assert {:error, :shipyard_not_found} = Shipyards.fetch_shipyard_for_port(port.id)
     end
 
     test "fetch_shipyard_inventory/1 returns the inventory list" do

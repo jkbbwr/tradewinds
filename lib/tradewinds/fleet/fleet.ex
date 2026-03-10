@@ -240,6 +240,18 @@ defmodule Tradewinds.Fleet do
   end
 
   @doc """
+  Lists all ships owned by the company within the given scope.
+  """
+  def list_ships(%Scope{company_id: company_id}, opts \\ []) do
+    preload = Keyword.get(opts, :preload, [])
+
+    Ship
+    |> where(company_id: ^company_id)
+    |> Repo.preload(preload)
+    |> Repo.all()
+  end
+
+  @doc """
   Fetches a single ship by ID, optionally preloading associations.
   """
   def fetch_ship(id, opts \\ []) do
@@ -247,6 +259,19 @@ defmodule Tradewinds.Fleet do
 
     Ship
     |> Repo.get(id)
+    |> Repo.preload(preload)
+    |> Repo.ok_or(:ship_not_found)
+  end
+
+  @doc """
+  Fetches a single ship by ID owned by the company within the given scope.
+  """
+  def fetch_company_ship(%Scope{company_id: company_id}, id, opts \\ []) do
+    preload = Keyword.get(opts, :preload, [])
+
+    Ship
+    |> where(id: ^id, company_id: ^company_id)
+    |> Repo.one()
     |> Repo.preload(preload)
     |> Repo.ok_or(:ship_not_found)
   end

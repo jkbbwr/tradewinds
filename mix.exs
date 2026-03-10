@@ -57,6 +57,8 @@ defmodule Tradewinds.MixProject do
       {:oban, "~> 2.20"},
       {:oban_live_dashboard, "~> 0.2.0"},
       {:goal, "~> 1.1"},
+      {:paginator, "~> 1.2"},
+      # Force plug_crypto to 2.1.1 to satisfy the rest of your app
       {:cachex, "~> 4.0"},
       {:hammer, "~> 7.0"},
       {:open_api_spex, "~> 3.21"},

@@ -19,6 +19,25 @@ defmodule TradewindsWeb.CompanyJSON do
     }
   end
 
+  def ledger(%{ledger: ledger}) do
+    %{data: for(entry <- ledger, do: ledger_data(entry))}
+  end
+
+  def ledger_data(entry) do
+    %{
+      id: entry.id,
+      company_id: entry.company_id,
+      occurred_at: entry.occurred_at,
+      amount: entry.amount,
+      reason: entry.reason,
+      reference_type: entry.reference_type,
+      reference_id: entry.reference_id,
+      idempotency_key: entry.idempotency_key,
+      meta: entry.meta,
+      inserted_at: entry.inserted_at
+    }
+  end
+
   def data(company) do
     %{
       id: company.id,

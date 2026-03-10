@@ -210,6 +210,25 @@ defmodule Tradewinds.Logistics do
   end
 
   @doc """
+  Lists all warehouses owned by the company within the given scope.
+  """
+  def list_warehouses(%Scope{company_id: company_id}) do
+    Warehouse
+    |> where(company_id: ^company_id)
+    |> Repo.all()
+  end
+
+  @doc """
+  Fetches a single warehouse by ID owned by the company within the given scope.
+  """
+  def fetch_company_warehouse(%Scope{company_id: company_id}, id) do
+    Warehouse
+    |> where(id: ^id, company_id: ^company_id)
+    |> Repo.one()
+    |> Repo.ok_or(:warehouse_not_found)
+  end
+
+  @doc """
   Retrieves a specific company's warehouse at a given port.
   """
   def fetch_warehouse(company_id, port_id) do

@@ -72,6 +72,16 @@ defmodule Tradewinds.Companies do
   end
 
   @doc """
+  Retrieves the ledger entries for a specific company, ordered by most recent first.
+  """
+  def list_ledger(company_id) do
+    Ledger
+    |> where(company_id: ^company_id)
+    |> order_by(desc: :occurred_at)
+    |> Repo.all()
+  end
+
+  @doc """
   Atomically records a financial transaction to the ledger and updates the company's treasury.
   Fails and rolls back if the company lacks sufficient funds for a deduction.
   """

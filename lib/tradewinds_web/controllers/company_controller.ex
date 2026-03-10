@@ -9,6 +9,7 @@ defmodule TradewindsWeb.CompanyController do
     CompanyResponse,
     CreateCompanyRequest,
     CompanyEconomyResponse,
+    LedgerResponse,
     ErrorResponse,
     ChangesetResponse
   }
@@ -120,5 +121,32 @@ defmodule TradewindsWeb.CompanyController do
         total_upkeep: ship_upkeep + warehouse_upkeep
       )
     end
+  end
+
+  operation(:ledger,
+    summary: "Get company ledger",
+    description: "Returns the financial ledger entries for the current company, ordered by most recent first.",
+    security: [%{"bearerAuth" => []}],
+    parameters: [
+      %OpenApiSpex.Parameter{
+        name: "tradewinds-company-id",
+        in: :header,
+        required: true,
+        schema: %OpenApiSpex.Schema{type: :string, format: :uuid},
+        description: "Company ID"
+      }
+    ],
+    responses: [
+      ok: {"Company ledger", "application/json", LedgerResponse},
+      unauthorized: {"Invalid or expired token", "application/json", ErrorResponse},
+      forbidden: {"Not a director of this company", "application/json", ErrorResponse}
+    ]
+  )
+
+  def ledger(conn, _params) do
+    company_id = conn.assigns.scope.company_id
+
+    ledger = Companies.list_ledger(company_id)
+    render(conn, :ledger, ledger: ledger)
   end
 end

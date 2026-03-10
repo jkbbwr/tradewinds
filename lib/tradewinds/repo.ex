@@ -7,6 +7,8 @@ defmodule Tradewinds.Repo do
     otp_app: :tradewinds,
     adapter: Ecto.Adapters.Postgres
 
+  use Paginator
+
   @doc """
   A utility helper that converts a `nil` result into an `{:error, error}` tuple,
   or wraps a valid result in an `{:ok, result}` tuple.

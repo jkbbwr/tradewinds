@@ -7,6 +7,10 @@
 # General application configuration
 import Config
 
+config :mime, :types, %{
+  "text/event-stream" => ["sse"]
+}
+
 config :nostrum,
   streamlink: false,
   youtubedl: false

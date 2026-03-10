@@ -8,6 +8,13 @@ defmodule Tradewinds.Trade do
   alias Tradewinds.Repo
   import Ecto.Query
 
+  def list_trader_positions(port_id) do
+    Tradewinds.Trade.TraderPosition
+    |> where(port_id: ^port_id)
+    |> preload([:good])
+    |> Repo.all()
+  end
+
   @doc """
   Generates a signed, stateless quote for a company to buy or sell goods from/to
   a trader. Applies active economic shocks to base price and volatility. Returns
