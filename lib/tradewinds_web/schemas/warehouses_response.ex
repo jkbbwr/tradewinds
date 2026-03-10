@@ -6,8 +6,9 @@ defmodule TradewindsWeb.Schemas.WarehousesResponse do
     description: "Response schema for a list of warehouses.",
     type: :object,
     properties: %{
-      data: %OpenApiSpex.Schema{type: :array, items: TradewindsWeb.Schemas.Warehouse}
+      data: %OpenApiSpex.Schema{type: :array, items: TradewindsWeb.Schemas.Warehouse},
+      metadata: TradewindsWeb.Schemas.PageMetadata
     },
-    required: [:data]
+    required: [:data, :metadata]
   })
 end

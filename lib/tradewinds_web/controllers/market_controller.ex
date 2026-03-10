@@ -22,6 +22,9 @@ defmodule TradewindsWeb.MarketController do
     required(:port_id, :string, format: :uuid)
     required(:good_id, :string, format: :uuid)
     required(:side, :string, included_in: ["buy", "sell"])
+    optional(:after, :string)
+    optional(:before, :string)
+    optional(:limit, :integer, min: 1, max: 100)
   end
 
   operation(:orders,
@@ -30,7 +33,10 @@ defmodule TradewindsWeb.MarketController do
     parameters: [
       port_id: [in: :query, description: "Port ID", type: :string],
       good_id: [in: :query, description: "Good ID", type: :string],
-      side: [in: :query, description: "Order side (buy or sell)", type: :string]
+      side: [in: :query, description: "Order side (buy or sell)", type: :string],
+      after: [in: :query, description: "Cursor for next page", type: :string],
+      before: [in: :query, description: "Cursor for previous page", type: :string],
+      limit: [in: :query, description: "Number of items per page", type: :integer]
     ],
     responses: [
       ok: {"List of orders", "application/json", OrdersResponse},
@@ -41,9 +47,10 @@ defmodule TradewindsWeb.MarketController do
   def orders(conn, params) do
     with {:ok, valid} <- validate(:orders, params) do
       side_atom = String.to_existing_atom(valid.side)
-      orders = Market.list_orders(valid.port_id, valid.good_id, side_atom)
-      # Note: list_orders returns %{order: order, company_reputation: rep}
-      render(conn, :index, orders: orders)
+      opts = Map.take(valid, [:after, :before, :limit]) |> Map.to_list() |> Keyword.put(:paginate, true)
+      
+      page = Market.list_orders(valid.port_id, valid.good_id, side_atom, opts)
+      render(conn, :index, page: page)
     end
   end
 

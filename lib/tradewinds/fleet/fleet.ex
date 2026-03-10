@@ -244,11 +244,14 @@ defmodule Tradewinds.Fleet do
   """
   def list_ships(%Scope{company_id: company_id}, opts \\ []) do
     preload = Keyword.get(opts, :preload, [])
+    cursor_opts = Keyword.drop(opts, [:preload])
+    paginator_opts = Keyword.merge([cursor_fields: [inserted_at: :desc, id: :desc], limit: 50], cursor_opts)
 
     Ship
     |> where(company_id: ^company_id)
+    |> order_by(desc: :inserted_at, desc: :id)
     |> Repo.preload(preload)
-    |> Repo.all()
+    |> Repo.paginate(paginator_opts)
   end
 
   @doc """

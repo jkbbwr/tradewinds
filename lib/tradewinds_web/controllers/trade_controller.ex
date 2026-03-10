@@ -20,13 +20,19 @@ defmodule TradewindsWeb.TradeController do
 
   defparams :trader_positions do
     required(:port_id, :string, format: :uuid)
+    optional(:after, :string)
+    optional(:before, :string)
+    optional(:limit, :integer, min: 1, max: 100)
   end
 
   operation(:trader_positions,
     summary: "List trader positions",
     description: "Returns a list of goods a trader is buying or selling at a port.",
     parameters: [
-      port_id: [in: :query, description: "Port ID", type: :string]
+      port_id: [in: :query, description: "Port ID", type: :string],
+      after: [in: :query, description: "Cursor for next page", type: :string],
+      before: [in: :query, description: "Cursor for previous page", type: :string],
+      limit: [in: :query, description: "Number of items per page", type: :integer]
     ],
     responses: [
       ok: {"List of trader positions", "application/json", TraderPositionsResponse}
@@ -35,8 +41,9 @@ defmodule TradewindsWeb.TradeController do
 
   def trader_positions(conn, params) do
     with {:ok, valid} <- validate(:trader_positions, params) do
-      positions = Trade.list_trader_positions(valid.port_id)
-      render(conn, :trader_positions, positions: positions)
+      opts = Map.take(valid, [:after, :before, :limit]) |> Map.to_list()
+      page = Trade.list_trader_positions(valid.port_id, opts)
+      render(conn, :trader_positions, page: page)
     end
   end
 

@@ -74,11 +74,13 @@ defmodule Tradewinds.Companies do
   @doc """
   Retrieves the ledger entries for a specific company, ordered by most recent first.
   """
-  def list_ledger(company_id) do
+  def list_ledger(company_id, cursor_opts \\ []) do
+    opts = Keyword.merge([cursor_fields: [occurred_at: :desc, id: :desc], limit: 50], cursor_opts)
+    
     Ledger
     |> where(company_id: ^company_id)
-    |> order_by(desc: :occurred_at)
-    |> Repo.all()
+    |> order_by(desc: :occurred_at, desc: :id)
+    |> Repo.paginate(opts)
   end
 
   @doc """

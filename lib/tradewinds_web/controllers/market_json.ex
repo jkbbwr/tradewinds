@@ -1,6 +1,13 @@
 defmodule TradewindsWeb.MarketJSON do
-  def index(%{orders: orders}) do
-    %{data: for(order <- orders, do: order_data(order))}
+  def index(%{page: page}) do
+    %{
+      data: for(entry <- page.entries, do: order_data(entry)),
+      metadata: %{
+        after: page.metadata.after,
+        before: page.metadata.before,
+        limit: page.metadata.limit
+      }
+    }
   end
 
   def show(%{order: order}) do

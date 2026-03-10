@@ -59,6 +59,7 @@ defmodule Tradewinds.MixProject do
       {:goal, "~> 1.1"},
       {:paginator, "~> 1.2"},
       # Force plug_crypto to 2.1.1 to satisfy the rest of your app
+      {:plug_crypto, "~> 2.0", override: true},
       {:cachex, "~> 4.0"},
       {:hammer, "~> 7.0"},
       {:open_api_spex, "~> 3.21"},

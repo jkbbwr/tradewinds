@@ -18,6 +18,12 @@ defmodule TradewindsWeb.ShipController do
 
   # -- Ships --
 
+  defparams :ships do
+    optional(:after, :string)
+    optional(:before, :string)
+    optional(:limit, :integer, min: 1, max: 100)
+  end
+
   operation(:ships,
     summary: "List company ships",
     description: "Returns a list of ships owned by the current company.",
@@ -29,7 +35,10 @@ defmodule TradewindsWeb.ShipController do
         required: true,
         schema: %OpenApiSpex.Schema{type: :string, format: :uuid},
         description: "Company ID"
-      }
+      },
+      after: [in: :query, description: "Cursor for next page", type: :string],
+      before: [in: :query, description: "Cursor for previous page", type: :string],
+      limit: [in: :query, description: "Number of items per page", type: :integer]
     ],
     responses: [
       ok: {"List of ships", "application/json", ShipsResponse},
@@ -37,9 +46,12 @@ defmodule TradewindsWeb.ShipController do
     ]
   )
 
-  def ships(conn, _params) do
-    ships = Fleet.list_ships(conn.assigns.scope)
-    render(conn, :index, ships: ships)
+  def ships(conn, params) do
+    with {:ok, valid} <- validate(:ships, params) do
+      opts = Map.take(valid, [:after, :before, :limit]) |> Map.to_list()
+      page = Fleet.list_ships(conn.assigns.scope, opts)
+      render(conn, :index, page: page)
+    end
   end
 
   # -- Ship --

@@ -258,19 +258,32 @@ defmodule Tradewinds.Market do
   @doc """
   Lists open orders for a port and good, sorted by price and reputation.
   """
-  def list_orders(port_id, good_id, side) do
-    order_by = if side == :sell, do: [asc: :price], else: [desc: :price]
+  def list_orders(port_id, good_id, side, opts \\ []) do
+    order_by_price = if side == :sell, do: :asc, else: :desc
 
-    Order
-    |> where(
-      [o],
-      o.port_id == ^port_id and o.good_id == ^good_id and o.side == ^side and o.status == :open
-    )
-    |> join(:inner, [o], c in Company, on: o.company_id == c.id)
-    |> order_by(^order_by)
-    |> order_by([o, c], desc: c.reputation)
-    |> select([o, c], %{order: o, company_reputation: c.reputation})
-    |> Repo.all()
+    query =
+      Order
+      |> where(
+        [o],
+        o.port_id == ^port_id and o.good_id == ^good_id and o.side == ^side and o.status == :open
+      )
+      |> join(:inner, [o], c in Company, on: o.company_id == c.id)
+      |> select([o, c], %{order: o, company_reputation: c.reputation})
+
+    if Keyword.get(opts, :paginate, false) do
+      paginator_opts =
+        opts
+        |> Keyword.delete(:paginate)
+        |> Keyword.merge(cursor_fields: [price: order_by_price, id: :desc], limit: 50)
+
+      query
+      |> order_by([o, c], [{^order_by_price, o.price}, desc: o.id])
+      |> Repo.paginate(paginator_opts)
+    else
+      query
+      |> order_by([o, c], [{^order_by_price, o.price}, desc: c.reputation])
+      |> Repo.all()
+    end
   end
 
   @doc """

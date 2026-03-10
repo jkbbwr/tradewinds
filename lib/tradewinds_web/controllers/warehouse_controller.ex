@@ -16,6 +16,12 @@ defmodule TradewindsWeb.WarehouseController do
 
   # -- Warehouses --
 
+  defparams :warehouses do
+    optional(:after, :string)
+    optional(:before, :string)
+    optional(:limit, :integer, min: 1, max: 100)
+  end
+
   operation(:warehouses,
     summary: "List company warehouses",
     description: "Returns a list of warehouses owned by the current company.",
@@ -27,7 +33,10 @@ defmodule TradewindsWeb.WarehouseController do
         required: true,
         schema: %OpenApiSpex.Schema{type: :string, format: :uuid},
         description: "Company ID"
-      }
+      },
+      after: [in: :query, description: "Cursor for next page", type: :string],
+      before: [in: :query, description: "Cursor for previous page", type: :string],
+      limit: [in: :query, description: "Number of items per page", type: :integer]
     ],
     responses: [
       ok: {"List of warehouses", "application/json", WarehousesResponse},
@@ -35,9 +44,12 @@ defmodule TradewindsWeb.WarehouseController do
     ]
   )
 
-  def warehouses(conn, _params) do
-    warehouses = Logistics.list_warehouses(conn.assigns.scope)
-    render(conn, :index, warehouses: warehouses)
+  def warehouses(conn, params) do
+    with {:ok, valid} <- validate(:warehouses, params) do
+      opts = Map.take(valid, [:after, :before, :limit]) |> Map.to_list()
+      page = Logistics.list_warehouses(conn.assigns.scope, opts)
+      render(conn, :index, page: page)
+    end
   end
 
   # -- Warehouse --

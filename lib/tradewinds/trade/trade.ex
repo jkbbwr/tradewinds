@@ -8,11 +8,14 @@ defmodule Tradewinds.Trade do
   alias Tradewinds.Repo
   import Ecto.Query
 
-  def list_trader_positions(port_id) do
+  def list_trader_positions(port_id, cursor_opts \\ []) do
+    opts = Keyword.merge([cursor_fields: [inserted_at: :desc, id: :desc], limit: 50], cursor_opts)
+
     Tradewinds.Trade.TraderPosition
     |> where(port_id: ^port_id)
+    |> order_by(desc: :inserted_at, desc: :id)
     |> preload([:good])
-    |> Repo.all()
+    |> Repo.paginate(opts)
   end
 
   @doc """

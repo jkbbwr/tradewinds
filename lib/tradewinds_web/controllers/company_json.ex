@@ -19,8 +19,15 @@ defmodule TradewindsWeb.CompanyJSON do
     }
   end
 
-  def ledger(%{ledger: ledger}) do
-    %{data: for(entry <- ledger, do: ledger_data(entry))}
+  def ledger(%{page: page}) do
+    %{
+      data: for(entry <- page.entries, do: ledger_data(entry)),
+      metadata: %{
+        after: page.metadata.after,
+        before: page.metadata.before,
+        limit: page.metadata.limit
+      }
+    }
   end
 
   def ledger_data(entry) do

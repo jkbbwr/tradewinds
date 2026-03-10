@@ -1,6 +1,13 @@
 defmodule TradewindsWeb.WarehouseJSON do
-  def index(%{warehouses: warehouses}) do
-    %{data: for(warehouse <- warehouses, do: data(warehouse))}
+  def index(%{page: page}) do
+    %{
+      data: for(warehouse <- page.entries, do: data(warehouse)),
+      metadata: %{
+        after: page.metadata.after,
+        before: page.metadata.before,
+        limit: page.metadata.limit
+      }
+    }
   end
 
   def show(%{warehouse: warehouse}) do

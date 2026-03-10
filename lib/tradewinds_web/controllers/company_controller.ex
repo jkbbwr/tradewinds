@@ -123,6 +123,12 @@ defmodule TradewindsWeb.CompanyController do
     end
   end
 
+  defparams :ledger do
+    optional(:after, :string)
+    optional(:before, :string)
+    optional(:limit, :integer, min: 1, max: 100)
+  end
+
   operation(:ledger,
     summary: "Get company ledger",
     description: "Returns the financial ledger entries for the current company, ordered by most recent first.",
@@ -134,7 +140,10 @@ defmodule TradewindsWeb.CompanyController do
         required: true,
         schema: %OpenApiSpex.Schema{type: :string, format: :uuid},
         description: "Company ID"
-      }
+      },
+      after: [in: :query, description: "Cursor for next page", type: :string],
+      before: [in: :query, description: "Cursor for previous page", type: :string],
+      limit: [in: :query, description: "Number of items per page", type: :integer]
     ],
     responses: [
       ok: {"Company ledger", "application/json", LedgerResponse},
@@ -143,10 +152,13 @@ defmodule TradewindsWeb.CompanyController do
     ]
   )
 
-  def ledger(conn, _params) do
-    company_id = conn.assigns.scope.company_id
+  def ledger(conn, params) do
+    with {:ok, valid} <- validate(:ledger, params) do
+      company_id = conn.assigns.scope.company_id
 
-    ledger = Companies.list_ledger(company_id)
-    render(conn, :ledger, ledger: ledger)
+      opts = Map.take(valid, [:after, :before, :limit]) |> Map.to_list()
+      page = Companies.list_ledger(company_id, opts)
+      render(conn, :ledger, page: page)
+    end
   end
 end

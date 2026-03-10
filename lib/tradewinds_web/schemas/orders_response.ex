@@ -6,8 +6,9 @@ defmodule TradewindsWeb.Schemas.OrdersResponse do
     description: "Response schema for a list of market orders.",
     type: :object,
     properties: %{
-      data: %OpenApiSpex.Schema{type: :array, items: TradewindsWeb.Schemas.Order}
+      data: %OpenApiSpex.Schema{type: :array, items: TradewindsWeb.Schemas.Order},
+      metadata: TradewindsWeb.Schemas.PageMetadata
     },
-    required: [:data]
+    required: [:data, :metadata]
   })
 end

@@ -6,8 +6,9 @@ defmodule TradewindsWeb.Schemas.ShipsResponse do
     description: "Response schema for a list of ships.",
     type: :object,
     properties: %{
-      data: %OpenApiSpex.Schema{type: :array, items: TradewindsWeb.Schemas.Ship}
+      data: %OpenApiSpex.Schema{type: :array, items: TradewindsWeb.Schemas.Ship},
+      metadata: TradewindsWeb.Schemas.PageMetadata
     },
-    required: [:data]
+    required: [:data, :metadata]
   })
 end

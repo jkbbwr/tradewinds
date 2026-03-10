@@ -1,6 +1,13 @@
 defmodule TradewindsWeb.ShipJSON do
-  def index(%{ships: ships}) do
-    %{data: for(ship <- ships, do: data(ship))}
+  def index(%{page: page}) do
+    %{
+      data: for(ship <- page.entries, do: data(ship)),
+      metadata: %{
+        after: page.metadata.after,
+        before: page.metadata.before,
+        limit: page.metadata.limit
+      }
+    }
   end
 
   def show(%{ship: ship}) do
