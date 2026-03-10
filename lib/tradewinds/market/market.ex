@@ -27,6 +27,7 @@ defmodule Tradewinds.Market do
            :ok <- check_posting_threshold(company),
            {:ok, order} <- create_order(company, port_id, good_id, side, price, total),
            {:ok, _} <- deduct_listing_fee(company, order.id) do
+        Tradewinds.Events.broadcast_order_created(company_id, order)
         {:ok, order}
       else
         {:error, reason} -> Repo.rollback(reason)
@@ -83,9 +84,14 @@ defmodule Tradewinds.Market do
            {:ok, :active} <- Companies.is_active?(company),
            :ok <- validate_order_ownership(order, company_id),
            :ok <- validate_order_status(order) do
-        order
-        |> Order.update_status_changeset(:cancelled)
-        |> Repo.update()
+        case order |> Order.update_status_changeset(:cancelled) |> Repo.update() do
+          {:ok, updated_order} ->
+            Tradewinds.Events.broadcast_order_cancelled(company_id, updated_order)
+            {:ok, updated_order}
+
+          error ->
+            error
+        end
       else
         {:error, reason} -> Repo.rollback(reason)
       end
@@ -208,6 +214,7 @@ defmodule Tradewinds.Market do
              seller_id: ctx.seller_id
            }),
          {:ok, updated_order} <- update_order_fulfillment(ctx.order, ctx.quantity) do
+      Tradewinds.Events.broadcast_order_filled(ctx.buyer_id, ctx.seller_id, ctx.order, ctx.quantity)
       {:ok, updated_order}
     end
   end
@@ -292,9 +299,19 @@ defmodule Tradewinds.Market do
   def sweep_expired_orders do
     now = DateTime.utc_now()
 
-    Order
-    |> where([o], o.status == :open and o.expires_at < ^now)
-    |> Repo.update_all(set: [status: :expired, updated_at: now])
+    query =
+      Order
+      |> where([o], o.status == :open and o.expires_at < ^now)
+      |> select([o], map(o, [:id, :company_id]))
+
+    {count, expired_orders} =
+      Repo.update_all(query, set: [status: :expired, updated_at: now])
+
+    Enum.each(expired_orders, fn order ->
+      Tradewinds.Events.broadcast_order_expired(order.company_id, order)
+    end)
+    
+    {:ok, %{expired_count: count}}
   end
 
   @doc """

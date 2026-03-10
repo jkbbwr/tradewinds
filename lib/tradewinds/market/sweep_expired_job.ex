@@ -5,7 +5,6 @@ defmodule Tradewinds.Market.SweepExpiredJob do
 
   @impl Oban.Worker
   def perform(_job) do
-    {count, _} = Market.sweep_expired_orders()
-    {:ok, %{expired_count: count}}
+    Market.sweep_expired_orders()
   end
 end

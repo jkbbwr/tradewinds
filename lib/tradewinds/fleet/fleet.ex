@@ -42,6 +42,7 @@ defmodule Tradewinds.Fleet do
                %{"ship_id" => ship_id}
                |> Tradewinds.Fleet.TransitJob.new(schedule_in: seconds)
                |> Oban.insert() do
+          Tradewinds.Events.broadcast_ship_transit_started(company_id, updated_ship)
           {:ok, updated_ship}
         end
       end)
@@ -85,9 +86,14 @@ defmodule Tradewinds.Fleet do
     with {:ok, ship} <- fetch_ship(ship_id, preload: [:route]),
          :ok <- check_ship_traveling(ship),
          :ok <- check_ship_arrived(ship) do
-      ship
-      |> Ship.dock_changeset(ship.route.to_id)
-      |> Repo.update()
+      case ship |> Ship.dock_changeset(ship.route.to_id) |> Repo.update() do
+        {:ok, updated_ship} ->
+          Tradewinds.Events.broadcast_ship_docked(updated_ship.company_id, updated_ship)
+          {:ok, updated_ship}
+
+        error ->
+          error
+      end
     end
   end
 

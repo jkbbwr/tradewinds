@@ -113,9 +113,10 @@ defmodule Tradewinds.Companies do
         })
 
       with {:ok, company} <- fetch_company_for_update(company_id),
-           {:ok, _ledger} <- Repo.insert(ledger),
+           {:ok, ledger} <- Repo.insert(ledger),
            :ok <- check_sufficient_funds(company, amount),
            {:ok, updated_company} <- update_company_treasury(company, amount) do
+        Tradewinds.Events.broadcast_ledger_entry(company_id, ledger)
         {:ok, updated_company}
       else
         {:error, reason} -> Repo.rollback(reason)
