@@ -1,5 +1,14 @@
 defmodule TradewindsWeb.EventController do
   use TradewindsWeb, :controller
+  use OpenApiSpex.ControllerSpecs
+
+  operation(:world_events,
+    summary: "Subscribe to world events",
+    description: "Server-Sent Events (SSE) endpoint streaming public world events (e.g. general economy shocks, news).",
+    responses: [
+      ok: {"SSE stream", "text/event-stream", %OpenApiSpex.Schema{type: :string}}
+    ]
+  )
 
   def world_events(conn, _params) do
     conn =
@@ -13,6 +22,25 @@ defmodule TradewindsWeb.EventController do
 
     loop(conn)
   end
+
+  operation(:company_events,
+    summary: "Subscribe to company events",
+    description: "Server-Sent Events (SSE) endpoint streaming private company events (e.g. ship arrivals, completed trades, ledger updates).",
+    security: [%{"bearerAuth" => []}],
+    parameters: [
+      %OpenApiSpex.Parameter{
+        name: "tradewinds-company-id",
+        in: :header,
+        required: true,
+        schema: %OpenApiSpex.Schema{type: :string, format: :uuid},
+        description: "Company ID"
+      }
+    ],
+    responses: [
+      ok: {"SSE stream", "text/event-stream", %OpenApiSpex.Schema{type: :string}},
+      unauthorized: {"Invalid or expired token", "application/json", TradewindsWeb.Schemas.ErrorResponse}
+    ]
+  )
 
   def company_events(conn, _params) do
     conn =
