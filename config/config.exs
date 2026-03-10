@@ -23,7 +23,8 @@ config :tradewinds, Oban,
     {Oban.Plugins.Cron,
      crontab: [
        # Runs every 5 minutes
-       {"*/5 * * * *", Tradewinds.Market.SweepExpiredJob}
+       {"*/5 * * * *", Tradewinds.Market.SweepExpiredJob},
+       {"*/5 * * * *", Tradewinds.Economy.ScanShocksJob}
      ]}
   ],
   repo: Tradewinds.Repo

@@ -115,4 +115,37 @@ defmodule Tradewinds.Events do
       {:message, %{type: "order_expired", data: %{id: order.id}}}
     )
   end
+
+  def broadcast_shock_started(shock) do
+    PubSub.broadcast(
+      @pubsub,
+      "events:world:all",
+      {:message, %{
+        type: "shock_started",
+        data: %{
+          id: shock.id,
+          name: shock.name,
+          description: shock.description,
+          port_id: shock.port_id,
+          good_id: shock.good_id
+        }
+      }}
+    )
+  end
+
+  def broadcast_shock_ended(shock) do
+    PubSub.broadcast(
+      @pubsub,
+      "events:world:all",
+      {:message, %{
+        type: "shock_ended",
+        data: %{
+          id: shock.id,
+          name: shock.name,
+          port_id: shock.port_id,
+          good_id: shock.good_id
+        }
+      }}
+    )
+  end
 end

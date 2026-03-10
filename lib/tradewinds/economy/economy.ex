@@ -75,6 +75,38 @@ defmodule Tradewinds.Economy do
   end
 
   @doc """
+  Scans for pending shocks that have started, and active shocks that have expired.
+  Transitions their status and broadcasts the changes.
+  """
+  def scan_shocks do
+    now = DateTime.utc_now()
+
+    # Find pending -> active
+    starting_query =
+      from s in Shock,
+        where: s.status == :pending and s.start_time <= ^now,
+        select: s
+
+    {started_count, starting_shocks} =
+      Repo.update_all(starting_query, set: [status: :active, updated_at: now])
+
+    Enum.each(starting_shocks, &Tradewinds.Events.broadcast_shock_started/1)
+
+    # Find active -> expired
+    ending_query =
+      from s in Shock,
+        where: s.status == :active and not is_nil(s.end_time) and s.end_time <= ^now,
+        select: s
+
+    {ended_count, ending_shocks} =
+      Repo.update_all(ending_query, set: [status: :expired, updated_at: now])
+
+    Enum.each(ending_shocks, &Tradewinds.Events.broadcast_shock_ended/1)
+
+    {:ok, %{started_count: started_count, ended_count: ended_count}}
+  end
+
+  @doc """
   Calculates the net player flow from the NPC trader for a specific port, good, and time range.
   Positive value means players bought from the NPC.
   Negative value means players sold to the NPC.

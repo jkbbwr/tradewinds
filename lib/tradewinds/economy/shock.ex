@@ -4,7 +4,7 @@ defmodule Tradewinds.Economy.Shock do
   schema "economy_shocks" do
     field :name, :string
     field :description, :string
-    field :status, Ecto.Enum, values: [:active, :paused, :expired], default: :active
+    field :status, Ecto.Enum, values: [:pending, :active, :paused, :expired], default: :pending
 
     field :start_time, :utc_datetime_usec
     field :end_time, :utc_datetime_usec
