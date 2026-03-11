@@ -1,7 +1,7 @@
 defmodule Tradewinds.Companies.UpkeepJob do
   use Oban.Worker,
     queue: :company,
-    unique: [period: 600, states: [:available, :scheduled, :executing]]
+    unique: [period: 600, states: [:available, :scheduled]]
 
   # 1 game month = 30 days = 720 ticks. 1 tick = 24 seconds. 720 * 24 = 17280 seconds.
   @game_month_seconds 17280

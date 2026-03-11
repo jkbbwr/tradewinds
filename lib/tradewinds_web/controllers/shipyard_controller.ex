@@ -4,6 +4,7 @@ defmodule TradewindsWeb.ShipyardController do
   use OpenApiSpex.ControllerSpecs
 
   alias Tradewinds.Shipyards
+
   alias TradewindsWeb.Schemas.{
     ShipyardResponse,
     InventoryResponse,
@@ -18,6 +19,8 @@ defmodule TradewindsWeb.ShipyardController do
   # -- Shipyard for Port --
 
   operation(:shipyard_for_port,
+    operation_id: "shipyardForPort",
+    tags: ["Shipyards"],
     summary: "Get shipyard for port",
     description: "Returns the shipyard located at a specific port.",
     parameters: [
@@ -38,6 +41,8 @@ defmodule TradewindsWeb.ShipyardController do
   # -- Shipyard Inventory --
 
   operation(:inventory,
+    operation_id: "inventory",
+    tags: ["Shipyards"],
     summary: "Get shipyard inventory",
     description: "Returns all unowned ships available for purchase at a shipyard.",
     parameters: [
@@ -62,6 +67,8 @@ defmodule TradewindsWeb.ShipyardController do
   end
 
   operation(:purchase,
+    operation_id: "purchase",
+    tags: ["Shipyards"],
     summary: "Purchase a ship",
     description: "Purchases a ship from the shipyard inventory for the current company.",
     security: [%{"bearerAuth" => []}],

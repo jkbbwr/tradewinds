@@ -4,7 +4,15 @@ defmodule TradewindsWeb.AuthController do
   use OpenApiSpex.ControllerSpecs
 
   alias Tradewinds.Accounts
-  alias TradewindsWeb.Schemas.{LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, ChangesetResponse, ErrorResponse}
+
+  alias TradewindsWeb.Schemas.{
+    LoginRequest,
+    LoginResponse,
+    RegisterRequest,
+    RegisterResponse,
+    ChangesetResponse,
+    ErrorResponse
+  }
 
   action_fallback(TradewindsWeb.FallbackController)
 
@@ -16,13 +24,14 @@ defmodule TradewindsWeb.AuthController do
   end
 
   operation(:register,
+    operation_id: "register",
+    tags: ["Accounts"],
     summary: "Register a new player",
     description: "Creates a new player account with the provided details.",
     request_body: {"Registration details", "application/json", RegisterRequest},
     responses: [
       created: {"Player created", "application/json", RegisterResponse},
-      unprocessable_entity:
-        {"Validation error", "application/json", ChangesetResponse}
+      unprocessable_entity: {"Validation error", "application/json", ChangesetResponse}
     ]
   )
 
@@ -42,15 +51,18 @@ defmodule TradewindsWeb.AuthController do
   end
 
   operation(:login,
+    operation_id: "login",
+    tags: ["Accounts"],
     summary: "Login player",
     description: "Authenticates a player and returns a JWT token for subsequent API calls.",
     request_body: {"Login credentials", "application/json", LoginRequest},
     responses: [
       ok: {"Successful login", "application/json", LoginResponse},
       unauthorized:
-        {"Invalid credentials or disabled account", "application/json", ErrorResponse},
-      unprocessable_entity:
-        {"Validation error", "application/json", ChangesetResponse}
+        {"Invalid credentials", "application/json", ErrorResponse},
+      forbidden:
+        {"Disabled account", "application/json", ErrorResponse},
+      unprocessable_entity: {"Validation error", "application/json", ChangesetResponse}
     ]
   )
 
@@ -64,13 +76,14 @@ defmodule TradewindsWeb.AuthController do
   end
 
   operation(:revoke,
+    operation_id: "revoke",
+    tags: ["Accounts"],
     summary: "Revoke token",
     description: "Revokes the currently active JWT token, logging the player out.",
     security: [%{"bearerAuth" => []}],
     responses: [
       no_content: "Token successfully revoked",
-      unauthorized:
-        {"Invalid or expired token", "application/json", ErrorResponse}
+      unauthorized: {"Invalid or expired token", "application/json", ErrorResponse}
     ]
   )
 
@@ -81,13 +94,14 @@ defmodule TradewindsWeb.AuthController do
   end
 
   operation(:me,
+    operation_id: "me",
+    tags: ["Accounts"],
     summary: "Get current player profile",
     description: "Returns the profile of the currently authenticated player.",
     security: [%{"bearerAuth" => []}],
     responses: [
       ok: {"Current player", "application/json", RegisterResponse},
-      unauthorized:
-        {"Invalid or expired token", "application/json", ErrorResponse}
+      unauthorized: {"Invalid or expired token", "application/json", ErrorResponse}
     ]
   )
 

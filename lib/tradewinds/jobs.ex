@@ -23,20 +23,6 @@ defmodule Tradewinds.Jobs do
   end
 
   @doc """
-  Checks if the system has already been kickstarted by looking for enqueued jobs.
-  """
-  def kickstarted? do
-    query =
-      from j in "oban_jobs",
-        where:
-          j.worker in ["Tradewinds.Trade.TraderSimulationJob", "Tradewinds.Companies.UpkeepJob"],
-        limit: 1,
-        select: j.id
-
-    Repo.one(query) != nil
-  end
-
-  @doc """
   Returns a map of background job counts by worker type.
   """
   def get_job_counts do

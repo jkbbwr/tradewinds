@@ -1,7 +1,7 @@
 defmodule Tradewinds.Trade.TraderSimulationJob do
   use Oban.Worker,
     queue: :traders,
-    unique: [period: 60, states: [:available, :scheduled, :executing]]
+    unique: [period: 60, states: [:available, :scheduled]]
 
   alias Tradewinds.Trade
   alias Tradewinds.Repo

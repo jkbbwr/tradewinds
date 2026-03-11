@@ -4,6 +4,7 @@ defmodule TradewindsWeb.TradeController do
   use Goal
 
   alias Tradewinds.Trade
+
   alias TradewindsWeb.Schemas.{
     QuoteRequest,
     QuoteResponse,
@@ -26,6 +27,8 @@ defmodule TradewindsWeb.TradeController do
   end
 
   operation(:trader_positions,
+    operation_id: "traderPositions",
+    tags: ["Trade"],
     summary: "List trader positions",
     description: "Returns a list of goods a trader is buying or selling at a port.",
     parameters: [
@@ -56,6 +59,8 @@ defmodule TradewindsWeb.TradeController do
   end
 
   operation(:quote,
+    operation_id: "quote",
+    tags: ["Trade"],
     summary: "Get a trade quote",
     description: "Generates a signed quote for a trade.",
     security: [%{"bearerAuth" => []}],
@@ -101,6 +106,8 @@ defmodule TradewindsWeb.TradeController do
   # -- Execute Quote --
 
   operation(:execute_quote,
+    operation_id: "executeQuote",
+    tags: ["Trade"],
     summary: "Execute a signed quote",
     description: "Executes a trade based on a previously generated quote token.",
     security: [%{"bearerAuth" => []}],
@@ -159,6 +166,8 @@ defmodule TradewindsWeb.TradeController do
   end
 
   operation(:execute,
+    operation_id: "execute",
+    tags: ["Trade"],
     summary: "Execute an immediate trade",
     description: "Executes a trade directly without a quote.",
     security: [%{"bearerAuth" => []}],

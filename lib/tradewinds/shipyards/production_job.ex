@@ -1,7 +1,7 @@
 defmodule Tradewinds.Shipyards.ProductionJob do
   use Oban.Worker,
-    queue: :default,
-    unique: [period: 600, states: [:available, :scheduled, :executing]]
+    queue: :shipyard,
+    unique: [period: 600, states: [:available, :scheduled]]
 
   alias Tradewinds.Shipyards
   alias Tradewinds.Repo

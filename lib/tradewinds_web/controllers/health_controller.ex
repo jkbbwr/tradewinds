@@ -4,6 +4,8 @@ defmodule TradewindsWeb.HealthController do
   alias TradewindsWeb.Schemas.HealthResponse
 
   operation :show,
+    operation_id: "show",
+    tags: ["Health"],
     summary: "Health Check",
     description:
       "Returns the health status of the application, including database connectivity and Oban job lag.",

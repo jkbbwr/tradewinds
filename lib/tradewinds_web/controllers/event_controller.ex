@@ -3,8 +3,11 @@ defmodule TradewindsWeb.EventController do
   use OpenApiSpex.ControllerSpecs
 
   operation(:world_events,
+    operation_id: "worldEvents",
+    tags: ["Events"],
     summary: "Subscribe to world events",
-    description: "Server-Sent Events (SSE) endpoint streaming public world events (e.g. general economy shocks, news).",
+    description:
+      "Server-Sent Events (SSE) endpoint streaming public world events (e.g. general economy shocks, news).",
     responses: [
       ok: {"SSE stream", "text/event-stream", %OpenApiSpex.Schema{type: :string}}
     ]
@@ -24,8 +27,11 @@ defmodule TradewindsWeb.EventController do
   end
 
   operation(:company_events,
+    operation_id: "companyEvents",
+    tags: ["Events"],
     summary: "Subscribe to company events",
-    description: "Server-Sent Events (SSE) endpoint streaming private company events (e.g. ship arrivals, completed trades, ledger updates).",
+    description:
+      "Server-Sent Events (SSE) endpoint streaming private company events (e.g. ship arrivals, completed trades, ledger updates).",
     security: [%{"bearerAuth" => []}],
     parameters: [
       %OpenApiSpex.Parameter{
@@ -38,7 +44,8 @@ defmodule TradewindsWeb.EventController do
     ],
     responses: [
       ok: {"SSE stream", "text/event-stream", %OpenApiSpex.Schema{type: :string}},
-      unauthorized: {"Invalid or expired token", "application/json", TradewindsWeb.Schemas.ErrorResponse}
+      unauthorized:
+        {"Invalid or expired token", "application/json", TradewindsWeb.Schemas.ErrorResponse}
     ]
   )
 

@@ -4,6 +4,7 @@ defmodule TradewindsWeb.WorldController do
   use OpenApiSpex.ControllerSpecs
 
   alias Tradewinds.World
+
   alias TradewindsWeb.Schemas.{
     PortsResponse,
     PortResponse,
@@ -29,6 +30,8 @@ defmodule TradewindsWeb.WorldController do
   end
 
   operation(:ports,
+    operation_id: "ports",
+    tags: ["World"],
     summary: "List ports",
     description: "Returns a list of all ports in the world.",
     parameters: [
@@ -51,6 +54,8 @@ defmodule TradewindsWeb.WorldController do
   end
 
   operation(:port,
+    operation_id: "port",
+    tags: ["World"],
     summary: "Get port details",
     description: "Returns the details of a specific port.",
     parameters: [
@@ -75,6 +80,8 @@ defmodule TradewindsWeb.WorldController do
   end
 
   operation(:goods,
+    operation_id: "goods",
+    tags: ["World"],
     summary: "List goods",
     description: "Returns a list of all tradeable goods.",
     parameters: [
@@ -93,6 +100,8 @@ defmodule TradewindsWeb.WorldController do
   end
 
   operation(:good,
+    operation_id: "good",
+    tags: ["World"],
     summary: "Get good details",
     description: "Returns the details of a specific good.",
     parameters: [
@@ -113,6 +122,8 @@ defmodule TradewindsWeb.WorldController do
   # -- Ship Types --
 
   operation(:ship_types,
+    operation_id: "shipTypes",
+    tags: ["World"],
     summary: "List ship types",
     description: "Returns a list of all available ship types.",
     responses: [
@@ -126,6 +137,8 @@ defmodule TradewindsWeb.WorldController do
   end
 
   operation(:ship_type,
+    operation_id: "shipType",
+    tags: ["World"],
     summary: "Get ship type details",
     description: "Returns the details of a specific ship type.",
     parameters: [
@@ -154,6 +167,8 @@ defmodule TradewindsWeb.WorldController do
   end
 
   operation(:routes,
+    operation_id: "routes",
+    tags: ["World"],
     summary: "List routes",
     description: "Returns a list of all routes in the world.",
     parameters: [
@@ -176,6 +191,8 @@ defmodule TradewindsWeb.WorldController do
   end
 
   operation(:route,
+    operation_id: "route",
+    tags: ["World"],
     summary: "Get route details",
     description: "Returns the details of a specific route by ID.",
     parameters: [

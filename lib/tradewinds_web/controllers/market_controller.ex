@@ -4,6 +4,7 @@ defmodule TradewindsWeb.MarketController do
   use OpenApiSpex.ControllerSpecs
 
   alias Tradewinds.Market
+
   alias TradewindsWeb.Schemas.{
     OrdersResponse,
     OrderResponse,
@@ -28,6 +29,8 @@ defmodule TradewindsWeb.MarketController do
   end
 
   operation(:orders,
+    operation_id: "orders",
+    tags: ["Market"],
     summary: "List open market orders",
     description: "Returns a list of open orders for a specific port, good, and side.",
     parameters: [
@@ -62,6 +65,8 @@ defmodule TradewindsWeb.MarketController do
   end
 
   operation(:blended_price,
+    operation_id: "blendedPrice",
+    tags: ["Market"],
     summary: "Calculate blended price",
     description: "Calculates the blended price for filling a specific quantity of an order.",
     parameters: [
@@ -80,6 +85,7 @@ defmodule TradewindsWeb.MarketController do
   def blended_price(conn, params) do
     with {:ok, valid} <- validate(:blended_price, params) do
       side_atom = String.to_existing_atom(valid.side)
+
       case Market.calculate_blended_price(valid.port_id, valid.good_id, side_atom, valid.quantity) do
         {:ok, price} ->
           render(conn, :blended_price, blended_price: price)
@@ -103,6 +109,8 @@ defmodule TradewindsWeb.MarketController do
   end
 
   operation(:create_order,
+    operation_id: "createOrder",
+    tags: ["Market"],
     summary: "Create a market order",
     description: "Posts a new order to the market.",
     security: [%{"bearerAuth" => []}],
@@ -149,6 +157,8 @@ defmodule TradewindsWeb.MarketController do
   end
 
   operation(:fill_order,
+    operation_id: "fillOrder",
+    tags: ["Market"],
     summary: "Fill an order",
     description: "Fills a specified quantity of an open order.",
     security: [%{"bearerAuth" => []}],
@@ -182,7 +192,7 @@ defmodule TradewindsWeb.MarketController do
           conn
           |> put_status(:bad_request)
           |> json(%{error: "trade_voided", message: "Trade was voided due to #{reason}."})
-          
+
         {:error, reason} ->
           conn
           |> put_status(:bad_request)
@@ -194,6 +204,8 @@ defmodule TradewindsWeb.MarketController do
   # -- Delete Order --
 
   operation(:delete_order,
+    operation_id: "deleteOrder",
+    tags: ["Market"],
     summary: "Cancel an order",
     description: "Cancels an open order.",
     security: [%{"bearerAuth" => []}],

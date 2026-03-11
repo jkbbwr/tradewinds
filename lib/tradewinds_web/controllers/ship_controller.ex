@@ -4,6 +4,7 @@ defmodule TradewindsWeb.ShipController do
   use OpenApiSpex.ControllerSpecs
 
   alias Tradewinds.Fleet
+
   alias TradewindsWeb.Schemas.{
     ShipsResponse,
     ShipResponse,
@@ -25,6 +26,8 @@ defmodule TradewindsWeb.ShipController do
   end
 
   operation(:ships,
+    operation_id: "ships",
+    tags: ["Fleet"],
     summary: "List company ships",
     description: "Returns a list of ships owned by the current company.",
     security: [%{"bearerAuth" => []}],
@@ -56,6 +59,8 @@ defmodule TradewindsWeb.ShipController do
   # -- Ship --
 
   operation(:ship,
+    operation_id: "ship",
+    tags: ["Fleet"],
     summary: "Get ship details",
     description: "Returns the details of a specific ship owned by the current company.",
     security: [%{"bearerAuth" => []}],
@@ -89,6 +94,8 @@ defmodule TradewindsWeb.ShipController do
   end
 
   operation(:rename_ship,
+    operation_id: "renameShip",
+    tags: ["Fleet"],
     summary: "Rename a ship",
     description: "Changes the name of a ship owned by the current company.",
     security: [%{"bearerAuth" => []}],
@@ -125,6 +132,8 @@ defmodule TradewindsWeb.ShipController do
   end
 
   operation(:transit,
+    operation_id: "transit",
+    tags: ["Fleet"],
     summary: "Transit a ship",
     description: "Puts a ship in transit along a specific route.",
     security: [%{"bearerAuth" => []}],
@@ -163,6 +172,8 @@ defmodule TradewindsWeb.ShipController do
   end
 
   operation(:transfer_to_warehouse,
+    operation_id: "transferToWarehouse",
+    tags: ["Fleet"],
     summary: "Transfer cargo to warehouse",
     description: "Transfers cargo from a docked ship to a warehouse.",
     security: [%{"bearerAuth" => []}],

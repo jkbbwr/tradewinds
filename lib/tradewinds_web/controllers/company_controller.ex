@@ -4,6 +4,7 @@ defmodule TradewindsWeb.CompanyController do
   use OpenApiSpex.ControllerSpecs
 
   alias Tradewinds.Companies
+
   alias TradewindsWeb.Schemas.{
     CompaniesResponse,
     CompanyResponse,
@@ -17,6 +18,8 @@ defmodule TradewindsWeb.CompanyController do
   action_fallback TradewindsWeb.FallbackController
 
   operation(:companies,
+    operation_id: "companies",
+    tags: ["Companies"],
     summary: "List player's companies",
     description: "Returns a list of companies where the current player is a director.",
     security: [%{"bearerAuth" => []}],
@@ -38,6 +41,8 @@ defmodule TradewindsWeb.CompanyController do
   end
 
   operation(:create_company,
+    operation_id: "createCompany",
+    tags: ["Companies"],
     summary: "Create a new company",
     description: "Creates a new company and assigns the player as its first director.",
     security: [%{"bearerAuth" => []}],
@@ -60,6 +65,8 @@ defmodule TradewindsWeb.CompanyController do
   end
 
   operation(:company,
+    operation_id: "company",
+    tags: ["Companies"],
     summary: "Get current company",
     description:
       "Returns the details of the company specified in the 'tradewinds-company-id' header.",
@@ -87,6 +94,8 @@ defmodule TradewindsWeb.CompanyController do
   end
 
   operation(:economy,
+    operation_id: "economy",
+    tags: ["Companies"],
     summary: "Get company economy summary",
     description: "Returns financial summary and upkeep information for the current company.",
     security: [%{"bearerAuth" => []}],
@@ -130,8 +139,11 @@ defmodule TradewindsWeb.CompanyController do
   end
 
   operation(:ledger,
+    operation_id: "ledger",
+    tags: ["Companies"],
     summary: "Get company ledger",
-    description: "Returns the financial ledger entries for the current company, ordered by most recent first.",
+    description:
+      "Returns the financial ledger entries for the current company, ordered by most recent first.",
     security: [%{"bearerAuth" => []}],
     parameters: [
       %OpenApiSpex.Parameter{

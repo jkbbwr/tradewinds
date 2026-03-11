@@ -7,6 +7,10 @@ defmodule TradewindsWeb.ErrorJSON do
     %{errors: %{detail: "Unauthorized"}}
   end
 
+  def render("account_disabled.json", %{}) do
+    %{errors: %{detail: "Account is disabled"}}
+  end
+
   def render("500.json", %{}) do
     %{errors: %{detail: "Internal Server Error"}}
   end

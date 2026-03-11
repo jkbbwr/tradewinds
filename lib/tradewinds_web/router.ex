@@ -1,6 +1,8 @@
 defmodule TradewindsWeb.Router do
   use TradewindsWeb, :router
 
+  import Phoenix.LiveDashboard.Router
+
   pipeline :api do
     plug :accepts, ["json"]
     plug TradewindsWeb.Plugs.IPBan
@@ -36,7 +38,11 @@ defmodule TradewindsWeb.Router do
   scope "/admin", TradewindsWeb do
     pipe_through [:browser, :admin_auth]
 
-    live "/setup", AdminSetupLive, :index
+    live_dashboard "/dashboard",
+      metrics: TradewindsWeb.Telemetry,
+      additional_pages: [
+        oban: Oban.LiveDashboard
+      ]
   end
 
   scope "/api" do

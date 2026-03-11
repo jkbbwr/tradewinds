@@ -1,5 +1,5 @@
 defmodule Tradewinds.Fleet.TransitJob do
-  use Oban.Worker, queue: :default, max_attempts: 3
+  use Oban.Worker, queue: :transit, max_attempts: 3, unique: true
 
   alias Tradewinds.Fleet
 

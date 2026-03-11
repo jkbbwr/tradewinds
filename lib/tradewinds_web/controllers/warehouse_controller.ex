@@ -4,6 +4,7 @@ defmodule TradewindsWeb.WarehouseController do
   use OpenApiSpex.ControllerSpecs
 
   alias Tradewinds.Logistics
+
   alias TradewindsWeb.Schemas.{
     WarehousesResponse,
     WarehouseResponse,
@@ -22,6 +23,8 @@ defmodule TradewindsWeb.WarehouseController do
   end
 
   operation(:create,
+    operation_id: "create",
+    tags: ["Logistics"],
     summary: "Purchase a new warehouse",
     description: "Purchases a level 1 warehouse at a specific port.",
     security: [%{"bearerAuth" => []}],
@@ -61,6 +64,8 @@ defmodule TradewindsWeb.WarehouseController do
   end
 
   operation(:warehouses,
+    operation_id: "warehouses",
+    tags: ["Logistics"],
     summary: "List company warehouses",
     description: "Returns a list of warehouses owned by the current company.",
     security: [%{"bearerAuth" => []}],
@@ -92,6 +97,8 @@ defmodule TradewindsWeb.WarehouseController do
   # -- Warehouse --
 
   operation(:warehouse,
+    operation_id: "warehouse",
+    tags: ["Logistics"],
     summary: "Get warehouse details",
     description: "Returns the details of a specific warehouse owned by the current company.",
     security: [%{"bearerAuth" => []}],
@@ -121,6 +128,8 @@ defmodule TradewindsWeb.WarehouseController do
   # -- Grow --
 
   operation(:grow,
+    operation_id: "grow",
+    tags: ["Logistics"],
     summary: "Upgrade a warehouse",
     description: "Upgrades a warehouse to the next tier, increasing its capacity.",
     security: [%{"bearerAuth" => []}],
@@ -152,6 +161,8 @@ defmodule TradewindsWeb.WarehouseController do
   # -- Shrink --
 
   operation(:shrink,
+    operation_id: "shrink",
+    tags: ["Logistics"],
     summary: "Downgrade a warehouse",
     description: "Downgrades a warehouse to the previous tier, decreasing its capacity.",
     security: [%{"bearerAuth" => []}],
@@ -188,6 +199,8 @@ defmodule TradewindsWeb.WarehouseController do
   end
 
   operation(:transfer_to_ship,
+    operation_id: "transferToShip",
+    tags: ["Logistics"],
     summary: "Transfer cargo to ship",
     description: "Transfers cargo from a warehouse to a docked ship.",
     security: [%{"bearerAuth" => []}],

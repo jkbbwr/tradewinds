@@ -67,7 +67,7 @@ defmodule TradewindsWeb.AuthControllerTest do
       assert json_response(conn, 401)
     end
 
-    test "returns 401 if account is not enabled", %{conn: conn, player: player} do
+    test "returns 403 if account is not enabled", %{conn: conn, player: player} do
       Accounts.disable(player)
 
       conn = post(conn, ~p"/api/v1/auth/login", %{
@@ -75,7 +75,7 @@ defmodule TradewindsWeb.AuthControllerTest do
         "password" => "password123"
       })
 
-      assert json_response(conn, 401)
+      assert json_response(conn, 403) == %{"errors" => %{"detail" => "Account is disabled"}}
     end
   end
 

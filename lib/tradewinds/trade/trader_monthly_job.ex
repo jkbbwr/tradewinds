@@ -1,7 +1,7 @@
 defmodule Tradewinds.Trade.TraderMonthlyJob do
   use Oban.Worker,
     queue: :traders,
-    unique: [period: 600, states: [:available, :scheduled, :executing]]
+    unique: [period: 600, states: [:available, :scheduled]]
 
   alias Tradewinds.Trade
 
