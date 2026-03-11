@@ -1,12 +1,11 @@
 defmodule Tradewinds.Discord.Consumer do
   @behaviour Nostrum.Consumer
 
-  alias Nostrum.Api.Message
-
   def handle_event({:READY, _data, _ws_state}) do
     commands = [
       {"toggle", Tradewinds.Discord.Commands.Toggle},
-      {"health", Tradewinds.Discord.Commands.Health}
+      {"health", Tradewinds.Discord.Commands.Health},
+      {"bailout", Tradewinds.Discord.Commands.Bailout}
     ]
 
     for {name, command} <- commands do
