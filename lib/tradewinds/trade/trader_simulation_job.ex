@@ -21,7 +21,7 @@ defmodule Tradewinds.Trade.TraderSimulationJob do
         {:ok, results} ->
           summary =
             Enum.map_join(results, ", ", fn r ->
-              "Good #{r.good_id}: #{r.old_stock}->#{r.new_stock} (flow: #{r.flow})"
+              "#{r.good_name}: #{r.old_stock}->#{r.new_stock} (flow: #{r.flow})"
             end)
 
           Logger.info("Successfully simulated trader_id: #{trader_id}. #{summary}")

@@ -404,6 +404,7 @@ defmodule Tradewinds.Trade do
     positions =
       Tradewinds.Trade.TraderPosition
       |> where([p], p.trader_id == ^trader_id)
+      |> preload(:good)
       |> Repo.all()
 
     # Look back 1 game day (576 seconds) for trade volume
@@ -461,6 +462,7 @@ defmodule Tradewinds.Trade do
 
           %{
             good_id: position.good_id,
+            good_name: position.good.name,
             old_stock: position.stock,
             new_stock: new_stock,
             flow: flow
