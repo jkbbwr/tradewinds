@@ -218,7 +218,7 @@ defmodule Tradewinds.TradeTest do
       p1 = insert(:trader_position, trader: trader, stock: 100, target_stock: 100)
       p2 = insert(:trader_position, trader: trader, stock: 50, target_stock: 100)
 
-      assert {:ok, :simulated} = Trade.simulate_trader(trader.id)
+      assert {:ok, _results} = Trade.simulate_trader(trader.id)
 
       assert Repo.get(Tradewinds.Trade.TraderPosition, p1.id).stock < 100
       assert Repo.get(Tradewinds.Trade.TraderPosition, p2.id).stock > 50

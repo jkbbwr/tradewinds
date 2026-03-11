@@ -125,7 +125,7 @@ defmodule Tradewinds.CompaniesTest do
       insert(:warehouse, company: company, level: 1, capacity: 1000)
 
       now = ~U[2026-03-06 12:00:00Z]
-      assert {:ok, :paid} = Companies.process_monthly_upkeep(company.id, now)
+      assert {:ok, 3000} = Companies.process_monthly_upkeep(company.id, now)
 
       updated_co = Repo.get!(Company, company.id)
       assert updated_co.treasury == 5000 - 2000 - 1000
