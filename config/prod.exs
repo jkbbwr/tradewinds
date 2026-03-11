@@ -24,7 +24,8 @@ config :logger, level: :info
 
 config :nostrum,
   streamlink: false,
-  youtubedl: false
+  youtubedl: false,
+  ffmpeg: false
 
 # Runtime production configuration, including reading
 # of environment variables, is done on config/runtime.exs.

@@ -176,19 +176,23 @@ defmodule Tradewinds.Companies do
   If funds are insufficient at any point, the transaction rolls back and the company is marked as bankrupt.
   """
   def process_monthly_upkeep(company_id, now \\ DateTime.utc_now()) do
+    fleet_cost = Tradewinds.Fleet.calculate_total_upkeep(company_id)
+    logistics_cost = Tradewinds.Logistics.calculate_total_upkeep(company_id)
+    total_cost = fleet_cost + logistics_cost
+
     result =
       Repo.transact(fn ->
         with {:ok, _} <- Tradewinds.Fleet.process_upkeep(company_id, now),
              {:ok, _} <- Tradewinds.Logistics.process_upkeep(company_id, now) do
-          {:ok, :paid}
+          {:ok, total_cost}
         else
           {:error, reason} -> Repo.rollback(reason)
         end
       end)
 
     case result do
-      {:ok, :paid} ->
-        {:ok, :paid}
+      {:ok, cost} ->
+        {:ok, cost}
 
       {:error, :insufficient_funds} ->
         set_bankrupt(company_id)

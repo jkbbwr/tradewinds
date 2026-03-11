@@ -410,56 +410,64 @@ defmodule Tradewinds.Trade do
     start_time = DateTime.add(now, -576, :second)
 
     Repo.transact(fn ->
-      Enum.each(positions, fn position ->
-        modifiers =
-          Tradewinds.Economy.get_active_modifiers(position.port_id, position.good_id, now)
+      results =
+        Enum.map(positions, fn position ->
+          modifiers =
+            Tradewinds.Economy.get_active_modifiers(position.port_id, position.good_id, now)
 
-        # 1. Aggregate net player flow for this specific position over the last day
-        flow =
-          Tradewinds.Economy.net_player_flow_from_npc(
-            position.port_id,
-            position.good_id,
-            start_time,
-            now
-          )
+          # 1. Aggregate net player flow for this specific position over the last day
+          flow =
+            Tradewinds.Economy.net_player_flow_from_npc(
+              position.port_id,
+              position.good_id,
+              start_time,
+              now
+            )
 
-        # 2. Adjust target stock based on flow
-        # If flow > 0 (players buying), demand is high, so increase target stock.
-        # If flow < 0 (players selling), demand is low, so decrease target stock.
-        target_adjustment = floor(flow * 0.1)
-        max_adjustment = ceil(position.target_stock * 0.1)
-        clamped_adjustment = clamp(target_adjustment, -max_adjustment, max_adjustment)
-        new_target_stock = max(10, position.target_stock + clamped_adjustment)
+          # 2. Adjust target stock based on flow
+          # If flow > 0 (players buying), demand is high, so increase target stock.
+          # If flow < 0 (players selling), demand is low, so decrease target stock.
+          target_adjustment = floor(flow * 0.1)
+          max_adjustment = ceil(position.target_stock * 0.1)
+          clamped_adjustment = clamp(target_adjustment, -max_adjustment, max_adjustment)
+          new_target_stock = max(10, position.target_stock + clamped_adjustment)
 
-        # 3. Adjust spread based on flow intensity
-        # High flow magnitude means high volatility/demand; increase spread to capitalize.
-        # Low/zero flow decays the spread back down to encourage trading.
-        new_spread =
-          if abs(flow) > 100 do
-            min(0.20, position.spread + 0.005)
-          else
-            max(0.05, position.spread - 0.001)
-          end
+          # 3. Adjust spread based on flow intensity
+          # High flow magnitude means high volatility/demand; increase spread to capitalize.
+          # Low/zero flow decays the spread back down to encourage trading.
+          new_spread =
+            if abs(flow) > 100 do
+              min(0.20, position.spread + 0.005)
+            else
+              max(0.05, position.spread - 0.001)
+            end
 
-        new_stock =
-          simulate_daily_tick(
-            position.stock,
-            new_target_stock,
-            position.supply_rate,
-            position.demand_rate,
-            modifiers
-          )
+          new_stock =
+            simulate_daily_tick(
+              position.stock,
+              new_target_stock,
+              position.supply_rate,
+              position.demand_rate,
+              modifiers
+            )
 
-        position
-        |> Tradewinds.Trade.TraderPosition.update_simulation_changeset(%{
-          stock: new_stock,
-          target_stock: new_target_stock,
-          spread: new_spread
-        })
-        |> Repo.update!()
-      end)
+          position
+          |> Tradewinds.Trade.TraderPosition.update_simulation_changeset(%{
+            stock: new_stock,
+            target_stock: new_target_stock,
+            spread: new_spread
+          })
+          |> Repo.update!()
 
-      {:ok, :simulated}
+          %{
+            good_id: position.good_id,
+            old_stock: position.stock,
+            new_stock: new_stock,
+            flow: flow
+          }
+        end)
+
+      {:ok, results}
     end)
   end
 

@@ -3,8 +3,19 @@ defmodule Tradewinds.Economy.ScanShocksJob do
 
   alias Tradewinds.Economy
 
+  require Logger
+
   @impl Oban.Worker
   def perform(_job) do
-    Economy.scan_shocks()
+    Logger.info("Scanning economy shocks")
+    case Economy.scan_shocks() do
+      {:ok, stats} ->
+        Logger.info("Economy shocks scan complete. Started: #{stats.started_count}, Ended: #{stats.ended_count}")
+        {:ok, stats}
+
+      error ->
+        Logger.error("Failed to scan economy shocks: #{inspect(error)}")
+        error
+    end
   end
 end
