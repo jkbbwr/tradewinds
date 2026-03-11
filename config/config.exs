@@ -20,6 +20,7 @@ config :tradewinds, Oban,
   notifier: Oban.Notifiers.PG,
   queues: [transit: 20, shipyard: 5, company: 15, default: 10, traders: 10, sweeps: 5],
   plugins: [
+    {Oban.Plugins.Pruner, max_age: 600},
     {Oban.Plugins.Cron,
      crontab: [
        # Runs every 5 minutes
