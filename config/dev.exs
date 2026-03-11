@@ -50,7 +50,9 @@ config :tradewinds, TradewindsWeb.Endpoint,
 # different ports.
 
 # Enable dev routes for dashboard and mailbox
-config :tradewinds, dev_routes: true
+config :tradewinds,
+  dev_routes: true,
+  discord: true
 
 # Do not include metadata nor timestamps in development logs
 config :logger, :default_formatter, format: "[$level] $message\n"

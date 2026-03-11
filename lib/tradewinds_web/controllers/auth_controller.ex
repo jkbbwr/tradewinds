@@ -58,10 +58,8 @@ defmodule TradewindsWeb.AuthController do
     request_body: {"Login credentials", "application/json", LoginRequest},
     responses: [
       ok: {"Successful login", "application/json", LoginResponse},
-      unauthorized:
-        {"Invalid credentials", "application/json", ErrorResponse},
-      forbidden:
-        {"Disabled account", "application/json", ErrorResponse},
+      unauthorized: {"Invalid credentials", "application/json", ErrorResponse},
+      forbidden: {"Disabled account", "application/json", ErrorResponse},
       unprocessable_entity: {"Validation error", "application/json", ChangesetResponse}
     ]
   )

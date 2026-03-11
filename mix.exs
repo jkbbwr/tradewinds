@@ -20,7 +20,7 @@ defmodule Tradewinds.MixProject do
   def application do
     [
       mod: {Tradewinds.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :os_mon]
     ]
   end
 

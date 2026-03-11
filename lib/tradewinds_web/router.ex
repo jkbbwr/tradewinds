@@ -3,6 +3,16 @@ defmodule TradewindsWeb.Router do
 
   import Phoenix.LiveDashboard.Router
 
+  defp admin_auth(conn, _opts) do
+    # This fetch happens at runtime
+    config = Application.get_env(:tradewinds, :admin_auth)
+    username = config[:username]
+    password = config[:password]
+
+    # Use Plug's built-in basic_auth helper
+    Plug.BasicAuth.basic_auth(conn, username: username, password: password)
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
     plug TradewindsWeb.Plugs.IPBan
@@ -28,11 +38,6 @@ defmodule TradewindsWeb.Router do
 
   pipeline :strict_rate_limits do
     plug TradewindsWeb.Plugs.RateLimiter, limit: 10, scale: 60_000
-  end
-
-  pipeline :admin_auth do
-    import Plug.BasicAuth
-    plug :basic_auth, Application.compile_env(:tradewinds, :admin_auth)
   end
 
   scope "/admin", TradewindsWeb do
@@ -172,22 +177,7 @@ defmodule TradewindsWeb.Router do
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:tradewinds, :dev_routes) do
-    # If you want to use the LiveDashboard in production, you should put
-    # it behind authentication and allow only admins to access it.
-    # If your application does not have an admins-only section yet,
-    # you can use Plug.BasicAuth to set up some basic authentication
-    # as long as you are also using SSL (which you should anyway).
-    import Phoenix.LiveDashboard.Router
-
     scope "/dev" do
-      pipe_through [:fetch_session, :protect_from_forgery]
-
-      live_dashboard "/dashboard",
-        metrics: TradewindsWeb.Telemetry,
-        additional_pages: [
-          oban: Oban.LiveDashboard
-        ]
-
       forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
   end

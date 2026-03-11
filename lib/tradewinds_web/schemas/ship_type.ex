@@ -18,6 +18,16 @@ defmodule TradewindsWeb.Schemas.ShipType do
       inserted_at: %Schema{type: :string, format: :"date-time"},
       updated_at: %Schema{type: :string, format: :"date-time"}
     },
-    required: [:id, :name, :description, :capacity, :speed, :base_price, :upkeep, :inserted_at, :updated_at]
+    required: [
+      :id,
+      :name,
+      :description,
+      :capacity,
+      :speed,
+      :base_price,
+      :upkeep,
+      :inserted_at,
+      :updated_at
+    ]
   })
 end

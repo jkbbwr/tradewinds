@@ -80,7 +80,7 @@ defmodule Tradewinds.Companies do
       |> Map.take([:after, :before, :limit])
       |> Map.to_list()
       |> Keyword.merge(cursor_fields: [occurred_at: :desc, id: :desc], limit: 50)
-    
+
     Ledger
     |> where(company_id: ^company_id)
     |> order_by(desc: :occurred_at, desc: :id)

@@ -10,7 +10,10 @@ defmodule TradewindsWeb.Schemas.LoginResponse do
       data: %Schema{
         type: :object,
         properties: %{
-          token: %Schema{type: :string, description: "Authentication token to be used in Authorization header"}
+          token: %Schema{
+            type: :string,
+            description: "Authentication token to be used in Authorization header"
+          }
         },
         required: [:token]
       }

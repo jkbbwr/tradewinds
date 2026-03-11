@@ -16,6 +16,15 @@ defmodule TradewindsWeb.Schemas.Port do
       inserted_at: %Schema{type: :string, format: :"date-time"},
       updated_at: %Schema{type: :string, format: :"date-time"}
     },
-    required: [:id, :name, :shortcode, :country_id, :is_hub, :tax_rate_bps, :inserted_at, :updated_at]
+    required: [
+      :id,
+      :name,
+      :shortcode,
+      :country_id,
+      :is_hub,
+      :tax_rate_bps,
+      :inserted_at,
+      :updated_at
+    ]
   })
 end

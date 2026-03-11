@@ -214,7 +214,13 @@ defmodule Tradewinds.Market do
              seller_id: ctx.seller_id
            }),
          {:ok, updated_order} <- update_order_fulfillment(ctx.order, ctx.quantity) do
-      Tradewinds.Events.broadcast_order_filled(ctx.buyer_id, ctx.seller_id, ctx.order, ctx.quantity)
+      Tradewinds.Events.broadcast_order_filled(
+        ctx.buyer_id,
+        ctx.seller_id,
+        ctx.order,
+        ctx.quantity
+      )
+
       {:ok, updated_order}
     end
   end
@@ -313,7 +319,7 @@ defmodule Tradewinds.Market do
     Enum.each(expired_orders, fn order ->
       Tradewinds.Events.broadcast_order_expired(order.company_id, order)
     end)
-    
+
     {:ok, %{expired_count: count}}
   end
 

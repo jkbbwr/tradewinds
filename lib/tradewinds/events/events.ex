@@ -120,16 +120,17 @@ defmodule Tradewinds.Events do
     PubSub.broadcast(
       @pubsub,
       "events:world:all",
-      {:message, %{
-        type: "shock_started",
-        data: %{
-          id: shock.id,
-          name: shock.name,
-          description: shock.description,
-          port_id: shock.port_id,
-          good_id: shock.good_id
-        }
-      }}
+      {:message,
+       %{
+         type: "shock_started",
+         data: %{
+           id: shock.id,
+           name: shock.name,
+           description: shock.description,
+           port_id: shock.port_id,
+           good_id: shock.good_id
+         }
+       }}
     )
   end
 
@@ -137,15 +138,16 @@ defmodule Tradewinds.Events do
     PubSub.broadcast(
       @pubsub,
       "events:world:all",
-      {:message, %{
-        type: "shock_ended",
-        data: %{
-          id: shock.id,
-          name: shock.name,
-          port_id: shock.port_id,
-          good_id: shock.good_id
-        }
-      }}
+      {:message,
+       %{
+         type: "shock_ended",
+         data: %{
+           id: shock.id,
+           name: shock.name,
+           port_id: shock.port_id,
+           good_id: shock.good_id
+         }
+       }}
     )
   end
 end

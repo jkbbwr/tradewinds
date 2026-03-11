@@ -250,7 +250,7 @@ defmodule Tradewinds.Fleet do
   """
   def list_ships(%Scope{company_id: company_id}, params \\ %{}) do
     preload = Map.get(params, :preload, [])
-    
+
     paginator_opts =
       params
       |> Map.take([:after, :before, :limit])

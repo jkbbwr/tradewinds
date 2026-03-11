@@ -99,7 +99,8 @@ defmodule Tradewinds.Logistics do
   Purchases a new level 1 warehouse at a specific port.
   """
   def create_warehouse(%Scope{company_id: company_id}, port_id) do
-    cost = 100 # Base cost for level 1
+    # Base cost for level 1
+    cost = 100
 
     Repo.transact(fn ->
       with {:ok, company} <- Tradewinds.Companies.fetch_company(company_id),
@@ -115,7 +116,8 @@ defmodule Tradewinds.Logistics do
                Ecto.UUID.generate(),
                now
              ),
-           {:ok, _} <- maybe_record_tax(company_id, port_id, Ecto.UUID.generate(), cost, tax_amount, now),
+           {:ok, _} <-
+             maybe_record_tax(company_id, port_id, Ecto.UUID.generate(), cost, tax_amount, now),
            warehouse = %Warehouse{},
            attrs = %{level: 1, capacity: 1000, port_id: port_id, company_id: company_id},
            changeset = Warehouse.create_changeset(warehouse, attrs),

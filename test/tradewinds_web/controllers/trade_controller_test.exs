@@ -12,25 +12,35 @@ defmodule TradewindsWeb.TradeControllerTest do
 
     port = Factory.insert(:port)
     good = Factory.insert(:good)
-    
+
     # Needs a country, country has ports...
     # Factory handles it, but let's make sure good has a base_price
     # good.base_price should be > 0
 
     scope = Tradewinds.Scope.for_player(player)
     {:ok, company} = Companies.create(scope, "Trade Co", "TRD1", port.id)
-    
-    {:ok, _} = Tradewinds.Companies.record_transaction(company.id, 10_000, :market_trade, :market, Ecto.UUID.generate(), DateTime.utc_now())
+
+    {:ok, _} =
+      Tradewinds.Companies.record_transaction(
+        company.id,
+        10_000,
+        :market_trade,
+        :market,
+        Ecto.UUID.generate(),
+        DateTime.utc_now()
+      )
 
     trader = Factory.insert(:trader)
-    position = Factory.insert(:trader_position, 
-      trader: trader, 
-      port: port, 
-      good: good, 
-      stock: 100, 
-      target_stock: 100, 
-      spread: 0.1
-    )
+
+    position =
+      Factory.insert(:trader_position,
+        trader: trader,
+        port: port,
+        good: good,
+        stock: 100,
+        target_stock: 100,
+        spread: 0.1
+      )
 
     conn =
       conn
@@ -38,10 +48,10 @@ defmodule TradewindsWeb.TradeControllerTest do
       |> put_req_header("tradewinds-company-id", company.id)
 
     %{
-      conn: conn, 
-      company: company, 
-      player: player, 
-      port: port, 
+      conn: conn,
+      company: company,
+      player: player,
+      port: port,
       good: good,
       trader: trader,
       position: position,
@@ -60,13 +70,14 @@ defmodule TradewindsWeb.TradeControllerTest do
 
   describe "POST /api/v1/trade/quote" do
     test "generates a quote", %{conn: conn, port: port, good: good} do
-      conn = post(conn, ~p"/api/v1/trade/quote", %{
-        port_id: port.id,
-        good_id: good.id,
-        action: "buy",
-        quantity: 10
-      })
-      
+      conn =
+        post(conn, ~p"/api/v1/trade/quote", %{
+          port_id: port.id,
+          good_id: good.id,
+          action: "buy",
+          quantity: 10
+        })
+
       data = json_response(conn, 200)["data"]
       assert Map.has_key?(data, "token")
       assert data["quote"]["quantity"] == 10
@@ -78,26 +89,28 @@ defmodule TradewindsWeb.TradeControllerTest do
     test "executes a quote", %{conn: conn, company: company, port: port, good: good} do
       # Need a ship or warehouse to deliver to
       warehouse = Factory.insert(:warehouse, company: company, port: port)
-      
+
       # 1. Generate Quote
-      conn_quote = post(conn, ~p"/api/v1/trade/quote", %{
-        port_id: port.id,
-        good_id: good.id,
-        action: "buy",
-        quantity: 10
-      })
-      
+      conn_quote =
+        post(conn, ~p"/api/v1/trade/quote", %{
+          port_id: port.id,
+          good_id: good.id,
+          action: "buy",
+          quantity: 10
+        })
+
       data = json_response(conn_quote, 200)["data"]
       token = data["token"]
-      
+
       # 2. Execute Quote
-      conn_exec = post(conn, ~p"/api/v1/trade/quotes/execute", %{
-        token: token,
-        destinations: [
-          %{type: "warehouse", id: warehouse.id, quantity: 10}
-        ]
-      })
-      
+      conn_exec =
+        post(conn, ~p"/api/v1/trade/quotes/execute", %{
+          token: token,
+          destinations: [
+            %{type: "warehouse", id: warehouse.id, quantity: 10}
+          ]
+        })
+
       assert json_response(conn_exec, 200)["data"]["action"] == "buy"
     end
   end
@@ -105,16 +118,17 @@ defmodule TradewindsWeb.TradeControllerTest do
   describe "POST /api/v1/trade/execute" do
     test "executes an immediate trade", %{conn: conn, company: company, port: port, good: good} do
       warehouse = Factory.insert(:warehouse, company: company, port: port)
-      
-      conn = post(conn, ~p"/api/v1/trade/execute", %{
-        port_id: port.id,
-        good_id: good.id,
-        action: "buy",
-        destinations: [
-          %{type: "warehouse", id: warehouse.id, quantity: 10}
-        ]
-      })
-      
+
+      conn =
+        post(conn, ~p"/api/v1/trade/execute", %{
+          port_id: port.id,
+          good_id: good.id,
+          action: "buy",
+          destinations: [
+            %{type: "warehouse", id: warehouse.id, quantity: 10}
+          ]
+        })
+
       assert json_response(conn, 200)["data"]["action"] == "buy"
     end
   end

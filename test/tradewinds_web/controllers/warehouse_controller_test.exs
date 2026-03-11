@@ -17,14 +17,30 @@ defmodule TradewindsWeb.WarehouseControllerTest do
     scope = Tradewinds.Scope.for_player(player)
     {:ok, company} = Companies.create(scope, "Warehouse Co", "WHSE1", port.id)
 
-    {:ok, _} = Tradewinds.Companies.record_transaction(company.id, 1_000_000, :market_trade, :market, Ecto.UUID.generate(), DateTime.utc_now())
+    {:ok, _} =
+      Tradewinds.Companies.record_transaction(
+        company.id,
+        1_000_000,
+        :market_trade,
+        :market,
+        Ecto.UUID.generate(),
+        DateTime.utc_now()
+      )
 
     conn =
       conn
       |> put_req_header("authorization", "Bearer #{auth_token.token}")
       |> put_req_header("tradewinds-company-id", company.id)
 
-    %{conn: conn, company: company, player: player, port: port, good: good, ship_type: ship_type, scope: %{scope | company_id: company.id}}
+    %{
+      conn: conn,
+      company: company,
+      player: player,
+      port: port,
+      good: good,
+      ship_type: ship_type,
+      scope: %{scope | company_id: company.id}
+    }
   end
 
   describe "GET /api/v1/warehouses" do
@@ -35,7 +51,7 @@ defmodule TradewindsWeb.WarehouseControllerTest do
 
     test "returns list of warehouses", %{conn: conn, company: company, port: port} do
       warehouse = Factory.insert(:warehouse, company: company, port: port)
-      
+
       conn = get(conn, ~p"/api/v1/warehouses")
       data = json_response(conn, 200)["data"]
 
@@ -47,7 +63,7 @@ defmodule TradewindsWeb.WarehouseControllerTest do
   describe "GET /api/v1/warehouses/:id" do
     test "returns warehouse details", %{conn: conn, company: company, port: port} do
       warehouse = Factory.insert(:warehouse, company: company, port: port)
-      
+
       conn = get(conn, ~p"/api/v1/warehouses/#{warehouse.id}")
       assert %{"id" => id, "level" => level} = json_response(conn, 200)["data"]
       assert id == warehouse.id
@@ -57,8 +73,9 @@ defmodule TradewindsWeb.WarehouseControllerTest do
 
   describe "POST /api/v1/warehouses/:id/grow" do
     test "upgrades a warehouse", %{conn: conn, company: company, port: port} do
-      warehouse = Factory.insert(:warehouse, company: company, port: port, level: 1, capacity: 1000)
-      
+      warehouse =
+        Factory.insert(:warehouse, company: company, port: port, level: 1, capacity: 1000)
+
       conn = post(conn, ~p"/api/v1/warehouses/#{warehouse.id}/grow")
       assert %{"id" => id, "level" => 2, "capacity" => 2000} = json_response(conn, 200)["data"]
       assert id == warehouse.id
@@ -67,8 +84,9 @@ defmodule TradewindsWeb.WarehouseControllerTest do
 
   describe "POST /api/v1/warehouses/:id/shrink" do
     test "downgrades a warehouse", %{conn: conn, company: company, port: port} do
-      warehouse = Factory.insert(:warehouse, company: company, port: port, level: 2, capacity: 2000)
-      
+      warehouse =
+        Factory.insert(:warehouse, company: company, port: port, level: 2, capacity: 2000)
+
       conn = post(conn, ~p"/api/v1/warehouses/#{warehouse.id}/shrink")
       assert %{"id" => id, "level" => 1, "capacity" => 1000} = json_response(conn, 200)["data"]
       assert id == warehouse.id
@@ -76,18 +94,26 @@ defmodule TradewindsWeb.WarehouseControllerTest do
   end
 
   describe "POST /api/v1/warehouses/:id/transfer-to-ship" do
-    test "transfers cargo to ship", %{conn: conn, company: company, port: port, good: good, ship_type: ship_type} do
+    test "transfers cargo to ship", %{
+      conn: conn,
+      company: company,
+      port: port,
+      good: good,
+      ship_type: ship_type
+    } do
       warehouse = Factory.insert(:warehouse, company: company, port: port)
       Factory.insert(:warehouse_inventory, warehouse: warehouse, good: good, quantity: 100)
-      
-      ship = Factory.insert(:ship, company: company, ship_type: ship_type, port: port, status: :docked)
-      
-      conn = post(conn, ~p"/api/v1/warehouses/#{warehouse.id}/transfer-to-ship", %{
-        ship_id: ship.id,
-        good_id: good.id,
-        quantity: 50
-      })
-      
+
+      ship =
+        Factory.insert(:ship, company: company, ship_type: ship_type, port: port, status: :docked)
+
+      conn =
+        post(conn, ~p"/api/v1/warehouses/#{warehouse.id}/transfer-to-ship", %{
+          ship_id: ship.id,
+          good_id: good.id,
+          quantity: 50
+        })
+
       assert response(conn, 204)
     end
   end

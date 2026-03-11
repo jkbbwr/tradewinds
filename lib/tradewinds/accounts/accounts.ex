@@ -36,6 +36,11 @@ defmodule Tradewinds.Accounts do
     |> Repo.ok_or(:email_not_found)
   end
 
+  def fetch_player_by_discord_id(discord_id) do
+    Repo.get_by(Player, discord_id: discord_id)
+    |> Repo.ok_or(:player_not_found)
+  end
+
   @doc """
   Checks if a player account is currently enabled.
   Returns `:ok` or `{:error, :player_not_enabled}`.

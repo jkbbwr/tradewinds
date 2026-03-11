@@ -9,7 +9,7 @@ defmodule TradewindsWeb.WorldControllerTest do
     ship_type = Factory.insert(:ship_type)
     port_to = Factory.insert(:port)
     route = Factory.insert(:route, from: port, to: port_to, distance: 100)
-    
+
     %{
       conn: conn,
       port: port,

@@ -10,6 +10,9 @@ config :tradewinds, TradewindsWeb.Endpoint,
     hosts: ["localhost", "127.0.0.1"]
   ]
 
+config :tradewinds,
+  discord: true
+
 # Configure Swoosh API Client
 config :swoosh, api_client: Swoosh.ApiClient.Req
 
@@ -18,6 +21,10 @@ config :swoosh, local: false
 
 # Do not print debug messages in production
 config :logger, level: :info
+
+config :nostrum,
+  streamlink: false,
+  youtubedl: false
 
 # Runtime production configuration, including reading
 # of environment variables, is done on config/runtime.exs.

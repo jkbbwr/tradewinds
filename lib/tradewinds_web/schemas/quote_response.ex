@@ -23,7 +23,16 @@ defmodule TradewindsWeb.Schemas.QuoteResponse do
               total_price: %Schema{type: :integer},
               timestamp: %Schema{type: :string, format: :"date-time"}
             },
-            required: [:company_id, :port_id, :good_id, :action, :quantity, :unit_price, :total_price, :timestamp]
+            required: [
+              :company_id,
+              :port_id,
+              :good_id,
+              :action,
+              :quantity,
+              :unit_price,
+              :total_price,
+              :timestamp
+            ]
           }
         },
         required: [:token, :quote]

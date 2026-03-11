@@ -14,7 +14,9 @@ defmodule TradewindsWeb.AuthControllerTest do
   describe "POST /api/v1/auth/register" do
     test "renders player when data is valid", %{conn: conn} do
       conn = post(conn, ~p"/api/v1/auth/register", @register_params)
-      assert %{"id" => _id, "name" => "Kibb", "email" => "kibb@example.com"} = json_response(conn, 201)["data"]
+
+      assert %{"id" => _id, "name" => "Kibb", "email" => "kibb@example.com"} =
+               json_response(conn, 201)["data"]
 
       assert Repo.get_by(Player, email: "kibb@example.com")
     end
@@ -40,29 +42,32 @@ defmodule TradewindsWeb.AuthControllerTest do
     end
 
     test "returns token for valid credentials", %{conn: conn} do
-      conn = post(conn, ~p"/api/v1/auth/login", %{
-        "email" => "kibb@example.com",
-        "password" => "password123"
-      })
+      conn =
+        post(conn, ~p"/api/v1/auth/login", %{
+          "email" => "kibb@example.com",
+          "password" => "password123"
+        })
 
       assert %{"token" => token} = json_response(conn, 200)["data"]
       assert is_binary(token)
     end
 
     test "returns 401 for invalid password", %{conn: conn} do
-      conn = post(conn, ~p"/api/v1/auth/login", %{
-        "email" => "kibb@example.com",
-        "password" => "wrongpassword"
-      })
+      conn =
+        post(conn, ~p"/api/v1/auth/login", %{
+          "email" => "kibb@example.com",
+          "password" => "wrongpassword"
+        })
 
       assert json_response(conn, 401)
     end
 
     test "returns 401 for non-existent email", %{conn: conn} do
-      conn = post(conn, ~p"/api/v1/auth/login", %{
-        "email" => "nobody@example.com",
-        "password" => "password123"
-      })
+      conn =
+        post(conn, ~p"/api/v1/auth/login", %{
+          "email" => "nobody@example.com",
+          "password" => "password123"
+        })
 
       assert json_response(conn, 401)
     end
@@ -70,10 +75,11 @@ defmodule TradewindsWeb.AuthControllerTest do
     test "returns 403 if account is not enabled", %{conn: conn, player: player} do
       Accounts.disable(player)
 
-      conn = post(conn, ~p"/api/v1/auth/login", %{
-        "email" => "kibb@example.com",
-        "password" => "password123"
-      })
+      conn =
+        post(conn, ~p"/api/v1/auth/login", %{
+          "email" => "kibb@example.com",
+          "password" => "password123"
+        })
 
       assert json_response(conn, 403) == %{"errors" => %{"detail" => "Account is disabled"}}
     end

@@ -1,4 +1,17 @@
 defmodule Tradewinds.Accounts.Player do
+  @derive {Inspect,
+           only: [
+             :id,
+             :name,
+             :email,
+             :discord_id,
+             :enabled,
+             :directorships,
+             :companies,
+             :inserted_at,
+             :updated_at
+           ]}
+
   use Tradewinds.Schema
 
   schema "player" do

@@ -17,7 +17,7 @@ config :nostrum,
 
 config :tradewinds, Oban,
   engine: Oban.Engines.Basic,
-  notifier: Oban.Notifiers.Postgres,
+  notifier: Oban.Notifiers.PG,
   queues: [transit: 20, shipyard: 5, company: 15, default: 10, traders: 10, sweeps: 5],
   plugins: [
     {Oban.Plugins.Cron,
@@ -30,12 +30,14 @@ config :tradewinds, Oban,
   repo: Tradewinds.Repo
 
 config :tradewinds,
+  discord: false,
   ecto_repos: [Tradewinds.Repo],
   generators: [timestamp_type: :utc_datetime, binary_id: true]
 
 config :tradewinds, Tradewinds.Repo,
   migration_primary_key: [type: :uuid],
-  migration_timestamps: [type: :utc_datetime]
+  migration_timestamps: [type: :utc_datetime],
+  prepare: :unnamed
 
 # Configure the endpoint
 config :tradewinds, TradewindsWeb.Endpoint,
