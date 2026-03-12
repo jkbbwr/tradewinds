@@ -43,7 +43,8 @@ defmodule Tradewinds.Application do
 
     [
       {Nostrum.Bot, bot_options},
-      {Nosedrum.Storage.Dispatcher, name: Nosedrum.Storage.Dispatcher}
+      {Nosedrum.Storage.Dispatcher, name: Nosedrum.Storage.Dispatcher},
+      {Tradewinds.Discord.WorldEventsSubscriber, []}
     ]
   end
 
