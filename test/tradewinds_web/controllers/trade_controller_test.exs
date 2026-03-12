@@ -115,6 +115,76 @@ defmodule TradewindsWeb.TradeControllerTest do
     end
   end
 
+  describe "POST /api/v1/trade/quotes/batch" do
+    test "generates multiple quotes", %{conn: conn, port: port, good: good} do
+      conn =
+        post(conn, ~p"/api/v1/trade/quotes/batch", %{
+          requests: [
+            %{
+              port_id: port.id,
+              good_id: good.id,
+              action: "buy",
+              quantity: 5
+            },
+            %{
+              port_id: port.id,
+              good_id: good.id,
+              action: "buy",
+              quantity: 10
+            }
+          ]
+        })
+
+      data = json_response(conn, 200)["data"]
+      assert length(data) == 2
+      assert Enum.at(data, 0)["status"] == "success"
+      assert Enum.at(data, 0)["quote"]["quantity"] == 5
+      assert Enum.at(data, 1)["status"] == "success"
+      assert Enum.at(data, 1)["quote"]["quantity"] == 10
+    end
+  end
+
+  describe "POST /api/v1/trade/quotes/execute/batch" do
+    test "executes multiple quotes", %{conn: conn, company: company, port: port, good: good} do
+      warehouse = Factory.insert(:warehouse, company: company, port: port)
+
+      # 1. Generate Batch Quotes
+      conn_batch_quote =
+        post(conn, ~p"/api/v1/trade/quotes/batch", %{
+          requests: [
+            %{port_id: port.id, good_id: good.id, action: "buy", quantity: 5},
+            %{port_id: port.id, good_id: good.id, action: "buy", quantity: 10}
+          ]
+        })
+
+      batch_data = json_response(conn_batch_quote, 200)["data"]
+      token1 = Enum.at(batch_data, 0)["token"]
+      token2 = Enum.at(batch_data, 1)["token"]
+
+      # 2. Execute Batch Quotes
+      conn_batch_exec =
+        post(conn, ~p"/api/v1/trade/quotes/execute/batch", %{
+          requests: [
+            %{
+              token: token1,
+              destinations: [%{type: "warehouse", id: warehouse.id, quantity: 5}]
+            },
+            %{
+              token: token2,
+              destinations: [%{type: "warehouse", id: warehouse.id, quantity: 10}]
+            }
+          ]
+        })
+
+      data = json_response(conn_batch_exec, 200)["data"]
+      assert length(data) == 2
+      assert Enum.at(data, 0)["status"] == "success"
+      assert Enum.at(data, 0)["execution"]["quantity"] == 5
+      assert Enum.at(data, 1)["status"] == "success"
+      assert Enum.at(data, 1)["execution"]["quantity"] == 10
+    end
+  end
+
   describe "POST /api/v1/trade/execute" do
     test "executes an immediate trade", %{conn: conn, company: company, port: port, good: good} do
       warehouse = Factory.insert(:warehouse, company: company, port: port)

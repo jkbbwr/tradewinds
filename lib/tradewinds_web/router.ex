@@ -158,7 +158,9 @@ defmodule TradewindsWeb.Router do
     pipe_through [:api, :auth, :company_context]
 
     post "/quote", TradeController, :quote
+    post "/quotes/batch", TradeController, :batch_quote
     post "/quotes/execute", TradeController, :execute_quote
+    post "/quotes/execute/batch", TradeController, :batch_execute_quote
     post "/execute", TradeController, :execute
   end
 

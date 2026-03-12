@@ -17,6 +17,35 @@ defmodule TradewindsWeb.TradeJSON do
     }
   end
 
+  def batch_quote(%{results: results}) do
+    %{
+      data:
+        Enum.map(results, fn
+          %{status: "success", token: token, quote_data: quote_data} ->
+            %{
+              status: "success",
+              token: token,
+              quote: %{
+                company_id: quote_data.company_id,
+                port_id: quote_data.port_id,
+                good_id: quote_data.good_id,
+                action: to_string(quote_data.action),
+                quantity: quote_data.quantity,
+                unit_price: quote_data.unit_price,
+                total_price: quote_data.total_price,
+                timestamp: quote_data.timestamp
+              }
+            }
+
+          %{status: "error", message: message} ->
+            %{
+              status: "error",
+              message: message
+            }
+        end)
+    }
+  end
+
   def execute(%{trade_data: data}) do
     %{
       data: %{
@@ -28,6 +57,35 @@ defmodule TradewindsWeb.TradeJSON do
         unit_price: data.unit_price,
         total_price: data.total_price
       }
+    }
+  end
+
+  def batch_execute_quote(%{results: results}) do
+    %{
+      data:
+        Enum.map(results, fn
+          %{status: "success", token: token, trade_data: data} ->
+            %{
+              status: "success",
+              token: token,
+              execution: %{
+                company_id: data.company_id,
+                port_id: data.port_id,
+                good_id: data.good_id,
+                action: to_string(data.action),
+                quantity: data.quantity,
+                unit_price: data.unit_price,
+                total_price: data.total_price
+              }
+            }
+
+          %{status: "error", token: token, message: message} ->
+            %{
+              status: "error",
+              token: token,
+              message: message
+            }
+        end)
     }
   end
 

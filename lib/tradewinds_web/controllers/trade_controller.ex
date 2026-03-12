@@ -8,7 +8,11 @@ defmodule TradewindsWeb.TradeController do
   alias TradewindsWeb.Schemas.{
     QuoteRequest,
     QuoteResponse,
+    BatchQuoteRequest,
+    BatchQuoteResponse,
     ExecuteQuoteRequest,
+    BatchExecuteQuoteRequest,
+    BatchExecuteQuoteResponse,
     ExecuteTradeRequest,
     TradeExecutionResponse,
     TraderPositionsResponse,
@@ -51,7 +55,7 @@ defmodule TradewindsWeb.TradeController do
   # -- Trader Positions --
 
   defparams :trader_positions do
-    required(:port_id, :string, format: :uuid)
+    optional(:port_id, :string, format: :uuid)
     optional(:after, :string)
     optional(:before, :string)
     optional(:limit, :integer, min: 1, max: 100)
@@ -61,9 +65,10 @@ defmodule TradewindsWeb.TradeController do
     operation_id: "traderPositions",
     tags: ["Trade"],
     summary: "List trader positions",
-    description: "Returns a list of goods a trader is buying or selling at a port.",
+    description:
+      "Returns a list of goods a trader is buying or selling optionally filtered by port..",
     parameters: [
-      port_id: [in: :query, description: "Port ID", type: :string],
+      port_id: [in: :query, description: "Port ID", type: :string, required: false],
       after: [in: :query, description: "Cursor for next page", type: :string],
       before: [in: :query, description: "Cursor for previous page", type: :string],
       limit: [in: :query, description: "Number of items per page", type: :integer]
@@ -75,7 +80,8 @@ defmodule TradewindsWeb.TradeController do
 
   def trader_positions(conn, params) do
     with {:ok, valid} <- validate(:trader_positions, params) do
-      page = Trade.list_trader_positions(valid.port_id, valid)
+      port_id = Map.get(valid, :port_id)
+      page = Trade.list_trader_positions(port_id, valid)
       render(conn, :trader_positions, page: page)
     end
   end
@@ -85,7 +91,7 @@ defmodule TradewindsWeb.TradeController do
   defparams :quote do
     required(:port_id, :string, format: :uuid)
     required(:good_id, :string, format: :uuid)
-    required(:action, :string, included_in: ["buy", "sell"])
+    required(:action, :enum, values: [:buy, :sell])
     required(:quantity, :integer, min: 1)
   end
 
@@ -113,28 +119,86 @@ defmodule TradewindsWeb.TradeController do
   )
 
   def quote(conn, params) do
-    with {:ok, valid} <- validate(:quote, params) do
-      action_atom = String.to_existing_atom(valid.action)
-
-      case Trade.generate_quote(
+    with {:ok, valid} <- validate(:quote, params),
+         {:ok, token, quote_data} <-
+           Trade.generate_quote(
              conn.assigns.scope,
              valid.port_id,
              valid.good_id,
-             action_atom,
+             valid.action,
              valid.quantity
            ) do
-        {:ok, token, quote_data} ->
-          render(conn, :quote, token: token, quote_data: quote_data)
+      render(conn, :quote, token: token, quote_data: quote_data)
+    end
+  end
 
-        {:error, reason} ->
-          conn
-          |> put_status(:bad_request)
-          |> json(%{error: "bad_request", message: "Failed to generate quote: #{reason}"})
-      end
+  # -- Batch Quote --
+
+  defparams :batch_quote do
+    required :requests, {:array, :map} do
+      required(:port_id, :string, format: :uuid)
+      required(:good_id, :string, format: :uuid)
+      required(:action, :enum, values: ["buy", "sell"])
+      required(:quantity, :integer, min: 1)
+    end
+  end
+
+  operation(:batch_quote,
+    operation_id: "batchQuote",
+    tags: ["Trade"],
+    summary: "Get multiple trade quotes",
+    description: "Generates signed quotes for multiple trades at once.",
+    security: [%{"bearerAuth" => []}],
+    parameters: [
+      %OpenApiSpex.Parameter{
+        name: "tradewinds-company-id",
+        in: :header,
+        required: true,
+        schema: %OpenApiSpex.Schema{type: :string, format: :uuid},
+        description: "Company ID"
+      }
+    ],
+    request_body: {"Batch quote request details", "application/json", BatchQuoteRequest},
+    responses: [
+      ok: {"Batch quotes generated successfully", "application/json", BatchQuoteResponse},
+      bad_request: {"Validation error", "application/json", ErrorResponse}
+    ]
+  )
+
+  def batch_quote(conn, params) do
+    with {:ok, valid} <- validate(:batch_quote, params) do
+      results = Enum.map(valid.requests, &process_batch_quote(conn, &1))
+      render(conn, :batch_quote, results: results)
+    end
+  end
+
+  defp process_batch_quote(conn, req) do
+    case Trade.generate_quote(
+           conn.assigns.scope,
+           req.port_id,
+           req.good_id,
+           req.action,
+           req.quantity
+         ) do
+      {:ok, token, quote_data} ->
+        %{status: "success", token: token, quote_data: quote_data}
+
+      {:error, reason} ->
+        %{status: "error", message: "Failed to generate quote: #{inspect(reason)}"}
     end
   end
 
   # -- Execute Quote --
+
+  defparams :execute_quote do
+    required(:token, :string)
+
+    required :destinations, {:array, :map} do
+      required(:type, :enum, values: ["ship", "warehouse"])
+      required(:id, :string, format: :uuid)
+      required(:quantity, :integer, min: 1)
+    end
+  end
 
   operation(:execute_quote,
     operation_id: "executeQuote",
@@ -159,32 +223,69 @@ defmodule TradewindsWeb.TradeController do
     ]
   )
 
-  def execute_quote(conn, %{"token" => token, "destinations" => dests}) when is_list(dests) do
-    # Convert string keys to atoms for destinations
-    formatted_dests =
-      Enum.map(dests, fn d ->
-        %{
-          type: String.to_existing_atom(d["type"]),
-          id: d["id"],
-          quantity: d["quantity"]
-        }
-      end)
-
-    case Trade.execute_quote(conn.assigns.scope, token, formatted_dests) do
-      {:ok, trade_data} ->
-        render(conn, :execute, trade_data: trade_data)
-
-      {:error, reason} ->
-        conn
-        |> put_status(:bad_request)
-        |> json(%{error: "bad_request", message: "Failed to execute quote: #{reason}"})
+  def execute_quote(conn, params) do
+    with {:ok, valid} <- validate(:execute_quote, params),
+         {:ok, trade_data} <-
+           Trade.execute_quote(conn.assigns.scope, valid.token, valid.destinations) do
+      render(conn, :execute, trade_data: trade_data)
     end
   end
 
-  def execute_quote(conn, _params) do
-    conn
-    |> put_status(:bad_request)
-    |> json(%{error: "bad_request", message: "Invalid payload format"})
+  # -- Batch Execute Quote --
+
+  defparams :batch_execute_quote do
+    required :requests, {:array, :map} do
+      required(:token, :string)
+
+      required :destinations, {:array, :map} do
+        required(:type, :enum, values: [:ship, :warehouse])
+        required(:id, :string, format: :uuid)
+        required(:quantity, :integer, min: 1)
+      end
+    end
+  end
+
+  operation(:batch_execute_quote,
+    operation_id: "batchExecuteQuote",
+    tags: ["Trade"],
+    summary: "Execute multiple signed quotes",
+    description: "Executes multiple trades based on previously generated quote tokens.",
+    security: [%{"bearerAuth" => []}],
+    parameters: [
+      %OpenApiSpex.Parameter{
+        name: "tradewinds-company-id",
+        in: :header,
+        required: true,
+        schema: %OpenApiSpex.Schema{type: :string, format: :uuid},
+        description: "Company ID"
+      }
+    ],
+    request_body: {"Batch execution details", "application/json", BatchExecuteQuoteRequest},
+    responses: [
+      ok: {"Trades executed successfully", "application/json", BatchExecuteQuoteResponse},
+      bad_request: {"Execution failed", "application/json", ErrorResponse}
+    ]
+  )
+
+  def batch_execute_quote(conn, params) do
+    with {:ok, valid} <- validate(:batch_execute_quote, params) do
+      results = Enum.map(valid.requests, &process_batch_execute(conn, &1))
+      render(conn, :batch_execute_quote, results: results)
+    end
+  end
+
+  defp process_batch_execute(conn, req) do
+    case Trade.execute_quote(conn.assigns.scope, req.token, req.destinations) do
+      {:ok, trade_data} ->
+        %{status: "success", token: req.token, trade_data: trade_data}
+
+      {:error, reason} ->
+        %{
+          status: "error",
+          token: req.token,
+          message: "Failed to execute quote: #{inspect(reason)}"
+        }
+    end
   end
 
   # -- Execute Immediate --
@@ -192,8 +293,13 @@ defmodule TradewindsWeb.TradeController do
   defparams :execute_immediate do
     required(:port_id, :string, format: :uuid)
     required(:good_id, :string, format: :uuid)
-    required(:action, :string, included_in: ["buy", "sell"])
-    required(:destinations, {:array, :map})
+    required(:action, :enum, values: ["buy", "sell"])
+
+    required :destinations, {:array, :map} do
+      required(:type, :enum, values: ["ship", "warehouse"])
+      required(:id, :string, format: :uuid)
+      required(:quantity, :integer, min: 1)
+    end
   end
 
   operation(:execute,
@@ -219,34 +325,16 @@ defmodule TradewindsWeb.TradeController do
   )
 
   def execute(conn, params) do
-    with {:ok, valid} <- validate(:execute_immediate, params) do
-      action_atom = String.to_existing_atom(valid.action)
-
-      formatted_dests =
-        Enum.map(valid.destinations, fn d ->
-          # Ensure atom keys for the trade context
-          %{
-            type: String.to_existing_atom(d["type"] || d.type),
-            id: d["id"] || d.id,
-            quantity: d["quantity"] || d.quantity
-          }
-        end)
-
-      case Trade.execute_immediate(
+    with {:ok, valid} <- validate(:execute_immediate, params),
+         {:ok, trade_data} <-
+           Trade.execute_immediate(
              conn.assigns.scope,
              valid.port_id,
              valid.good_id,
-             action_atom,
-             formatted_dests
+             valid.action,
+             valid.destinations
            ) do
-        {:ok, trade_data} ->
-          render(conn, :execute, trade_data: trade_data)
-
-        {:error, reason} ->
-          conn
-          |> put_status(:bad_request)
-          |> json(%{error: "bad_request", message: "Failed to execute trade: #{reason}"})
-      end
+      render(conn, :execute, trade_data: trade_data)
     end
   end
 end

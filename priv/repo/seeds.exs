@@ -560,16 +560,16 @@ for port <- ports do
     {stock, target, s_rate, d_rate} =
       cond do
         is_selling ->
-          # Producers: High stock (1,000–2,000), fast 12%/day regeneration
-          {round(1000 * hub_mult), round(1000 * hub_mult), 0.12, 0.02}
+          # Producers: Start with surplus (200% of target) to drive prices down
+          {round(2000 * hub_mult), round(1000 * hub_mult), 0.12, 0.02}
 
         is_buying ->
-          # Consumers: Low stock, 10%/day depletion
-          {round(100 * hub_mult), round(800 * hub_mult), 0.02, 0.10}
+          # Consumers: Start with severe scarcity (5% of target) to drive prices up
+          {round(50 * hub_mult), round(1000 * hub_mult), 0.02, 0.10}
 
         true ->
-          # Neutral: Low churn, steady baseline
-          {round(300 * hub_mult), round(300 * hub_mult), 0.04, 0.04}
+          # Neutral: Balanced baseline
+          {round(500 * hub_mult), round(500 * hub_mult), 0.04, 0.04}
       end
 
     Repo.insert!(%TraderPosition{
@@ -581,8 +581,8 @@ for port <- ports do
       # Rates treated as daily fractional drift in the simulation loop
       supply_rate: s_rate,
       demand_rate: d_rate,
-      # Stable pricing for multiplayer throughput
-      elasticity: 0.12,
+      # Use the good's specific elasticity for varied economic behavior
+      elasticity: good.elasticity,
       spread: base_spread,
       monthly_profit: 0
     })

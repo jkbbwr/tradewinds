@@ -30,8 +30,11 @@ defmodule Tradewinds.Trade do
       |> Map.to_list()
       |> Keyword.merge(cursor_fields: [inserted_at: :desc, id: :desc], limit: 50)
 
-    Tradewinds.Trade.TraderPosition
-    |> where(port_id: ^port_id)
+    query = Tradewinds.Trade.TraderPosition
+
+    query = if port_id, do: where(query, port_id: ^port_id), else: query
+
+    query
     |> order_by(desc: :inserted_at, desc: :id)
     |> preload([:good])
     |> Repo.paginate(opts)
