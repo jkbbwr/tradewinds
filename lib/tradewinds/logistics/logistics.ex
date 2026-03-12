@@ -59,7 +59,7 @@ defmodule Tradewinds.Logistics do
   Cost formula: 100 * 1.1^(tier-1)
   """
   def upgrade_cost(%Warehouse{level: level}) do
-    (100 * :math.pow(1.1, level - 1)) |> trunc()
+    (100 * :math.pow(1.4, level - 1)) |> trunc()
   end
 
   def upgrade_cost(warehouse_id) do
@@ -148,7 +148,8 @@ defmodule Tradewinds.Logistics do
                :warehouse,
                warehouse.id,
                now
-             ),           {:ok, _} <-
+             ),
+           {:ok, _} <-
              maybe_record_tax(
                warehouse.company_id,
                warehouse.port_id,

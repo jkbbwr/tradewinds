@@ -22,6 +22,15 @@ defmodule Tradewinds.Trade do
     |> Repo.paginate(opts)
   end
 
+  defp fetch_position(port_id, good_id) do
+    Repo.one(
+      from p in Tradewinds.Trade.TraderPosition,
+        where: p.port_id == ^port_id and p.good_id == ^good_id,
+        preload: [:good]
+    )
+    |> Repo.ok_or(:not_found)
+  end
+
   @doc """
   Generates a signed, stateless quote for a company to buy or sell goods from/to
   a trader. Applies active economic shocks to base price and volatility. Returns
@@ -37,12 +46,7 @@ defmodule Tradewinds.Trade do
       when action in [:buy, :sell] and is_integer(quantity) and quantity > 0 do
     with {:ok, company} <- Tradewinds.Companies.fetch_company(company_id),
          {:ok, :active} <- Tradewinds.Companies.is_active?(company),
-         %Tradewinds.Trade.TraderPosition{} = position <-
-           Repo.one(
-             from p in Tradewinds.Trade.TraderPosition,
-               where: p.port_id == ^port_id and p.good_id == ^good_id,
-               preload: [:good]
-           ) || {:error, :not_found},
+         {:ok, position} <- fetch_position(port_id, good_id),
          :ok <- ensure_available_stock(position, action, quantity),
          now <- DateTime.utc_now(),
          modifiers <-

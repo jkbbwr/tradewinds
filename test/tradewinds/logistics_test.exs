@@ -22,15 +22,15 @@ defmodule Tradewinds.LogisticsTest do
 
     test "upgrade_cost/1 calculates correct cost based on tier" do
       assert Logistics.upgrade_cost(%Warehouse{level: 1}) == 100
-      assert Logistics.upgrade_cost(%Warehouse{level: 2}) == 110
-      assert Logistics.upgrade_cost(%Warehouse{level: 3}) == 121
-      assert Logistics.upgrade_cost(%Warehouse{level: 4}) == 133
-      assert Logistics.upgrade_cost(%Warehouse{level: 5}) == 146
+      assert Logistics.upgrade_cost(%Warehouse{level: 2}) == 140
+      assert Logistics.upgrade_cost(%Warehouse{level: 3}) == 195
+      assert Logistics.upgrade_cost(%Warehouse{level: 4}) == 274
+      assert Logistics.upgrade_cost(%Warehouse{level: 5}) == 384
     end
 
     test "upgrade_cost/1 fetches warehouse and returns calculated cost" do
       warehouse = insert(:warehouse, level: 3)
-      assert {:ok, 121} = Logistics.upgrade_cost(warehouse.id)
+      assert {:ok, 195} = Logistics.upgrade_cost(warehouse.id)
     end
 
     test "upgrade_cost/1 returns error if warehouse not found" do
