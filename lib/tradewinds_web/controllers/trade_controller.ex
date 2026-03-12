@@ -55,7 +55,7 @@ defmodule TradewindsWeb.TradeController do
   # -- Trader Positions --
 
   defparams :trader_positions do
-    optional(:port_id, :string, format: :uuid)
+    optional(:trader_id, :string, format: :uuid)
     optional(:after, :string)
     optional(:before, :string)
     optional(:limit, :integer, min: 1, max: 100)
@@ -66,9 +66,9 @@ defmodule TradewindsWeb.TradeController do
     tags: ["Trade"],
     summary: "List trader positions",
     description:
-      "Returns a list of goods a trader is buying or selling optionally filtered by port..",
+      "Returns a list of goods a trader is buying or selling optionally filtered by trader..",
     parameters: [
-      port_id: [in: :query, description: "Port ID", type: :string, required: false],
+      trader_id: [in: :query, description: "Trader ID", type: :string, required: false],
       after: [in: :query, description: "Cursor for next page", type: :string],
       before: [in: :query, description: "Cursor for previous page", type: :string],
       limit: [in: :query, description: "Number of items per page", type: :integer]
@@ -80,8 +80,8 @@ defmodule TradewindsWeb.TradeController do
 
   def trader_positions(conn, params) do
     with {:ok, valid} <- validate(:trader_positions, params) do
-      port_id = Map.get(valid, :port_id)
-      page = Trade.list_trader_positions(port_id, valid)
+      trader_id = Map.get(valid, :trader_id)
+      page = Trade.list_trader_positions(trader_id, valid)
       render(conn, :trader_positions, page: page)
     end
   end

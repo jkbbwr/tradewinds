@@ -60,8 +60,8 @@ defmodule TradewindsWeb.TradeControllerTest do
   end
 
   describe "GET /api/v1/trade/trader-positions" do
-    test "lists trader positions for a port", %{conn: conn, port: port, position: position} do
-      conn = get(conn, ~p"/api/v1/trade/trader-positions", port_id: port.id)
+    test "lists trader positions for a trader", %{conn: conn, trader: trader, position: position} do
+      conn = get(conn, ~p"/api/v1/trade/trader-positions", trader_id: trader.id)
       data = json_response(conn, 200)["data"]
       assert length(data) == 1
       assert Enum.at(data, 0)["id"] == position.id

@@ -12,6 +12,28 @@ defmodule Tradewinds.TradeTest do
     {:ok, player: player}
   end
 
+  describe "list_trader_positions/2" do
+    test "lists positions filtered by trader_id" do
+      trader1 = insert(:trader)
+      trader2 = insert(:trader)
+      insert(:trader_position, trader: trader1)
+      insert(:trader_position, trader: trader1)
+      insert(:trader_position, trader: trader2)
+
+      page1 = Trade.list_trader_positions(trader1.id)
+      assert length(page1.entries) == 2
+
+      page2 = Trade.list_trader_positions(trader2.id)
+      assert length(page2.entries) == 1
+    end
+
+    test "returns all positions when no trader_id is provided" do
+      insert_list(3, :trader_position)
+      page = Trade.list_trader_positions(nil)
+      assert length(page.entries) >= 3
+    end
+  end
+
   describe "quotes" do
     test "generate_quote/5 creates a valid signed token and quote data", %{player: player} do
       company = insert(:company)

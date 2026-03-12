@@ -23,7 +23,7 @@ defmodule Tradewinds.Trade do
     |> Repo.paginate(opts)
   end
 
-  def list_trader_positions(port_id, params \\ %{}) do
+  def list_trader_positions(trader_id, params \\ %{}) do
     opts =
       params
       |> Map.take([:after, :before, :limit])
@@ -32,7 +32,7 @@ defmodule Tradewinds.Trade do
 
     query = Tradewinds.Trade.TraderPosition
 
-    query = if port_id, do: where(query, port_id: ^port_id), else: query
+    query = if trader_id, do: where(query, trader_id: ^trader_id), else: query
 
     query
     |> order_by(desc: :inserted_at, desc: :id)
