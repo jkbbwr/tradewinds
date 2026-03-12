@@ -28,6 +28,10 @@ if config_env() == :prod do
     username: System.fetch_env!("ADMIN_USERNAME"),
     password: System.fetch_env!("ADMIN_PASSWORD")
 
+  config :tradewinds, :discord,
+    enabled: true,
+    token: System.fetch_env!("BOT_TOKEN")
+
   database_url =
     System.get_env("DATABASE_URL") ||
       raise """

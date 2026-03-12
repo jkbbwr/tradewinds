@@ -11,6 +11,10 @@ config :mime, :types, %{
   "text/event-stream" => ["sse"]
 }
 
+config :tradewinds, :discord,
+  enabled: false,
+  token: ""
+
 config :nostrum,
   streamlink: false,
   youtubedl: false
@@ -31,7 +35,6 @@ config :tradewinds, Oban,
   repo: Tradewinds.Repo
 
 config :tradewinds,
-  discord: false,
   ecto_repos: [Tradewinds.Repo],
   generators: [timestamp_type: :utc_datetime, binary_id: true]
 

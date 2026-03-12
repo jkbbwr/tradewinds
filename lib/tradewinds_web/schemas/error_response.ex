@@ -10,7 +10,8 @@ defmodule TradewindsWeb.Schemas.ErrorResponse do
       errors: %Schema{
         type: :object,
         properties: %{
-          detail: %Schema{type: :string}
+          detail: %Schema{type: :string},
+          id: %Schema{type: :string, description: "The ID of the resource associated with the error, if applicable."}
         },
         required: [:detail]
       }

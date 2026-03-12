@@ -12,9 +12,10 @@ defmodule TradewindsWeb.Schemas.TraderPosition do
       port_id: %Schema{type: :string, format: :uuid},
       good_id: %Schema{type: :string, format: :uuid},
       stock_bounds: %Schema{type: :string},
+      price_bounds: %Schema{type: :string},
       inserted_at: %Schema{type: :string, format: :"date-time"},
       updated_at: %Schema{type: :string, format: :"date-time"}
     },
-    required: [:id, :trader_id, :port_id, :good_id, :stock_bounds, :inserted_at, :updated_at]
+    required: [:id, :trader_id, :port_id, :good_id, :stock_bounds, :price_bounds, :inserted_at, :updated_at]
   })
 end

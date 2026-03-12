@@ -69,6 +69,7 @@ defmodule TradewindsWeb.TradeJSON do
       port_id: position.port_id,
       good_id: position.good_id,
       stock_bounds: stock_bounds(position.stock),
+      price_bounds: price_bounds(position),
       inserted_at: position.inserted_at,
       updated_at: position.updated_at
     }
@@ -83,4 +84,26 @@ defmodule TradewindsWeb.TradeJSON do
   defp stock_bounds(stock) when stock <= 5000, do: "Very Abundant"
   defp stock_bounds(stock) when stock <= 10000, do: "Massive Stock"
   defp stock_bounds(_), do: "Overflowing"
+
+  defp price_bounds(position) do
+    market_price =
+      Tradewinds.Trade.base_market_price(
+        position.stock,
+        position.target_stock,
+        position.good.base_price,
+        position.elasticity
+      )
+
+    ratio = market_price / position.good.base_price
+
+    cond do
+      ratio <= 0.25 -> "Dirt Cheap"
+      ratio <= 0.5 -> "Very Cheap"
+      ratio <= 0.8 -> "Cheap"
+      ratio <= 1.2 -> "Average"
+      ratio <= 1.5 -> "Expensive"
+      ratio <= 2.0 -> "Very Expensive"
+      true -> "Exorbitant"
+    end
+  end
 end

@@ -7,7 +7,9 @@ defmodule Tradewinds.Application do
 
   @impl true
   def start(_type, _args) do
-    discord_enabled = Application.get_env(:tradewinds, :discord)
+    config = Application.get_env(:tradewinds, :discord)
+    discord_token = config[:token]
+    discord_enabled = config[:enabled]
 
     children =
       [
@@ -20,7 +22,7 @@ defmodule Tradewinds.Application do
         {Cachex, [:tradewinds_cache]},
         # Start to serve requests, typically the last entry
         TradewindsWeb.Endpoint
-      ] ++ discord(discord_enabled)
+      ] ++ discord(discord_enabled, discord_token)
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
@@ -28,12 +30,15 @@ defmodule Tradewinds.Application do
     Supervisor.start_link(children, opts)
   end
 
-  def discord(true) do
+  def discord(true, token) when token != "" do
+    config = Application.get_env(:tradewinds, :discord)
+    token = config[:token]
+
     bot_options = %{
       name: Tradewinds.Discord,
       consumer: Tradewinds.Discord.Consumer,
       intents: [:direct_messages, :guild_messages, :message_content],
-      wrapped_token: fn -> System.fetch_env!("BOT_TOKEN") end
+      wrapped_token: fn -> token end
     }
 
     [
@@ -42,7 +47,7 @@ defmodule Tradewinds.Application do
     ]
   end
 
-  def discord(false), do: []
+  def discord(false, _token), do: []
 
   # Tell Phoenix to update the endpoint configuration
   # whenever the application is updated.
