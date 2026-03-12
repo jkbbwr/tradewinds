@@ -69,6 +69,11 @@ defmodule TradewindsWeb.WarehouseControllerTest do
       assert id == warehouse.id
       assert level == warehouse.level
     end
+
+    test "returns 404 when warehouse not found", %{conn: conn} do
+      conn = get(conn, ~p"/api/v1/warehouses/#{Ecto.UUID.generate()}")
+      assert json_response(conn, 404)
+    end
   end
 
   describe "POST /api/v1/warehouses/:id/grow" do
@@ -80,6 +85,11 @@ defmodule TradewindsWeb.WarehouseControllerTest do
       assert %{"id" => id, "level" => 2, "capacity" => 2000} = json_response(conn, 200)["data"]
       assert id == warehouse.id
     end
+
+    test "returns 404 when warehouse not found", %{conn: conn} do
+      conn = post(conn, ~p"/api/v1/warehouses/#{Ecto.UUID.generate()}/grow")
+      assert json_response(conn, 404)
+    end
   end
 
   describe "POST /api/v1/warehouses/:id/shrink" do
@@ -90,6 +100,11 @@ defmodule TradewindsWeb.WarehouseControllerTest do
       conn = post(conn, ~p"/api/v1/warehouses/#{warehouse.id}/shrink")
       assert %{"id" => id, "level" => 1, "capacity" => 1000} = json_response(conn, 200)["data"]
       assert id == warehouse.id
+    end
+
+    test "returns 404 when warehouse not found", %{conn: conn} do
+      conn = post(conn, ~p"/api/v1/warehouses/#{Ecto.UUID.generate()}/shrink")
+      assert json_response(conn, 404)
     end
   end
 
@@ -115,6 +130,24 @@ defmodule TradewindsWeb.WarehouseControllerTest do
         })
 
       assert response(conn, 204)
+    end
+
+    test "returns 404 when warehouse not found", %{
+      conn: conn,
+      company: company,
+      port: port,
+      good: good,
+      ship_type: ship_type
+    } do
+      ship = Factory.insert(:ship, company: company, ship_type: ship_type, port: port, status: :docked)
+      conn =
+        post(conn, ~p"/api/v1/warehouses/#{Ecto.UUID.generate()}/transfer-to-ship", %{
+          ship_id: ship.id,
+          good_id: good.id,
+          quantity: 50
+        })
+
+      assert json_response(conn, 404)
     end
   end
 end

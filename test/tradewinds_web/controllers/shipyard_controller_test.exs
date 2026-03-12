@@ -50,6 +50,11 @@ defmodule TradewindsWeb.ShipyardControllerTest do
       assert id == shipyard.id
       assert port_id == port.id
     end
+
+    test "returns 404 when port not found", %{conn: conn} do
+      conn = get(conn, ~p"/api/v1/world/ports/#{Ecto.UUID.generate()}/shipyard")
+      assert json_response(conn, 404)
+    end
   end
 
   describe "GET /api/v1/shipyards/:shipyard_id/inventory" do
@@ -69,6 +74,11 @@ defmodule TradewindsWeb.ShipyardControllerTest do
       assert Enum.at(data, 0)["ship_type_id"] == ship_type.id
       assert Enum.at(data, 0)["cost"] == 1000
     end
+
+    test "returns 404 when shipyard not found", %{conn: conn} do
+      conn = get(conn, ~p"/api/v1/shipyards/#{Ecto.UUID.generate()}/inventory")
+      assert json_response(conn, 404)
+    end
   end
 
   describe "POST /api/v1/shipyards/:shipyard_id/purchase" do
@@ -86,6 +96,11 @@ defmodule TradewindsWeb.ShipyardControllerTest do
       assert %{"id" => id, "ship_type_id" => st_id} = json_response(conn, 200)["data"]
       assert id == ship.id
       assert st_id == ship_type.id
+    end
+
+    test "returns 404 when shipyard not found", %{conn: conn} do
+      conn = post(conn, ~p"/api/v1/shipyards/#{Ecto.UUID.generate()}/purchase", %{ship_type_id: Ecto.UUID.generate()})
+      assert json_response(conn, 404)
     end
   end
 end

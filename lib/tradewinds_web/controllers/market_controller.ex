@@ -188,6 +188,9 @@ defmodule TradewindsWeb.MarketController do
         {:ok, order} ->
           render(conn, :show, order: order)
 
+        {:error, :order_not_found} = error ->
+          error
+
         {:error, {:trade_voided, reason, _offender_id}} ->
           conn
           |> put_status(:bad_request)

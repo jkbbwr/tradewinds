@@ -8,14 +8,17 @@ defmodule TradewindsWeb.FallbackController do
     |> render(:account_disabled)
   end
 
-  def call(conn, {:error, :route_not_found}) do
-    conn
-    |> put_status(:not_found)
-    |> put_view(TradewindsWeb.ErrorJSON)
-    |> render(:not_found)
-  end
-
-  def call(conn, {:error, :port_not_found}) do
+  def call(conn, {:error, reason})
+      when reason in [
+             :route_not_found,
+             :port_not_found,
+             :good_not_found,
+             :ship_type_not_found,
+             :order_not_found,
+             :warehouse_not_found,
+             :ship_not_found,
+             :shipyard_not_found
+           ] do
     conn
     |> put_status(:not_found)
     |> put_view(TradewindsWeb.ErrorJSON)

@@ -137,6 +137,11 @@ defmodule TradewindsWeb.MarketControllerTest do
       conn = delete(conn, ~p"/api/v1/market/orders/#{order.id}")
       assert response(conn, 204)
     end
+
+    test "returns 404 when order not found", %{conn: conn} do
+      conn = delete(conn, ~p"/api/v1/market/orders/#{Ecto.UUID.generate()}")
+      assert json_response(conn, 404)
+    end
   end
 
   describe "POST /api/v1/market/orders/:id/fill" do
@@ -178,6 +183,11 @@ defmodule TradewindsWeb.MarketControllerTest do
 
       assert %{"id" => id, "remaining" => 30} = json_response(conn, 200)["data"]
       assert id == order.id
+    end
+
+    test "returns 404 when order not found", %{conn: conn} do
+      conn = post(conn, ~p"/api/v1/market/orders/#{Ecto.UUID.generate()}/fill", %{quantity: 20})
+      assert json_response(conn, 404)
     end
   end
 end

@@ -3,6 +3,10 @@ defmodule TradewindsWeb.ErrorJSON do
     %{errors: %{detail: "Not Found"}}
   end
 
+  def render("not_found.json", %{}) do
+    %{errors: %{detail: "Resource not found"}}
+  end
+
   def render("unauthorized.json", %{}) do
     %{errors: %{detail: "Unauthorized"}}
   end

@@ -68,6 +68,11 @@ defmodule TradewindsWeb.ShipControllerTest do
       assert %{"id" => id, "name" => "Ship 1"} = json_response(conn, 200)["data"]
       assert id == ship.id
     end
+
+    test "returns 404 when ship not found", %{conn: conn} do
+      conn = get(conn, ~p"/api/v1/ships/#{Ecto.UUID.generate()}")
+      assert json_response(conn, 404)
+    end
   end
 
   describe "GET /api/v1/ships/:id/transit-logs" do
@@ -89,6 +94,11 @@ defmodule TradewindsWeb.ShipControllerTest do
       assert length(data) == 1
       assert Enum.at(data, 0)["id"] == log.id
     end
+
+    test "returns 404 when ship not found", %{conn: conn} do
+      conn = get(conn, ~p"/api/v1/ships/#{Ecto.UUID.generate()}/transit-logs")
+      assert json_response(conn, 404)
+    end
   end
 
   describe "PATCH /api/v1/ships/:id" do
@@ -104,6 +114,11 @@ defmodule TradewindsWeb.ShipControllerTest do
       conn = patch(conn, ~p"/api/v1/ships/#{ship.id}", %{name: "New Name"})
       assert %{"id" => id, "name" => "New Name"} = json_response(conn, 200)["data"]
       assert id == ship.id
+    end
+
+    test "returns 404 when ship not found", %{conn: conn} do
+      conn = patch(conn, ~p"/api/v1/ships/#{Ecto.UUID.generate()}", %{name: "New Name"})
+      assert json_response(conn, 404)
     end
   end
 
@@ -134,6 +149,12 @@ defmodule TradewindsWeb.ShipControllerTest do
       assert id == ship.id
       assert route_id == route.id
     end
+
+    test "returns 404 when ship not found", %{conn: conn, port: port} do
+      route = Factory.insert(:route, from: port, to: Factory.insert(:port))
+      conn = post(conn, ~p"/api/v1/ships/#{Ecto.UUID.generate()}/transit", %{route_id: route.id})
+      assert json_response(conn, 404)
+    end
   end
 
   describe "POST /api/v1/ships/:id/transfer-to-warehouse" do
@@ -159,6 +180,18 @@ defmodule TradewindsWeb.ShipControllerTest do
         })
 
       assert response(conn, 204)
+    end
+
+    test "returns 404 when ship not found", %{conn: conn, company: company, port: port, good: good} do
+      warehouse = Factory.insert(:warehouse, company: company, port: port)
+      conn =
+        post(conn, ~p"/api/v1/ships/#{Ecto.UUID.generate()}/transfer-to-warehouse", %{
+          warehouse_id: warehouse.id,
+          good_id: good.id,
+          quantity: 50
+        })
+
+      assert json_response(conn, 404)
     end
   end
 end

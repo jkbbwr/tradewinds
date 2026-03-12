@@ -33,6 +33,11 @@ defmodule TradewindsWeb.WorldControllerTest do
       data = json_response(conn, 200)["data"]
       assert data["id"] == port.id
     end
+
+    test "returns 404 when port not found", %{conn: conn} do
+      conn = get(conn, ~p"/api/v1/world/ports/#{Ecto.UUID.generate()}")
+      assert json_response(conn, 404)
+    end
   end
 
   describe "GET /api/v1/world/goods" do
@@ -48,6 +53,11 @@ defmodule TradewindsWeb.WorldControllerTest do
       conn = get(conn, ~p"/api/v1/world/goods/#{good.id}")
       data = json_response(conn, 200)["data"]
       assert data["id"] == good.id
+    end
+
+    test "returns 404 when good not found", %{conn: conn} do
+      conn = get(conn, ~p"/api/v1/world/goods/#{Ecto.UUID.generate()}")
+      assert json_response(conn, 404)
     end
   end
 
@@ -65,6 +75,11 @@ defmodule TradewindsWeb.WorldControllerTest do
       data = json_response(conn, 200)["data"]
       assert data["id"] == ship_type.id
     end
+
+    test "returns 404 when ship type not found", %{conn: conn} do
+      conn = get(conn, ~p"/api/v1/world/ship-types/#{Ecto.UUID.generate()}")
+      assert json_response(conn, 404)
+    end
   end
 
   describe "GET /api/v1/world/routes" do
@@ -80,6 +95,11 @@ defmodule TradewindsWeb.WorldControllerTest do
       conn = get(conn, ~p"/api/v1/world/routes/#{route.id}")
       data = json_response(conn, 200)["data"]
       assert data["id"] == route.id
+    end
+
+    test "returns 404 when route not found", %{conn: conn} do
+      conn = get(conn, ~p"/api/v1/world/routes/#{Ecto.UUID.generate()}")
+      assert json_response(conn, 404)
     end
   end
 end

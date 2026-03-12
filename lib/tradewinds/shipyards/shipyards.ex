@@ -32,14 +32,14 @@ defmodule Tradewinds.Shipyards do
   Fetches all available inventory (unowned ships) currently for sale at a shipyard.
   """
   def fetch_shipyard_inventory(shipyard_id) do
-    query =
-      from s in Shipyard,
-        where: s.id == ^shipyard_id,
-        left_join: i in assoc(s, :inventory),
-        select: i
+    with {:ok, _shipyard} <- fetch_shipyard(shipyard_id) do
+      inventory =
+        Inventory
+        |> where(shipyard_id: ^shipyard_id)
+        |> Repo.all()
 
-    Repo.all(query)
-    |> Repo.ok_or(:shipyard_not_found)
+      {:ok, inventory}
+    end
   end
 
   @doc """
