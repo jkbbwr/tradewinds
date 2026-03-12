@@ -98,6 +98,14 @@ defmodule Tradewinds.Factory do
     }
   end
 
+  def transit_log_factory do
+    %Tradewinds.Fleet.TransitLog{
+      ship: build(:ship),
+      route: build(:route),
+      departed_at: DateTime.utc_now()
+    }
+  end
+
   def warehouse_factory do
     %Tradewinds.Logistics.Warehouse{
       level: 1,

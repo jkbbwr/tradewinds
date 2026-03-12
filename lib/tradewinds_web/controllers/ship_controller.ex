@@ -10,6 +10,7 @@ defmodule TradewindsWeb.ShipController do
     ShipResponse,
     RenameShipRequest,
     TransitRequest,
+    TransitLogsResponse,
     TransferToWarehouseRequest,
     ErrorResponse,
     ChangesetResponse
@@ -84,6 +85,48 @@ defmodule TradewindsWeb.ShipController do
   def ship(conn, %{"ship_id" => ship_id}) do
     with {:ok, ship} <- Fleet.fetch_company_ship(conn.assigns.scope, ship_id) do
       render(conn, :show, ship: ship)
+    end
+  end
+
+  # -- Transit Logs --
+
+  defparams :transit_logs do
+    optional(:after, :string)
+    optional(:before, :string)
+    optional(:limit, :integer, min: 1, max: 100)
+  end
+
+  operation(:transit_logs,
+    operation_id: "transitLogs",
+    tags: ["Fleet"],
+    summary: "List transit logs for a ship",
+    description:
+      "Returns a paginated list of transit logs for a specific ship owned by the current company.",
+    security: [%{"bearerAuth" => []}],
+    parameters: [
+      %OpenApiSpex.Parameter{
+        name: "tradewinds-company-id",
+        in: :header,
+        required: true,
+        schema: %OpenApiSpex.Schema{type: :string, format: :uuid},
+        description: "Company ID"
+      },
+      ship_id: [in: :path, description: "Ship ID", type: :string],
+      after: [in: :query, description: "Cursor for next page", type: :string],
+      before: [in: :query, description: "Cursor for previous page", type: :string],
+      limit: [in: :query, description: "Number of items per page", type: :integer]
+    ],
+    responses: [
+      ok: {"List of transit logs", "application/json", TransitLogsResponse},
+      unauthorized: {"Invalid or expired token", "application/json", ErrorResponse},
+      not_found: {"Ship not found", "application/json", ErrorResponse}
+    ]
+  )
+
+  def transit_logs(conn, params = %{"ship_id" => ship_id}) do
+    with {:ok, valid} <- validate(:transit_logs, params),
+         {:ok, page} <- Fleet.list_transit_logs(conn.assigns.scope, ship_id, valid) do
+      render(conn, :transit_logs, page: page)
     end
   end
 

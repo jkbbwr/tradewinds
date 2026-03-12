@@ -27,9 +27,7 @@ defmodule Tradewinds.Trade.TraderSimulationJob do
           Logger.info("Successfully simulated trader_id: #{trader_id}. #{summary}")
 
         {:error, reason} ->
-          Logger.error(
-            "Failed to simulate trader_id: #{trader_id}, reason: #{inspect(reason)}"
-          )
+          Logger.error("Failed to simulate trader_id: #{trader_id}, reason: #{inspect(reason)}")
       end
 
       %{trader_id: trader_id}

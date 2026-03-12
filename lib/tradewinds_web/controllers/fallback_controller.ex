@@ -8,6 +8,20 @@ defmodule TradewindsWeb.FallbackController do
     |> render(:account_disabled)
   end
 
+  def call(conn, {:error, :route_not_found}) do
+    conn
+    |> put_status(:not_found)
+    |> put_view(TradewindsWeb.ErrorJSON)
+    |> render(:not_found)
+  end
+
+  def call(conn, {:error, :port_not_found}) do
+    conn
+    |> put_status(:not_found)
+    |> put_view(TradewindsWeb.ErrorJSON)
+    |> render(:not_found)
+  end
+
   def call(conn, {:error, reason})
       when reason in [:unauthorized, :email_not_found] do
     conn

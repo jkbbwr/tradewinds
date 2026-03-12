@@ -8,9 +8,33 @@ defmodule Tradewinds.Fleet do
   alias Tradewinds.Repo
   alias Tradewinds.Fleet.Ship
   alias Tradewinds.Fleet.ShipCargo
+  alias Tradewinds.Fleet.TransitLog
   alias Tradewinds.Scope
   alias Tradewinds.World
   alias Tradewinds.Companies
+
+  @doc """
+  Creates a transit log entry.
+  """
+  def create_transit_log(ship_id, route_id, departed_at, arrived_at \\ nil) do
+    %TransitLog{}
+    |> TransitLog.create_changeset(%{
+      ship_id: ship_id,
+      route_id: route_id,
+      departed_at: departed_at,
+      arrived_at: arrived_at
+    })
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a transit log entry (primarily used for setting arrived_at).
+  """
+  def update_transit_log(%TransitLog{} = transit_log, arrived_at) do
+    transit_log
+    |> TransitLog.create_changeset(%{arrived_at: arrived_at})
+    |> Repo.update()
+  end
 
   @doc """
   Initiates travel for a docked ship along a specific route.
@@ -38,6 +62,7 @@ defmodule Tradewinds.Fleet do
                  arriving_at: arrival_time
                })
                |> Repo.update(),
+             {:ok, _transit_log} <- create_transit_log(ship_id, route.id, now),
              {:ok, _job} <-
                %{"ship_id" => ship_id}
                |> Tradewinds.Fleet.TransitJob.new(schedule_in: seconds)
@@ -86,14 +111,28 @@ defmodule Tradewinds.Fleet do
     with {:ok, ship} <- fetch_ship(ship_id, preload: [:route]),
          :ok <- check_ship_traveling(ship),
          :ok <- check_ship_arrived(ship) do
-      case ship |> Ship.dock_changeset(ship.route.to_id) |> Repo.update() do
-        {:ok, updated_ship} ->
+      Repo.transact(fn ->
+        now = DateTime.utc_now()
+
+        with {:ok, updated_ship} <- ship |> Ship.dock_changeset(ship.route.to_id) |> Repo.update(),
+             {:ok, _log} <- complete_active_transit_log(ship_id, now) do
           Tradewinds.Events.broadcast_ship_docked(updated_ship.company_id, updated_ship)
           {:ok, updated_ship}
+        end
+      end)
+    end
+  end
 
-        error ->
-          error
-      end
+  defp complete_active_transit_log(ship_id, arrived_at) do
+    query =
+      from t in TransitLog,
+        where: t.ship_id == ^ship_id and is_nil(t.arrived_at),
+        order_by: [desc: t.departed_at],
+        limit: 1
+
+    case Repo.one(query) do
+      nil -> {:ok, nil}
+      log -> update_transit_log(log, arrived_at)
     end
   end
 
@@ -262,6 +301,27 @@ defmodule Tradewinds.Fleet do
     |> order_by(desc: :inserted_at, desc: :id)
     |> Repo.preload(preload)
     |> Repo.paginate(paginator_opts)
+  end
+
+  @doc """
+  Lists transit logs for a ship owned by the company within the given scope.
+  """
+  def list_transit_logs(%Scope{company_id: company_id}, ship_id, params \\ %{}) do
+    with {:ok, _ship} <- fetch_company_ship(%Scope{company_id: company_id}, ship_id) do
+      paginator_opts =
+        params
+        |> Map.take([:after, :before, :limit])
+        |> Map.to_list()
+        |> Keyword.merge(cursor_fields: [departed_at: :desc, id: :desc], limit: 50)
+
+      page =
+        TransitLog
+        |> where(ship_id: ^ship_id)
+        |> order_by(desc: :departed_at, desc: :id)
+        |> Repo.paginate(paginator_opts)
+
+      {:ok, page}
+    end
   end
 
   @doc """

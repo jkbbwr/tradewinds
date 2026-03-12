@@ -18,6 +18,7 @@ defmodule Tradewinds.Companies.UpkeepJob do
     case Tradewinds.Companies.process_monthly_upkeep(company_id, base_time) do
       {:ok, cost} ->
         Logger.info("Company #{company_id} successfully paid monthly upkeep: #{cost}")
+
         %{company_id: company_id}
         |> new(scheduled_at: next_time)
         |> Oban.insert!()

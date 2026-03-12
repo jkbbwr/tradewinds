@@ -8,6 +8,7 @@ defmodule Tradewinds.Market.SweepExpiredJob do
   @impl Oban.Worker
   def perform(_job) do
     Logger.info("Sweeping expired market orders")
+
     case Market.sweep_expired_orders() do
       {:ok, stats} ->
         Logger.info("Swept #{stats.expired_count} expired market orders")

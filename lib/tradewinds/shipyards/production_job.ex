@@ -20,8 +20,13 @@ defmodule Tradewinds.Shipyards.ProductionJob do
     Repo.transact(fn ->
       # Produce ships for this specific shipyard
       case Shipyards.produce_ships(shipyard_id) do
-        {:ok, _} -> Logger.info("Successfully produced ships for shipyard_id: #{shipyard_id}")
-        {:error, reason} -> Logger.error("Failed to produce ships for shipyard_id: #{shipyard_id}, reason: #{inspect(reason)}")
+        {:ok, _} ->
+          Logger.info("Successfully produced ships for shipyard_id: #{shipyard_id}")
+
+        {:error, reason} ->
+          Logger.error(
+            "Failed to produce ships for shipyard_id: #{shipyard_id}, reason: #{inspect(reason)}"
+          )
       end
 
       # Schedule next week's production

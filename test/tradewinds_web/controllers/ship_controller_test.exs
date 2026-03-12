@@ -70,6 +70,27 @@ defmodule TradewindsWeb.ShipControllerTest do
     end
   end
 
+  describe "GET /api/v1/ships/:id/transit-logs" do
+    test "returns transit logs", %{
+      conn: conn,
+      company: company,
+      ship_type: ship_type,
+      port: port,
+      route: route
+    } do
+      ship =
+        Factory.insert(:ship, company: company, ship_type: ship_type, port: port, name: "Ship 1")
+
+      log = Factory.insert(:transit_log, ship: ship, route: route)
+
+      conn = get(conn, ~p"/api/v1/ships/#{ship.id}/transit-logs")
+      data = json_response(conn, 200)["data"]
+
+      assert length(data) == 1
+      assert Enum.at(data, 0)["id"] == log.id
+    end
+  end
+
   describe "PATCH /api/v1/ships/:id" do
     test "renames a ship", %{conn: conn, company: company, ship_type: ship_type, port: port} do
       ship =

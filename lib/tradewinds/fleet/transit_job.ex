@@ -8,6 +8,7 @@ defmodule Tradewinds.Fleet.TransitJob do
   @impl Oban.Worker
   def perform(%Oban.Job{args: %{"ship_id" => ship_id}}) do
     Logger.info("Processing transit for ship_id: #{ship_id}")
+
     case Fleet.dock_ship(ship_id) do
       {:ok, ship} ->
         Logger.info("Ship #{ship_id} successfully docked at port_id: #{ship.port_id}")

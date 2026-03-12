@@ -14,6 +14,17 @@ defmodule TradewindsWeb.ShipJSON do
     %{data: data(ship)}
   end
 
+  def transit_logs(%{page: page}) do
+    %{
+      data: for(log <- page.entries, do: transit_log_data(log)),
+      metadata: %{
+        after: page.metadata.after,
+        before: page.metadata.before,
+        limit: page.metadata.limit
+      }
+    }
+  end
+
   def data(ship) do
     %{
       id: ship.id,
@@ -26,6 +37,16 @@ defmodule TradewindsWeb.ShipJSON do
       route_id: ship.route_id,
       inserted_at: ship.inserted_at,
       updated_at: ship.updated_at
+    }
+  end
+
+  def transit_log_data(log) do
+    %{
+      id: log.id,
+      departed_at: log.departed_at,
+      arrived_at: log.arrived_at,
+      ship_id: log.ship_id,
+      route_id: log.route_id
     }
   end
 end

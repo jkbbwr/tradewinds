@@ -8,9 +8,13 @@ defmodule Tradewinds.Economy.ScanShocksJob do
   @impl Oban.Worker
   def perform(_job) do
     Logger.info("Scanning economy shocks")
+
     case Economy.scan_shocks() do
       {:ok, stats} ->
-        Logger.info("Economy shocks scan complete. Started: #{stats.started_count}, Ended: #{stats.ended_count}")
+        Logger.info(
+          "Economy shocks scan complete. Started: #{stats.started_count}, Ended: #{stats.ended_count}"
+        )
+
         {:ok, stats}
 
       error ->
