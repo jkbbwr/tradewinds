@@ -9,7 +9,7 @@ defmodule Tradewinds.AccountsTest do
       assert player.name == "John Doe"
       assert player.email == "john@example.com"
       assert player.password_hash
-      refute player.enabled
+      assert player.enabled
     end
 
     test "register/3 fails with invalid email" do

@@ -20,7 +20,7 @@ defmodule Tradewinds.Accounts.Player do
     field :discord_id, :string
     field :password, :string, virtual: true
     field :password_hash, :string
-    field :enabled, :boolean, default: false
+    field :enabled, :boolean, default: true
 
     has_many :directorships, Tradewinds.Companies.Director
 

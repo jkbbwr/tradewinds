@@ -191,7 +191,7 @@ defmodule Tradewinds.MarketTest do
       # Company 3: Rep 1000, higher price
       Market.post_order(scope, port.id, good.id, :sell, 110, 10)
 
-      orders = Market.list_orders(port.id, good.id, :sell)
+      orders = Market.list_orders(%{port_ids: [port.id], good_ids: [good.id], side: :sell, paginate: false})
 
       # Should be sorted by price ASC, then Reputation DESC
       assert [o1, o2, o3] = orders

@@ -271,19 +271,50 @@ defmodule Tradewinds.Market do
   defp calculate_fine(price, qty), do: max(trunc(price * qty * @penalty_fine_rate), 1)
 
   @doc """
-  Lists open orders for a port and good, sorted by price and reputation.
+  Lists open orders, applying filters for ports, goods, and side.
   """
-  def list_orders(port_id, good_id, side, params \\ %{}) do
-    order_by_price = if side == :sell, do: :asc, else: :desc
-
+  def list_orders(params \\ %{}) do
     query =
       Order
-      |> where(
-        [o],
-        o.port_id == ^port_id and o.good_id == ^good_id and o.side == ^side and o.status == :open
-      )
+      |> where([o], o.status == :open)
       |> join(:inner, [o], c in Company, on: o.company_id == c.id)
       |> select([o, c], %{order: o, company_reputation: c.reputation})
+
+    query =
+      if port_ids = Map.get(params, :port_ids) do
+        where(query, [o], o.port_id in ^port_ids)
+      else
+        query
+      end
+
+    query =
+      if good_ids = Map.get(params, :good_ids) do
+        where(query, [o], o.good_id in ^good_ids)
+      else
+        query
+      end
+
+    side =
+      case Map.get(params, :side) do
+        s when is_binary(s) -> String.to_existing_atom(s)
+        s when is_atom(s) and not is_nil(s) -> s
+        _ -> nil
+      end
+
+    query =
+      if side do
+        where(query, [o], o.side == ^side)
+      else
+        query
+      end
+
+    # Default sort is by id, unless side is specified
+    order_by_price =
+      case side do
+        :sell -> :asc
+        :buy -> :desc
+        _ -> :asc
+      end
 
     # Paginator is used when params are present (e.g. from a controller)
     # unless explicitly disabled. Internal calls with no params get the full list.
@@ -329,7 +360,7 @@ defmodule Tradewinds.Market do
   Calculates the blended price for a requested quantity from available orders.
   """
   def calculate_blended_price(port_id, good_id, side, requested_qty) do
-    orders = list_orders(port_id, good_id, side)
+    orders = list_orders(%{port_ids: [port_id], good_ids: [good_id], side: side, paginate: false})
 
     {total_cost, remaining} =
       Enum.reduce_while(orders, {0, requested_qty}, fn %{order: order}, {acc_cost, rem_qty} ->

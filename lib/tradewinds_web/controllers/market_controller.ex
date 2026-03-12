@@ -20,9 +20,9 @@ defmodule TradewindsWeb.MarketController do
   # -- Orders --
 
   defparams :orders do
-    required(:port_id, :string, format: :uuid)
-    required(:good_id, :string, format: :uuid)
-    required(:side, :string, included_in: ["buy", "sell"])
+    optional(:port_ids, {:array, :string})
+    optional(:good_ids, {:array, :string})
+    optional(:side, :string, included_in: ["buy", "sell"])
     optional(:after, :string)
     optional(:before, :string)
     optional(:limit, :integer, min: 1, max: 100)
@@ -32,10 +32,10 @@ defmodule TradewindsWeb.MarketController do
     operation_id: "orders",
     tags: ["Market"],
     summary: "List open market orders",
-    description: "Returns a list of open orders for a specific port, good, and side.",
+    description: "Returns a list of open orders, optionally filtered by ports, goods, and side.",
     parameters: [
-      port_id: [in: :query, description: "Port ID", type: :string],
-      good_id: [in: :query, description: "Good ID", type: :string],
+      port_ids: [in: :query, description: "List of Port IDs", schema: %OpenApiSpex.Schema{type: :array, items: %OpenApiSpex.Schema{type: :string}}],
+      good_ids: [in: :query, description: "List of Good IDs", schema: %OpenApiSpex.Schema{type: :array, items: %OpenApiSpex.Schema{type: :string}}],
       side: [in: :query, description: "Order side (buy or sell)", type: :string],
       after: [in: :query, description: "Cursor for next page", type: :string],
       before: [in: :query, description: "Cursor for previous page", type: :string],
@@ -49,8 +49,7 @@ defmodule TradewindsWeb.MarketController do
 
   def orders(conn, params) do
     with {:ok, valid} <- validate(:orders, params) do
-      side_atom = String.to_existing_atom(valid.side)
-      page = Market.list_orders(valid.port_id, valid.good_id, side_atom, valid)
+      page = Market.list_orders(valid)
       render(conn, :index, page: page)
     end
   end
