@@ -38,7 +38,8 @@ defmodule Tradewinds.AccountsTest do
     end
 
     test "fetch_player_by_email/1 returns error when not found" do
-      assert {:error, :email_not_found} = Accounts.fetch_player_by_email("unknown@example.com")
+      assert {:error, {:player_not_found, "unknown@example.com"}} =
+               Accounts.fetch_player_by_email("unknown@example.com")
     end
 
     test "is_enabled?/1 checks enabled status" do
@@ -107,7 +108,8 @@ defmodule Tradewinds.AccountsTest do
     end
 
     test "authenticate/2 fails with unknown email" do
-      assert {:error, :email_not_found} = Accounts.authenticate("unknown@example.com", "password")
+      assert {:error, {:player_not_found, "unknown@example.com"}} =
+               Accounts.authenticate("unknown@example.com", "password")
     end
   end
 

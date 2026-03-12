@@ -75,7 +75,7 @@ defmodule Tradewinds.WorldTest do
     end
 
     test "fetch_country/1 returns error if not found" do
-      assert World.fetch_country(Ecto.UUID.generate()) == {:error, :country_not_found}
+      assert {:error, {:country_not_found, _}} = World.fetch_country(Ecto.UUID.generate())
     end
   end
 
@@ -99,7 +99,7 @@ defmodule Tradewinds.WorldTest do
     end
 
     test "fetch_port/1 returns error if not found" do
-      assert World.fetch_port(Ecto.UUID.generate()) == {:error, :port_not_found}
+      assert {:error, {:port_not_found, _}} = World.fetch_port(Ecto.UUID.generate())
     end
   end
 
@@ -138,7 +138,7 @@ defmodule Tradewinds.WorldTest do
     end
 
     test "fetch_good/1 returns error if not found" do
-      assert World.fetch_good(Ecto.UUID.generate()) == {:error, :good_not_found}
+      assert {:error, {:good_not_found, _}} = World.fetch_good(Ecto.UUID.generate())
     end
   end
 
@@ -154,7 +154,7 @@ defmodule Tradewinds.WorldTest do
     end
 
     test "fetch_ship_type/1 returns error if not found" do
-      assert World.fetch_ship_type(Ecto.UUID.generate()) == {:error, :ship_type_not_found}
+      assert {:error, {:ship_type_not_found, _}} = World.fetch_ship_type(Ecto.UUID.generate())
     end
   end
 

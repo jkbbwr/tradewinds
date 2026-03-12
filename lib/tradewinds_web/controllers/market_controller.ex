@@ -188,13 +188,15 @@ defmodule TradewindsWeb.MarketController do
         {:ok, order} ->
           render(conn, :show, order: order)
 
-        {:error, :order_not_found} = error ->
+        {:error, {:order_not_found, _}} = error ->
           error
 
         {:error, {:trade_voided, reason, _offender_id}} ->
+          reason_msg = if is_tuple(reason), do: inspect(reason), else: reason
+
           conn
           |> put_status(:bad_request)
-          |> json(%{error: "trade_voided", message: "Trade was voided due to #{reason}."})
+          |> json(%{error: "trade_voided", message: "Trade was voided due to #{reason_msg}."})
 
         {:error, reason} ->
           conn

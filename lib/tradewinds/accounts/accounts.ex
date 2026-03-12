@@ -29,16 +29,16 @@ defmodule Tradewinds.Accounts do
 
   @doc """
   Retrieves a player by their email address.
-  Returns `{:ok, player}` or `{:error, :email_not_found}`.
+  Returns `{:ok, player}` or `{:error, {:player_not_found, email}}`.
   """
   def fetch_player_by_email(email) do
     Repo.get_by(Player, email: email)
-    |> Repo.ok_or(:email_not_found)
+    |> Repo.ok_or({:player_not_found, email})
   end
 
   def fetch_player_by_discord_id(discord_id) do
     Repo.get_by(Player, discord_id: discord_id)
-    |> Repo.ok_or(:player_not_found)
+    |> Repo.ok_or({:player_not_found, discord_id})
   end
 
   @doc """

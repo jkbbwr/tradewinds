@@ -17,7 +17,7 @@ defmodule Tradewinds.Shipyards do
   """
   def fetch_shipyard(id) do
     Repo.get(Shipyard, id)
-    |> Repo.ok_or(:shipyard_not_found)
+    |> Repo.ok_or({:shipyard_not_found, id})
   end
 
   @doc """
@@ -25,7 +25,7 @@ defmodule Tradewinds.Shipyards do
   """
   def fetch_shipyard_for_port(port_id) do
     Repo.get_by(Shipyard, port_id: port_id)
-    |> Repo.ok_or(:shipyard_not_found)
+    |> Repo.ok_or({:shipyard_not_found, port_id})
   end
 
   @doc """
@@ -112,7 +112,7 @@ defmodule Tradewinds.Shipyards do
     |> limit(1)
     |> lock("FOR UPDATE")
     |> Repo.one()
-    |> Repo.ok_or(:inventory_not_found)
+    |> Repo.ok_or({:inventory_not_found, ship_type_id})
   end
 
   @doc """

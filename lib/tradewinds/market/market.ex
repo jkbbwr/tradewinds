@@ -29,8 +29,6 @@ defmodule Tradewinds.Market do
            {:ok, _} <- deduct_listing_fee(company, order.id) do
         Tradewinds.Events.broadcast_order_created(company_id, order)
         {:ok, order}
-      else
-        {:error, reason} -> Repo.rollback(reason)
       end
     end)
   end
@@ -92,8 +90,6 @@ defmodule Tradewinds.Market do
           error ->
             error
         end
-      else
-        {:error, reason} -> Repo.rollback(reason)
       end
     end)
   end
@@ -112,8 +108,6 @@ defmodule Tradewinds.Market do
              {:ok, trade_ctx} <- prepare_trade(order, taker_company_id, quantity),
              {:ok, updated_order} <- execute_successful_trade(trade_ctx) do
           {:ok, updated_order}
-        else
-          {:error, reason} -> Repo.rollback(reason)
         end
       end)
 
@@ -226,7 +220,15 @@ defmodule Tradewinds.Market do
   end
 
   defp handle_failed_trade(order_id, taker_company_id, quantity, reason) do
-    if reason in [:insufficient_inventory, :insufficient_funds, :inventory_not_found] do
+    is_penalty_reason =
+      case reason do
+        :insufficient_inventory -> true
+        :insufficient_funds -> true
+        {:inventory_not_found, _} -> true
+        _ -> false
+      end
+
+    if is_penalty_reason do
       apply_penalties(order_id, taker_company_id, quantity, reason)
     else
       {:error, reason}
@@ -260,7 +262,7 @@ defmodule Tradewinds.Market do
 
     case reason do
       :insufficient_inventory -> seller_id
-      :inventory_not_found -> seller_id
+      {:inventory_not_found, _} -> seller_id
       :insufficient_funds -> buyer_id
       _ -> order.company_id
     end
@@ -352,7 +354,11 @@ defmodule Tradewinds.Market do
   # Helper functions
 
   defp fetch_order_for_update(id) do
-    Order |> where(id: ^id) |> lock("FOR UPDATE") |> Repo.one() |> Repo.ok_or(:order_not_found)
+    Order
+    |> where(id: ^id)
+    |> lock("FOR UPDATE")
+    |> Repo.one()
+    |> Repo.ok_or({:order_not_found, id})
   end
 
   defp check_posting_threshold(company) do

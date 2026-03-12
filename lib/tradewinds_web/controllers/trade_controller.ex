@@ -12,10 +12,41 @@ defmodule TradewindsWeb.TradeController do
     ExecuteTradeRequest,
     TradeExecutionResponse,
     TraderPositionsResponse,
+    TradersResponse,
     ErrorResponse
   }
 
   action_fallback TradewindsWeb.FallbackController
+
+  # -- Traders --
+
+  defparams :traders do
+    optional(:after, :string)
+    optional(:before, :string)
+    optional(:limit, :integer, min: 1, max: 100)
+  end
+
+  operation(:traders,
+    operation_id: "traders",
+    tags: ["Trade"],
+    summary: "List traders",
+    description: "Returns a list of NPC traders.",
+    parameters: [
+      after: [in: :query, description: "Cursor for next page", type: :string],
+      before: [in: :query, description: "Cursor for previous page", type: :string],
+      limit: [in: :query, description: "Number of items per page", type: :integer]
+    ],
+    responses: [
+      ok: {"List of traders", "application/json", TradersResponse}
+    ]
+  )
+
+  def traders(conn, params) do
+    with {:ok, valid} <- validate(:traders, params) do
+      page = Trade.list_traders(valid)
+      render(conn, :traders, page: page)
+    end
+  end
 
   # -- Trader Positions --
 

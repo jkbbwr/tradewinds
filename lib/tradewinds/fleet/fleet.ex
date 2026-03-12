@@ -204,7 +204,7 @@ defmodule Tradewinds.Fleet do
     |> lock("FOR UPDATE")
     |> preload([:ship_type])
     |> Repo.one()
-    |> Repo.ok_or(:ship_not_found)
+    |> Repo.ok_or({:ship_not_found, ship_id})
   end
 
   # Ensures the ship has enough remaining capacity for the new cargo.
@@ -241,7 +241,7 @@ defmodule Tradewinds.Fleet do
     |> where(ship_id: ^ship_id, good_id: ^good_id)
     |> lock("FOR UPDATE")
     |> Repo.one()
-    |> Repo.ok_or(:cargo_not_found)
+    |> Repo.ok_or({:cargo_not_found, good_id})
   end
 
   # Ensures the ship actually holds enough of the requested good.
@@ -333,7 +333,7 @@ defmodule Tradewinds.Fleet do
     Ship
     |> Repo.get(id)
     |> Repo.preload(preload)
-    |> Repo.ok_or(:ship_not_found)
+    |> Repo.ok_or({:ship_not_found, id})
   end
 
   @doc """
@@ -346,7 +346,7 @@ defmodule Tradewinds.Fleet do
     |> where(id: ^id, company_id: ^company_id)
     |> Repo.one()
     |> Repo.preload(preload)
-    |> Repo.ok_or(:ship_not_found)
+    |> Repo.ok_or({:ship_not_found, id})
   end
 
   @doc """

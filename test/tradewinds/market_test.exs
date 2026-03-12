@@ -155,7 +155,7 @@ defmodule Tradewinds.MarketTest do
       {:ok, order} = Market.post_order(scope, port.id, good.id, :sell, 100, 10)
 
       # Try to fill (Seller has 0 goods)
-      assert {:ok, {:trade_voided, :inventory_not_found, offender_id}} =
+      assert {:ok, {:trade_voided, {:inventory_not_found, _}, offender_id}} =
                Market.fill_order(taker_scope, order.id, 5)
 
       assert offender_id == seller_company.id

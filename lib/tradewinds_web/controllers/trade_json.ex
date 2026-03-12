@@ -31,6 +31,26 @@ defmodule TradewindsWeb.TradeJSON do
     }
   end
 
+  def traders(%{page: page}) do
+    %{
+      data: for(trader <- page.entries, do: trader_data(trader)),
+      metadata: %{
+        after: page.metadata.after,
+        before: page.metadata.before,
+        limit: page.metadata.limit
+      }
+    }
+  end
+
+  defp trader_data(trader) do
+    %{
+      id: trader.id,
+      name: trader.name,
+      inserted_at: trader.inserted_at,
+      updated_at: trader.updated_at
+    }
+  end
+
   def trader_positions(%{page: page}) do
     %{
       data: for(position <- page.entries, do: position_data(position)),

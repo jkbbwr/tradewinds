@@ -99,7 +99,11 @@ defmodule TradewindsWeb.ShipyardControllerTest do
     end
 
     test "returns 404 when shipyard not found", %{conn: conn} do
-      conn = post(conn, ~p"/api/v1/shipyards/#{Ecto.UUID.generate()}/purchase", %{ship_type_id: Ecto.UUID.generate()})
+      conn =
+        post(conn, ~p"/api/v1/shipyards/#{Ecto.UUID.generate()}/purchase", %{
+          ship_type_id: Ecto.UUID.generate()
+        })
+
       assert json_response(conn, 404)
     end
   end

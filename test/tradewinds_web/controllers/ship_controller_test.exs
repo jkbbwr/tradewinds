@@ -182,8 +182,14 @@ defmodule TradewindsWeb.ShipControllerTest do
       assert response(conn, 204)
     end
 
-    test "returns 404 when ship not found", %{conn: conn, company: company, port: port, good: good} do
+    test "returns 404 when ship not found", %{
+      conn: conn,
+      company: company,
+      port: port,
+      good: good
+    } do
       warehouse = Factory.insert(:warehouse, company: company, port: port)
+
       conn =
         post(conn, ~p"/api/v1/ships/#{Ecto.UUID.generate()}/transfer-to-warehouse", %{
           warehouse_id: warehouse.id,

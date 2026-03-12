@@ -13,7 +13,7 @@ defmodule Tradewinds.LogisticsTest do
     end
 
     test "fetch_warehouse/1 returns error if not found" do
-      assert {:error, :warehouse_not_found} = Logistics.fetch_warehouse(Ecto.UUID.generate())
+      assert {:error, {:warehouse_not_found, _}} = Logistics.fetch_warehouse(Ecto.UUID.generate())
     end
   end
 
@@ -34,7 +34,7 @@ defmodule Tradewinds.LogisticsTest do
     end
 
     test "upgrade_cost/1 returns error if warehouse not found" do
-      assert {:error, :warehouse_not_found} = Logistics.upgrade_cost(Ecto.UUID.generate())
+      assert {:error, {:warehouse_not_found, _}} = Logistics.upgrade_cost(Ecto.UUID.generate())
     end
 
     test "upkeep_cost/1 calculates correct total cost based on tier and capacity" do
@@ -59,7 +59,7 @@ defmodule Tradewinds.LogisticsTest do
     end
 
     test "upkeep_cost/1 returns error if warehouse not found" do
-      assert {:error, :warehouse_not_found} = Logistics.upkeep_cost(Ecto.UUID.generate())
+      assert {:error, {:warehouse_not_found, _}} = Logistics.upkeep_cost(Ecto.UUID.generate())
     end
   end
 
@@ -207,7 +207,8 @@ defmodule Tradewinds.LogisticsTest do
       warehouse = insert(:warehouse)
       good = insert(:good)
 
-      assert {:error, :inventory_not_found} = Logistics.remove_cargo(warehouse.id, good.id, 10)
+      assert {:error, {:inventory_not_found, _}} =
+               Logistics.remove_cargo(warehouse.id, good.id, 10)
     end
   end
 

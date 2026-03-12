@@ -123,8 +123,6 @@ defmodule Tradewinds.Companies do
            {:ok, updated_company} <- update_company_treasury(company, amount) do
         Tradewinds.Events.broadcast_ledger_entry(company_id, ledger)
         {:ok, updated_company}
-      else
-        {:error, reason} -> Repo.rollback(reason)
       end
     end)
   end
@@ -150,16 +148,16 @@ defmodule Tradewinds.Companies do
   def fetch_company(id) do
     Company
     |> Repo.get(id)
-    |> Repo.ok_or(:company_not_found)
+    |> Repo.ok_or({:company_not_found, id})
   end
 
   # Fetches and locks a company record for transaction safety.
-  defp fetch_company_for_update(company_id) do
+  defp fetch_company_for_update(id) do
     Company
-    |> where(id: ^company_id)
+    |> where(id: ^id)
     |> lock("FOR UPDATE")
     |> Repo.one()
-    |> Repo.ok_or(:company_not_found)
+    |> Repo.ok_or({:company_not_found, id})
   end
 
   # Validates that a deduction will not push the company's treasury below zero.
@@ -186,8 +184,6 @@ defmodule Tradewinds.Companies do
         with {:ok, _} <- Tradewinds.Fleet.process_upkeep(company_id, now),
              {:ok, _} <- Tradewinds.Logistics.process_upkeep(company_id, now) do
           {:ok, total_cost}
-        else
-          {:error, reason} -> Repo.rollback(reason)
         end
       end)
 
@@ -243,8 +239,6 @@ defmodule Tradewinds.Companies do
              |> Repo.update() do
         Cachex.put(:tradewinds_cache, "company_status:#{company_id}", :active)
         {:ok, updated_company}
-      else
-        {:error, reason} -> Repo.rollback(reason)
       end
     end)
   end

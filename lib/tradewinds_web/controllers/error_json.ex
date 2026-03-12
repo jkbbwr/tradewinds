@@ -1,10 +1,22 @@
 defmodule TradewindsWeb.ErrorJSON do
+  defp humanize_reason(atom) when is_atom(atom) do
+    atom
+    |> Atom.to_string()
+    |> String.replace("_", " ")
+    |> String.downcase()
+    |> String.capitalize()
+  end
+
   def render("400.json", _assigns) do
     %{errors: %{detail: "Bad Request"}}
   end
 
   def render("404.json", %{}) do
     %{errors: %{detail: "Not Found"}}
+  end
+
+  def render("not_found.json", %{reason: reason, id: id}) do
+    %{errors: %{detail: humanize_reason(reason), id: id}}
   end
 
   def render("not_found.json", %{}) do

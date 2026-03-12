@@ -213,8 +213,6 @@ defmodule Tradewinds.Logistics do
              })
              |> Repo.update() do
         {:ok, updated}
-      else
-        {:error, reason} -> Repo.rollback(reason)
       end
     end)
   end
@@ -238,7 +236,7 @@ defmodule Tradewinds.Logistics do
   """
   def fetch_warehouse(id) do
     Repo.get(Warehouse, id)
-    |> Repo.ok_or(:warehouse_not_found)
+    |> Repo.ok_or({:warehouse_not_found, id})
   end
 
   @doc """
@@ -264,7 +262,7 @@ defmodule Tradewinds.Logistics do
     Warehouse
     |> where(id: ^id, company_id: ^company_id)
     |> Repo.one()
-    |> Repo.ok_or(:warehouse_not_found)
+    |> Repo.ok_or({:warehouse_not_found, id})
   end
 
   @doc """
@@ -274,7 +272,7 @@ defmodule Tradewinds.Logistics do
     Warehouse
     |> where(company_id: ^company_id, port_id: ^port_id)
     |> Repo.one()
-    |> Repo.ok_or(:warehouse_not_found)
+    |> Repo.ok_or({:warehouse_not_found, port_id})
   end
 
   # Retrieves and locks a warehouse for transaction safety.
@@ -283,7 +281,7 @@ defmodule Tradewinds.Logistics do
     |> where(id: ^warehouse_id)
     |> lock("FOR UPDATE")
     |> Repo.one()
-    |> Repo.ok_or(:warehouse_not_found)
+    |> Repo.ok_or({:warehouse_not_found, warehouse_id})
   end
 
   # Ensures the warehouse has enough remaining capacity for the new quantity.
@@ -370,7 +368,7 @@ defmodule Tradewinds.Logistics do
     |> where(warehouse_id: ^warehouse_id, good_id: ^good_id)
     |> lock("FOR UPDATE")
     |> Repo.one()
-    |> Repo.ok_or(:inventory_not_found)
+    |> Repo.ok_or({:inventory_not_found, good_id})
   end
 
   # Ensures the warehouse actually holds enough of the requested good.

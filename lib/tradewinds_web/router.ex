@@ -150,6 +150,7 @@ defmodule TradewindsWeb.Router do
   scope "/api/v1/trade", TradewindsWeb do
     pipe_through :api
 
+    get "/traders", TradeController, :traders
     get "/trader-positions", TradeController, :trader_positions
   end
 

@@ -8,6 +8,21 @@ defmodule Tradewinds.Trade do
   alias Tradewinds.Repo
   import Ecto.Query
 
+  @doc """
+  Lists all NPC traders.
+  """
+  def list_traders(params \\ %{}) do
+    opts =
+      params
+      |> Map.take([:after, :before, :limit])
+      |> Map.to_list()
+      |> Keyword.merge(cursor_fields: [inserted_at: :desc, id: :desc], limit: 50)
+
+    Tradewinds.Trade.Trader
+    |> order_by(desc: :inserted_at, desc: :id)
+    |> Repo.paginate(opts)
+  end
+
   def list_trader_positions(port_id, params \\ %{}) do
     opts =
       params
@@ -28,7 +43,7 @@ defmodule Tradewinds.Trade do
         where: p.port_id == ^port_id and p.good_id == ^good_id,
         preload: [:good]
     )
-    |> Repo.ok_or(:not_found)
+    |> Repo.ok_or({:trader_position_not_found, good_id})
   end
 
   @doc """
@@ -132,8 +147,6 @@ defmodule Tradewinds.Trade do
         with {:ok, position} <- fetch_position_for_update(quote_data.port_id, quote_data.good_id),
              :ok <- validate_trade_execution(quote_data, position, destinations) do
           perform_execution(quote_data, position, destinations, quote_data.timestamp)
-        else
-          {:error, reason} -> Repo.rollback(reason)
         end
       end)
     end
@@ -203,8 +216,6 @@ defmodule Tradewinds.Trade do
           }
 
           perform_execution(quote_data, position, destinations, now)
-        else
-          {:error, reason} -> Repo.rollback(reason)
         end
       end)
     end
@@ -232,7 +243,7 @@ defmodule Tradewinds.Trade do
     |> lock("FOR UPDATE")
     |> preload([:good])
     |> Repo.one()
-    |> Repo.ok_or(:market_not_found)
+    |> Repo.ok_or({:market_not_found, good_id})
   end
 
   # Verifies the NPC actually has enough stock to fulfill a buy order.

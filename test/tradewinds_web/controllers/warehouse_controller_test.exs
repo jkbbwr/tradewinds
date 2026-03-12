@@ -153,7 +153,9 @@ defmodule TradewindsWeb.WarehouseControllerTest do
       good: good,
       ship_type: ship_type
     } do
-      ship = Factory.insert(:ship, company: company, ship_type: ship_type, port: port, status: :docked)
+      ship =
+        Factory.insert(:ship, company: company, ship_type: ship_type, port: port, status: :docked)
+
       conn =
         post(conn, ~p"/api/v1/warehouses/#{Ecto.UUID.generate()}/transfer-to-ship", %{
           ship_id: ship.id,

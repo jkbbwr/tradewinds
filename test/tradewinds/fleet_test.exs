@@ -15,7 +15,7 @@ defmodule Tradewinds.FleetTest do
     end
 
     test "fetch_ship/1 returns error if not found" do
-      assert {:error, :ship_not_found} = Fleet.fetch_ship(Ecto.UUID.generate())
+      assert {:error, {:ship_not_found, _}} = Fleet.fetch_ship(Ecto.UUID.generate())
     end
 
     test "rename_ship/3 renames the ship if authorized" do
