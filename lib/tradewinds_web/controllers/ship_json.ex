@@ -25,6 +25,12 @@ defmodule TradewindsWeb.ShipJSON do
     }
   end
 
+  def inventory(%{cargo: cargo}) do
+    %{
+      data: for(item <- cargo, do: cargo_data(item))
+    }
+  end
+
   def data(ship) do
     %{
       id: ship.id,
@@ -47,6 +53,13 @@ defmodule TradewindsWeb.ShipJSON do
       arrived_at: log.arrived_at,
       ship_id: log.ship_id,
       route_id: log.route_id
+    }
+  end
+
+  def cargo_data(item) do
+    %{
+      good_id: item.good_id,
+      quantity: item.quantity
     }
   end
 end

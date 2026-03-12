@@ -12,6 +12,7 @@ defmodule TradewindsWeb.ShipController do
     TransitRequest,
     TransitLogsResponse,
     TransferToWarehouseRequest,
+    CargoResponse,
     ErrorResponse,
     ChangesetResponse
   }
@@ -85,6 +86,37 @@ defmodule TradewindsWeb.ShipController do
   def ship(conn, %{"ship_id" => ship_id}) do
     with {:ok, ship} <- Fleet.fetch_company_ship(conn.assigns.scope, ship_id) do
       render(conn, :show, ship: ship)
+    end
+  end
+
+  # -- Inventory --
+
+  operation(:inventory,
+    operation_id: "shipInventory",
+    tags: ["Fleet"],
+    summary: "Get ship inventory",
+    description: "Returns the cargo currently loaded on a specific ship owned by the current company.",
+    security: [%{"bearerAuth" => []}],
+    parameters: [
+      %OpenApiSpex.Parameter{
+        name: "tradewinds-company-id",
+        in: :header,
+        required: true,
+        schema: %OpenApiSpex.Schema{type: :string, format: :uuid},
+        description: "Company ID"
+      },
+      ship_id: [in: :path, description: "Ship ID", type: :string]
+    ],
+    responses: [
+      ok: {"List of cargo", "application/json", CargoResponse},
+      unauthorized: {"Invalid or expired token", "application/json", ErrorResponse},
+      not_found: {"Ship not found", "application/json", ErrorResponse}
+    ]
+  )
+
+  def inventory(conn, %{"ship_id" => ship_id}) do
+    with {:ok, cargo} <- Fleet.list_ship_cargo(conn.assigns.scope, ship_id) do
+      render(conn, :inventory, cargo: cargo)
     end
   end
 

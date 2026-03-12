@@ -124,6 +124,7 @@ defmodule TradewindsWeb.Router do
 
     get "/", ShipController, :ships
     get "/:ship_id", ShipController, :ship
+    get "/:ship_id/inventory", ShipController, :inventory
     get "/:ship_id/transit-logs", ShipController, :transit_logs
     patch "/:ship_id", ShipController, :rename_ship
     post "/:ship_id/transit", ShipController, :transit

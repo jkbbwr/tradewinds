@@ -75,6 +75,25 @@ defmodule TradewindsWeb.ShipControllerTest do
     end
   end
 
+  describe "GET /api/v1/ships/:id/inventory" do
+    test "returns ship inventory", %{conn: conn, company: company, ship_type: ship_type, port: port, good: good} do
+      ship = Factory.insert(:ship, company: company, ship_type: ship_type, port: port)
+      Factory.insert(:ship_cargo, ship: ship, good: good, quantity: 100)
+
+      conn = get(conn, ~p"/api/v1/ships/#{ship.id}/inventory")
+      data = json_response(conn, 200)["data"]
+
+      assert length(data) == 1
+      assert Enum.at(data, 0)["good_id"] == good.id
+      assert Enum.at(data, 0)["quantity"] == 100
+    end
+
+    test "returns 404 when ship not found", %{conn: conn} do
+      conn = get(conn, ~p"/api/v1/ships/#{Ecto.UUID.generate()}/inventory")
+      assert json_response(conn, 404)
+    end
+  end
+
   describe "GET /api/v1/ships/:id/transit-logs" do
     test "returns transit logs", %{
       conn: conn,

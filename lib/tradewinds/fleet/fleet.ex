@@ -272,6 +272,21 @@ defmodule Tradewinds.Fleet do
   end
 
   @doc """
+  Lists the cargo currently loaded on a ship owned by the company within the given scope.
+  """
+  def list_ship_cargo(%Scope{company_id: company_id}, ship_id) do
+    with {:ok, _ship} <- fetch_company_ship(%Scope{company_id: company_id}, ship_id) do
+      query =
+        from c in ShipCargo,
+          where: c.ship_id == ^ship_id,
+          order_by: [asc: c.good_id],
+          select: %{good_id: c.good_id, quantity: c.quantity}
+
+      {:ok, Repo.all(query)}
+    end
+  end
+
+  @doc """
   Calculates the total monthly upkeep cost for all ships owned by a company.
   """
   def calculate_total_upkeep(company_id) do
