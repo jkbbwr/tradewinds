@@ -62,7 +62,7 @@ defmodule Tradewinds.Shipyards do
   end
 
   @doc """
-  Atomically purchases a ship from a shipyard, assigning it to the company 
+  Atomically purchases a ship from a shipyard, assigning it to the company
   and deducting the cost from the company's treasury.
   """
   def purchase_ship(%Scope{company_id: company_id}, shipyard_id, ship_type_id) do
@@ -99,9 +99,8 @@ defmodule Tradewinds.Shipyards do
               else
                 {:ok, :no_tax}
               end) do
+        Tradewinds.Events.broadcast_ship_bought(ship)
         {:ok, ship}
-      else
-        {:error, reason} -> Repo.rollback(reason)
       end
     end)
   end

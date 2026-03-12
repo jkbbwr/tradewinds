@@ -31,6 +31,7 @@ defmodule Tradewinds.Companies do
              |> Tradewinds.Companies.UpkeepJob.new(schedule_in: 17280)
              |> Oban.insert() do
         Cachex.put(:tradewinds_cache, "company_status:#{company.id}", :active)
+        Tradewinds.Events.broadcast_company_formed(company)
         {:ok, company}
       end
     end)

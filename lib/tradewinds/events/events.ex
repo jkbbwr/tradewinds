@@ -29,6 +29,39 @@ defmodule Tradewinds.Events do
     )
   end
 
+  def broadcast_company_formed(company) do
+    PubSub.broadcast(
+      @pubsub,
+      "events:world:all",
+      {:message,
+       %{
+         type: "company_formed",
+         data: %{
+           id: company.id,
+           name: company.name,
+           ticker: company.ticker
+         }
+       }}
+    )
+  end
+
+  def broadcast_ship_bought(ship) do
+    PubSub.broadcast(
+      @pubsub,
+      "events:world:all",
+      {:message,
+       %{
+         type: "ship_bought",
+         data: %{
+           ship_id: ship.id,
+           name: ship.name,
+           ship_type_id: ship.ship_type_id,
+           company_id: ship.company_id
+         }
+       }}
+    )
+  end
+
   def broadcast_ship_transit_started(company_id, ship) do
     PubSub.broadcast(
       @pubsub,
@@ -43,6 +76,20 @@ defmodule Tradewinds.Events do
          }
        }}
     )
+
+    PubSub.broadcast(
+      @pubsub,
+      "events:world:all",
+      {:message,
+       %{
+         type: "ship_set_sail",
+         data: %{
+           ship_id: ship.id,
+           name: ship.name,
+           route_id: ship.route_id
+         }
+       }}
+    )
   end
 
   def broadcast_ship_docked(company_id, ship) do
@@ -54,6 +101,20 @@ defmodule Tradewinds.Events do
          type: "ship_docked",
          data: %{
            ship_id: ship.id,
+           port_id: ship.port_id
+         }
+       }}
+    )
+
+    PubSub.broadcast(
+      @pubsub,
+      "events:world:all",
+      {:message,
+       %{
+         type: "ship_docked_world",
+         data: %{
+           ship_id: ship.id,
+           name: ship.name,
            port_id: ship.port_id
          }
        }}
@@ -73,6 +134,20 @@ defmodule Tradewinds.Events do
            good_id: order.good_id,
            price: order.price,
            total: order.total
+         }
+       }}
+    )
+
+    PubSub.broadcast(
+      @pubsub,
+      "events:world:all",
+      {:message,
+       %{
+         type: "new_order_placed",
+         data: %{
+           port_id: order.port_id,
+           side: order.side,
+           good_id: order.good_id
          }
        }}
     )
