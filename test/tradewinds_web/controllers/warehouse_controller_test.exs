@@ -60,6 +60,20 @@ defmodule TradewindsWeb.WarehouseControllerTest do
     end
   end
 
+  describe "POST /api/v1/warehouses" do
+    test "creates a new warehouse", %{conn: conn, port: port} do
+      conn = post(conn, ~p"/api/v1/warehouses", %{port_id: port.id})
+      assert %{"id" => id, "port_id" => port_id, "level" => 1} = json_response(conn, 201)["data"]
+      assert port_id == port.id
+      assert id
+    end
+
+    test "returns 422 for invalid parameters", %{conn: conn} do
+      conn = post(conn, ~p"/api/v1/warehouses", %{port_id: "not-a-uuid"})
+      assert json_response(conn, 422)
+    end
+  end
+
   describe "GET /api/v1/warehouses/:id" do
     test "returns warehouse details", %{conn: conn, company: company, port: port} do
       warehouse = Factory.insert(:warehouse, company: company, port: port)

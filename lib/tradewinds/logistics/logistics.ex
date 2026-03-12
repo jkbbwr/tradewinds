@@ -144,12 +144,11 @@ defmodule Tradewinds.Logistics do
              Tradewinds.Companies.record_transaction(
                warehouse.company_id,
                -cost,
-               "warehouse_upgrade",
-               "warehouse",
+               :warehouse_upgrade,
+               :warehouse,
                warehouse.id,
                now
-             ),
-           {:ok, _} <-
+             ),           {:ok, _} <-
              maybe_record_tax(
                warehouse.company_id,
                warehouse.port_id,

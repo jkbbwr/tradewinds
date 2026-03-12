@@ -10,6 +10,7 @@ defmodule Tradewinds.Companies.Ledger do
         :initial_deposit,
         :transfer,
         :ship_purchase,
+        :warehouse_purchase,
         :tax,
         :market_trade,
         :market_listing_fee,

@@ -1,4 +1,8 @@
 defmodule TradewindsWeb.ErrorJSON do
+  def render("400.json", _assigns) do
+    %{errors: %{detail: "Bad Request"}}
+  end
+
   def render("404.json", %{}) do
     %{errors: %{detail: "Not Found"}}
   end
@@ -26,8 +30,8 @@ defmodule TradewindsWeb.ErrorJSON do
   end
 
   defp translate_error({msg, opts}) do
-    Enum.reduce(opts, msg, fn {key, value}, acc ->
-      String.replace(acc, "%{#{key}}", to_string(value))
+    Regex.replace(~r"%{(\w+)}", msg, fn _, key ->
+      opts |> Keyword.get(String.to_existing_atom(key), key) |> to_string()
     end)
   end
 end
