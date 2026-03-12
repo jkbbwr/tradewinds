@@ -60,6 +60,26 @@ defmodule Tradewinds.AccountsTest do
       assert {:ok, updated_player} = Accounts.disable(player)
       refute updated_player.enabled
     end
+
+    test "delete_player/1 deletes player and downstream relations" do
+      player = insert(:player)
+      company = insert(:company)
+      insert(:director, company: company, player: player)
+
+      # Create downstream relations to ensure they cascade
+      ship = insert(:ship, company: company)
+      insert(:transit_log, ship: ship)
+      warehouse = insert(:warehouse, company: company)
+      good = insert(:good)
+      insert(:warehouse_inventory, warehouse: warehouse, good: good)
+
+      assert {:ok, _} = Accounts.delete_player(player)
+
+      assert Repo.get(Tradewinds.Accounts.Player, player.id) == nil
+      assert Repo.get(Tradewinds.Companies.Company, company.id) == nil
+      assert Repo.get(Tradewinds.Fleet.Ship, ship.id) == nil
+      assert Repo.get(Tradewinds.Logistics.Warehouse, warehouse.id) == nil
+    end
   end
 
   describe "authentication" do

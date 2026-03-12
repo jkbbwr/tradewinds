@@ -67,6 +67,27 @@ defmodule Tradewinds.Accounts do
     |> Repo.update()
   end
 
+  @doc """
+  Deletes a player account and all downstream relations (including companies they direct).
+  """
+  def delete_player(player) do
+    Repo.transact(fn ->
+      # Find all companies this player is a director of
+      companies =
+        Tradewinds.Companies.Company
+        |> join(:inner, [c], d in Tradewinds.Companies.Director, on: d.company_id == c.id)
+        |> where([c, d], d.player_id == ^player.id)
+        |> Repo.all()
+
+      # Delete all those companies, which triggers cascading deletes for ships, warehouses, etc.
+      Enum.each(companies, &Repo.delete!/1)
+
+      # Delete the player
+      Repo.delete!(player)
+      {:ok, player}
+    end)
+  end
+
   ## Authentication
 
   @doc """
