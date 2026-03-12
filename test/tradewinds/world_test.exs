@@ -83,7 +83,10 @@ defmodule Tradewinds.WorldTest do
     test "fetch_port/1 returns the port" do
       country = country_fixture()
       port = port_fixture(country)
-      assert World.fetch_port(port.id) == {:ok, port}
+      {:ok, fetched} = World.fetch_port(port.id)
+      assert fetched.id == port.id
+      assert fetched.traders == []
+      assert fetched.outgoing_routes == []
     end
 
     test "fetch_port_by_name/1 returns the port" do

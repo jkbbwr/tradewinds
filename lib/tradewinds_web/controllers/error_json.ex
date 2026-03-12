@@ -35,8 +35,16 @@ defmodule TradewindsWeb.ErrorJSON do
     %{errors: %{detail: "Account is disabled"}}
   end
 
+  def render("422.json", %{message: message}) do
+    %{errors: %{detail: message}}
+  end
+
   def render("500.json", %{}) do
     %{errors: %{detail: "Internal Server Error"}}
+  end
+
+  def error(%{status: :insufficient_funds}) do
+    %{errors: %{detail: "Insufficient funds to complete this trade."}}
   end
 
   def error(%{changeset: changeset}) do

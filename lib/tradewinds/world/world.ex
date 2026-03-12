@@ -31,7 +31,10 @@ defmodule Tradewinds.World do
   Fetches a port by its ID.
   """
   def fetch_port(id) do
-    Repo.get(Port, id) |> Repo.ok_or({:port_not_found, id})
+    Port
+    |> Repo.get(id)
+    |> Repo.preload([:traders, :outgoing_routes])
+    |> Repo.ok_or({:port_not_found, id})
   end
 
   @doc """

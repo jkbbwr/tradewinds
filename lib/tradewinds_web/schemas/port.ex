@@ -13,6 +13,8 @@ defmodule TradewindsWeb.Schemas.Port do
       country_id: %Schema{type: :string, format: :uuid},
       is_hub: %Schema{type: :boolean},
       tax_rate_bps: %Schema{type: :integer},
+      traders: %Schema{type: :array, items: TradewindsWeb.Schemas.Trader},
+      outgoing_routes: %Schema{type: :array, items: TradewindsWeb.Schemas.Route},
       inserted_at: %Schema{type: :string, format: :"date-time"},
       updated_at: %Schema{type: :string, format: :"date-time"}
     },

@@ -46,7 +46,7 @@ defmodule TradewindsWeb.WorldJSON do
   end
 
   defp port_data(port) do
-    %{
+    data = %{
       id: port.id,
       name: port.name,
       shortcode: port.shortcode,
@@ -55,6 +55,31 @@ defmodule TradewindsWeb.WorldJSON do
       tax_rate_bps: port.tax_rate_bps,
       inserted_at: port.inserted_at,
       updated_at: port.updated_at
+    }
+
+    data
+    |> maybe_put_traders(port)
+    |> maybe_put_routes(port)
+  end
+
+  defp maybe_put_traders(data, %{traders: %Ecto.Association.NotLoaded{}}), do: data
+
+  defp maybe_put_traders(data, %{traders: traders}) do
+    Map.put(data, :traders, Enum.map(traders, &trader_data/1))
+  end
+
+  defp maybe_put_routes(data, %{outgoing_routes: %Ecto.Association.NotLoaded{}}), do: data
+
+  defp maybe_put_routes(data, %{outgoing_routes: routes}) do
+    Map.put(data, :outgoing_routes, Enum.map(routes, &route_data/1))
+  end
+
+  defp trader_data(trader) do
+    %{
+      id: trader.id,
+      name: trader.name,
+      inserted_at: trader.inserted_at,
+      updated_at: trader.updated_at
     }
   end
 

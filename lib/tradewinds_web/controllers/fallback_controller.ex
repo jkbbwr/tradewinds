@@ -8,6 +8,13 @@ defmodule TradewindsWeb.FallbackController do
     |> render(:account_disabled)
   end
 
+  def call(conn, {:error, :quantity_mismatch}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(json: TradewindsWeb.ErrorJSON)
+    |> render(:unprocessable_entity, message: "Quantity mismatch detected")
+  end
+
   def call(conn, {:error, :insufficient_funds}) do
     conn
     |> put_status(:unprocessable_entity)

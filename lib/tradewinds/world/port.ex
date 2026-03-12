@@ -8,8 +8,13 @@ defmodule Tradewinds.World.Port do
     field :tax_rate_bps, :integer, default: 0
 
     belongs_to :country, Tradewinds.World.Country
-
     has_one :shipyard, Tradewinds.Shipyards.Shipyard
+
+    has_many :trader_positions, Tradewinds.Trade.TraderPosition
+    has_many :traders, through: [:trader_positions, :trader]
+
+    has_many :outgoing_routes, Tradewinds.World.Route, foreign_key: :from_id
+    has_many :destinations, through: [:outgoing_routes, :to]
 
     timestamps()
   end
