@@ -83,6 +83,20 @@ defmodule TradewindsWeb.TradeControllerTest do
       assert data["quote"]["quantity"] == 10
       assert data["quote"]["action"] == "buy"
     end
+
+    test "fails to generate a quote when not at port", %{conn: conn, good: good} do
+      other_port = Factory.insert(:port)
+
+      conn =
+        post(conn, ~p"/api/v1/trade/quote", %{
+          port_id: other_port.id,
+          good_id: good.id,
+          action: "buy",
+          quantity: 10
+        })
+
+      assert json_response(conn, 422)["errors"] != %{}
+    end
   end
 
   describe "POST /api/v1/trade/quotes/execute" do
