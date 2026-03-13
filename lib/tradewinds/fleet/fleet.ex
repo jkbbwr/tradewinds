@@ -287,6 +287,15 @@ defmodule Tradewinds.Fleet do
   end
 
   @doc """
+  Checks if the given company has at least one docked ship at the specified port.
+  """
+  def has_ship_at_port?(company_id, port_id) do
+    Ship
+    |> where([s], s.company_id == ^company_id and s.port_id == ^port_id and s.status == :docked)
+    |> Repo.exists?()
+  end
+
+  @doc """
   Calculates the total monthly upkeep cost for all ships owned by a company.
   """
   def calculate_total_upkeep(company_id) do

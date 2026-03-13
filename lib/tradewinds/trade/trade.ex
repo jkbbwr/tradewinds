@@ -64,6 +64,7 @@ defmodule Tradewinds.Trade do
       when action in [:buy, :sell] and is_integer(quantity) and quantity > 0 do
     with {:ok, company} <- Tradewinds.Companies.fetch_company(company_id),
          {:ok, :active} <- Tradewinds.Companies.is_active?(company),
+         :ok <- ensure_presence(company, port_id),
          {:ok, position} <- fetch_position(port_id, good_id),
          :ok <- ensure_available_stock(position, action, quantity),
          now <- DateTime.utc_now(),
@@ -118,6 +119,14 @@ defmodule Tradewinds.Trade do
        do: {:error, :insufficient_stock}
 
   defp ensure_available_stock(_position, _action, _quantity), do: :ok
+
+  defp ensure_presence(company, port_id) do
+    if company.home_port_id == port_id or Tradewinds.Fleet.has_ship_at_port?(company.id, port_id) do
+      :ok
+    else
+      {:error, :not_at_port}
+    end
+  end
 
   defp quote_price_and_action(:buy, ask, _bid), do: {ask, :ask}
   defp quote_price_and_action(:sell, _ask, bid), do: {bid, :bid}
@@ -175,6 +184,7 @@ defmodule Tradewinds.Trade do
       Repo.transact(fn ->
         with {:ok, company} <- Tradewinds.Companies.fetch_company(company_id),
              {:ok, :active} <- Tradewinds.Companies.is_active?(company),
+             :ok <- ensure_presence(company, port_id),
              {:ok, position} <- fetch_position_for_update(port_id, good_id),
              :ok <-
                validate_trade_execution(

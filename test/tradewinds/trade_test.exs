@@ -36,11 +36,11 @@ defmodule Tradewinds.TradeTest do
 
   describe "quotes" do
     test "generate_quote/5 creates a valid signed token and quote data", %{player: player} do
-      company = insert(:company)
+      port = insert(:port)
+      company = insert(:company, home_port: port)
       insert(:director, company: company, player: player)
       scope = Scope.for(player: player, company_id: company.id)
 
-      port = insert(:port)
       good = insert(:good)
       trader = insert(:trader)
       insert(:trader_position, trader: trader, port: port, good: good, stock: 100)
@@ -56,11 +56,11 @@ defmodule Tradewinds.TradeTest do
     end
 
     test "verify_quote/1 verifies a valid token", %{player: player} do
-      company = insert(:company)
+      port = insert(:port)
+      company = insert(:company, home_port: port)
       insert(:director, company: company, player: player)
       scope = Scope.for(player: player, company_id: company.id)
 
-      port = insert(:port)
       good = insert(:good)
       trader = insert(:trader)
       insert(:trader_position, trader: trader, port: port, good: good, stock: 100)
@@ -71,6 +71,19 @@ defmodule Tradewinds.TradeTest do
 
     test "verify_quote/1 fails for invalid token" do
       assert {:error, :invalid} = Trade.verify_quote("invalid token")
+    end
+
+    test "generate_quote/5 fails if not at home port and no ship present", %{player: player} do
+      port = insert(:port)
+      company = insert(:company) # has a different random home port
+      insert(:director, company: company, player: player)
+      scope = Scope.for(player: player, company_id: company.id)
+
+      good = insert(:good)
+      trader = insert(:trader)
+      insert(:trader_position, trader: trader, port: port, good: good, stock: 100)
+
+      assert {:error, :not_at_port} = Trade.generate_quote(scope, port.id, good.id, :buy, 10)
     end
   end
 
@@ -122,11 +135,11 @@ defmodule Tradewinds.TradeTest do
     end
 
     test "fails if destinations total quantity doesn't match quote", %{player: player} do
-      company = insert(:company)
+      port = insert(:port)
+      company = insert(:company, home_port: port)
       insert(:director, company: company, player: player)
       scope = Scope.for(player: player, company_id: company.id)
 
-      port = insert(:port)
       good = insert(:good)
       trader = insert(:trader)
       insert(:trader_position, trader: trader, port: port, good: good, stock: 100)
@@ -140,11 +153,11 @@ defmodule Tradewinds.TradeTest do
     end
 
     test "fails if ship is at wrong port", %{player: player} do
-      company = insert(:company, treasury: 10_000)
+      port = insert(:port)
+      company = insert(:company, home_port: port)
       insert(:director, company: company, player: player)
       scope = Scope.for(player: player, company_id: company.id)
 
-      port = insert(:port)
       wrong_port = insert(:port)
       good = insert(:good)
       trader = insert(:trader)
@@ -238,6 +251,22 @@ defmodule Tradewinds.TradeTest do
 
       updated_company = Tradewinds.Repo.get(Tradewinds.Companies.Company, company.id)
       assert updated_company.treasury < 10_000
+    end
+
+    test "fails if not at port", %{player: player} do
+      company = insert(:company)
+      insert(:director, company: company, player: player)
+      scope = Scope.for(player: player, company_id: company.id)
+
+      port = insert(:port)
+      good = insert(:good)
+      trader = insert(:trader)
+      insert(:trader_position, trader: trader, port: port, good: good, stock: 100)
+
+      assert {:error, :not_at_port} =
+               Trade.execute_immediate(scope, port.id, good.id, :buy, [
+                 %{type: :ship, id: Ecto.UUID.generate(), quantity: 10}
+               ])
     end
   end
 
