@@ -18,8 +18,11 @@ defmodule Tradewinds.Discord.Commands.Toggle do
 
     with {:ok, player} <- Tradewinds.Accounts.fetch_player_by_email(email),
          {:ok, updated} <- toggle_function.(player) do
+      message =
+        inspect(updated, pretty: true) |> Tradewinds.Discord.Safe.escape_unescaped_backticks()
+
       [
-        content: "Success! - ```elixir\n#{inspect(updated, pretty: true)}```",
+        content: "Success! - ```elixir\n#{message}```",
         ephemeral?: true
       ]
     else

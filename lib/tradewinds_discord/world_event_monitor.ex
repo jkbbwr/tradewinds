@@ -14,9 +14,14 @@ defmodule Tradewinds.Discord.WorldEventsSubscriber do
   defp loop do
     receive do
       {:message, payload} ->
+        message =
+          payload
+          |> Jason.encode!(pretty: true)
+          |> Tradewinds.Discord.Safe.escape_unescaped_backticks()
+
         Nostrum.Api.Message.create(
           @channel_id,
-          "```json\n#{Jason.encode!(payload, pretty: true)}```"
+          "```json\n#{message}```"
         )
 
         loop()
