@@ -64,6 +64,29 @@ defmodule Tradewinds.LogisticsTest do
   end
 
   describe "growth and shrinkage" do
+    test "create_warehouse/2 purchases a new warehouse and records metadata" do
+      player = insert(:player)
+      company = insert(:company, treasury: 5000)
+      insert(:director, company: company, player: player)
+      scope = Scope.for(player: player, company_id: company.id)
+
+      port = insert(:port)
+
+      assert {:ok, warehouse} = Logistics.create_warehouse(scope, port.id)
+      assert warehouse.port_id == port.id
+      assert warehouse.level == 1
+
+      # Check ledger metadata
+      ledger =
+        Repo.get_by(Tradewinds.Companies.Ledger,
+          company_id: company.id,
+          reason: :warehouse_purchase
+        )
+
+      assert ledger.meta["port_id"] == port.id
+      assert ledger.meta["cost"] == 100
+    end
+
     test "grow_warehouse/2 increases level and capacity and charges treasury" do
       player = insert(:player)
       company = insert(:company, treasury: 5000)
@@ -81,12 +104,18 @@ defmodule Tradewinds.LogisticsTest do
       updated_company = Repo.get(Tradewinds.Companies.Company, company.id)
       assert updated_company.treasury < 5000
 
-      # verify ledger entry
-      assert Repo.get_by(Tradewinds.Companies.Ledger,
-               company_id: company.id,
-               reference_type: "warehouse",
-               reference_id: warehouse.id
-             )
+      # verify ledger entry and metadata
+      ledger =
+        Repo.get_by(Tradewinds.Companies.Ledger,
+          company_id: company.id,
+          reason: :warehouse_upgrade,
+          reference_id: warehouse.id
+        )
+
+      assert ledger.meta["port_id"] == warehouse.port_id
+      assert ledger.meta["warehouse_id"] == warehouse.id
+      assert ledger.meta["new_level"] == 2
+      assert ledger.meta["cost"] == 100
     end
 
     test "grow_warehouse/2 fails if insufficient funds" do

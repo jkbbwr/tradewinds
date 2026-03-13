@@ -317,8 +317,8 @@ defmodule Tradewinds.Market do
       end
 
     # Paginator is used when params are present (e.g. from a controller)
-    # unless explicitly disabled. Internal calls with no params get the full list.
-    if Map.get(params, :paginate, true) and map_size(params) > 0 do
+    # unless explicitly disabled.
+    if Map.get(params, :paginate, true) do
       paginator_opts =
         params
         |> Map.take([:after, :before, :limit])

@@ -83,7 +83,12 @@ defmodule Tradewinds.Shipyards do
                :ship_purchase,
                :ship,
                inventory.ship_id,
-               now
+               now,
+               meta: %{
+                 shipyard_id: shipyard_id,
+                 ship_type_id: ship_type_id,
+                 cost: inventory.cost
+               }
              ),
            {:ok, _company} <-
              (if tax_amount > 0 do

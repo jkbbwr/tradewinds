@@ -107,17 +107,19 @@ defmodule Tradewinds.Logistics do
            {:ok, :active} <- Tradewinds.Companies.is_active?(company),
            now = DateTime.utc_now(),
            tax_amount = Tradewinds.Economy.calculate_tax_for_port(cost, port_id),
+           ref_id = Ecto.UUID.generate(),
            {:ok, _} <-
              Tradewinds.Companies.record_transaction(
                company_id,
                -cost,
                :warehouse_purchase,
                :warehouse,
-               Ecto.UUID.generate(),
-               now
+               ref_id,
+               now,
+               meta: %{port_id: port_id, cost: cost}
              ),
            {:ok, _} <-
-             maybe_record_tax(company_id, port_id, Ecto.UUID.generate(), cost, tax_amount, now),
+             maybe_record_tax(company_id, port_id, ref_id, cost, tax_amount, now),
            warehouse = %Warehouse{},
            attrs = %{level: 1, capacity: 1000, port_id: port_id, company_id: company_id},
            changeset = Warehouse.create_changeset(warehouse, attrs),
@@ -147,7 +149,13 @@ defmodule Tradewinds.Logistics do
                :warehouse_upgrade,
                :warehouse,
                warehouse.id,
-               now
+               now,
+               meta: %{
+                 port_id: warehouse.port_id,
+                 warehouse_id: warehouse.id,
+                 new_level: warehouse.level + 1,
+                 cost: cost
+               }
              ),
            {:ok, _} <-
              maybe_record_tax(

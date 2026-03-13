@@ -278,7 +278,13 @@ defmodule Tradewinds.Trade do
              :npc_trade,
              :market,
              quote_data.port_id,
-             now
+             now,
+             meta: %{
+               trader_id: position.trader_id,
+               good_id: quote_data.good_id,
+               quantity: quote_data.quantity,
+               price: quote_data.unit_price
+             }
            ),
          {:ok, _} <-
            (if tax_amount > 0 do

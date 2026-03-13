@@ -83,6 +83,15 @@ defmodule TradewindsWeb.MarketControllerTest do
       assert length(data) == 1
       assert Enum.at(data, 0)["id"] == order.id
     end
+
+    test "lists orders without parameters", %{conn: conn, company: company} do
+      Factory.insert(:order, company: company, status: :open)
+
+      conn = get(conn, ~p"/api/v1/market/orders")
+
+      assert %{"data" => data, "metadata" => _metadata} = json_response(conn, 200)
+      assert length(data) >= 1
+    end
   end
 
   describe "GET /api/v1/market/blended-price" do

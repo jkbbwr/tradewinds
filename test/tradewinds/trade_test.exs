@@ -195,6 +195,27 @@ defmodule Tradewinds.TradeTest do
       # Verify ship lost cargo
       assert {:ok, 0} = Tradewinds.Fleet.current_cargo_total(ship.id)
     end
+
+    test "captures trader_id, good_id, quantity, and price in ledger metadata", %{player: player} do
+      company = insert(:company, treasury: 10_000)
+      insert(:director, company: company, player: player)
+      scope = Scope.for(player: player, company_id: company.id)
+
+      port = insert(:port)
+      good = insert(:good)
+      trader = insert(:trader)
+      insert(:trader_position, trader: trader, port: port, good: good, stock: 100)
+      ship = insert(:ship, company: company, port: port, status: :docked)
+
+      {:ok, token, quote_data} = Trade.generate_quote(scope, port.id, good.id, :buy, 10)
+      {:ok, _} = Trade.execute_quote(scope, token, [%{type: :ship, id: ship.id, quantity: 10}])
+
+      ledger = Repo.get_by(Tradewinds.Companies.Ledger, company_id: company.id, reason: :npc_trade)
+      assert ledger.meta["trader_id"] == trader.id
+      assert ledger.meta["good_id"] == good.id
+      assert ledger.meta["quantity"] == 10
+      assert ledger.meta["price"] == quote_data.unit_price
+    end
   end
 
   describe "execute_immediate/5" do
