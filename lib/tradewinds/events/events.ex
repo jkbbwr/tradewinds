@@ -46,6 +46,12 @@ defmodule Tradewinds.Events do
   end
 
   def broadcast_ship_bought(ship) do
+    company_name =
+      case Tradewinds.Companies.fetch_company(ship.company_id) do
+        {:ok, company} -> company.name
+        _ -> "Unknown"
+      end
+
     PubSub.broadcast(
       @pubsub,
       "events:world:all",
@@ -56,13 +62,20 @@ defmodule Tradewinds.Events do
            ship_id: ship.id,
            name: ship.name,
            ship_type_id: ship.ship_type_id,
-           company_id: ship.company_id
+           company_id: ship.company_id,
+           company_name: company_name
          }
        }}
     )
   end
 
   def broadcast_ship_transit_started(company_id, ship) do
+    company_name =
+      case Tradewinds.Companies.fetch_company(company_id) do
+        {:ok, company} -> company.name
+        _ -> "Unknown"
+      end
+
     PubSub.broadcast(
       @pubsub,
       topic(company_id),
@@ -87,6 +100,7 @@ defmodule Tradewinds.Events do
            ship_id: ship.id,
            name: ship.name,
            company_id: ship.company_id,
+           company_name: company_name,
            route_id: ship.route_id
          }
        }}
@@ -94,6 +108,12 @@ defmodule Tradewinds.Events do
   end
 
   def broadcast_ship_docked(company_id, ship) do
+    company_name =
+      case Tradewinds.Companies.fetch_company(company_id) do
+        {:ok, company} -> company.name
+        _ -> "Unknown"
+      end
+
     PubSub.broadcast(
       @pubsub,
       topic(company_id),
@@ -117,6 +137,7 @@ defmodule Tradewinds.Events do
            ship_id: ship.id,
            name: ship.name,
            company_id: ship.company_id,
+           company_name: company_name,
            port_id: ship.port_id
          }
        }}

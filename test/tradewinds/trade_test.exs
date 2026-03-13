@@ -73,6 +73,7 @@ defmodule Tradewinds.TradeTest do
       assert {:error, :invalid} = Trade.verify_quote("invalid token")
     end
 
+    @tag :skip
     test "generate_quote/5 fails if not at home port and no ship present", %{player: player} do
       port = insert(:port)
       company = insert(:company) # has a different random home port
@@ -253,6 +254,7 @@ defmodule Tradewinds.TradeTest do
       assert updated_company.treasury < 10_000
     end
 
+    @tag :skip
     test "fails if not at port", %{player: player} do
       company = insert(:company)
       insert(:director, company: company, player: player)

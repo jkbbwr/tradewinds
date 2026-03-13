@@ -6,7 +6,7 @@ defmodule Tradewinds.Trade.TraderSimulationJob do
   alias Tradewinds.Trade
   alias Tradewinds.Repo
 
-  @game_day_seconds 576
+  @game_day_seconds 4320
 
   require Logger
 
