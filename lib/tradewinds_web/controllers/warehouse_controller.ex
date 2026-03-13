@@ -8,6 +8,7 @@ defmodule TradewindsWeb.WarehouseController do
   alias TradewindsWeb.Schemas.{
     WarehousesResponse,
     WarehouseResponse,
+    WarehouseInventoryResponse,
     CreateWarehouseRequest,
     TransferToShipRequest,
     ErrorResponse,
@@ -122,6 +123,49 @@ defmodule TradewindsWeb.WarehouseController do
   def warehouse(conn, %{"warehouse_id" => warehouse_id}) do
     with {:ok, warehouse} <- Logistics.fetch_company_warehouse(conn.assigns.scope, warehouse_id) do
       render(conn, :show, warehouse: warehouse)
+    end
+  end
+
+  # -- Inventory --
+
+  defparams :inventory do
+    optional(:after, :string)
+    optional(:before, :string)
+    optional(:limit, :integer, min: 1, max: 100)
+  end
+
+  operation(:inventory,
+    operation_id: "warehouseInventory",
+    tags: ["Logistics"],
+    summary: "List warehouse inventory",
+    description: "Returns a paginated list of inventory items stored in a specific warehouse.",
+    security: [%{"bearerAuth" => []}],
+    parameters: [
+      %OpenApiSpex.Parameter{
+        name: "tradewinds-company-id",
+        in: :header,
+        required: true,
+        schema: %OpenApiSpex.Schema{type: :string, format: :uuid},
+        description: "Company ID"
+      },
+      warehouse_id: [in: :path, description: "Warehouse ID", type: :string],
+      after: [in: :query, description: "Cursor for next page", type: :string],
+      before: [in: :query, description: "Cursor for previous page", type: :string],
+      limit: [in: :query, description: "Number of items per page", type: :integer]
+    ],
+    responses: [
+      ok: {"List of inventory items", "application/json", WarehouseInventoryResponse},
+      unauthorized: {"Invalid or expired token", "application/json", ErrorResponse},
+      not_found: {"Warehouse not found", "application/json", ErrorResponse}
+    ]
+  )
+
+  def inventory(conn, params = %{"warehouse_id" => warehouse_id}) do
+    with {:ok, valid} <- validate(:inventory, params),
+         # Ensure warehouse exists and belongs to company
+         {:ok, _warehouse} <- Logistics.fetch_company_warehouse(conn.assigns.scope, warehouse_id) do
+      page = Logistics.list_warehouse_inventory(conn.assigns.scope, warehouse_id, valid)
+      render(conn, :inventory, page: page)
     end
   end
 

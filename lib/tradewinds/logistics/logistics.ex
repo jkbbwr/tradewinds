@@ -264,6 +264,23 @@ defmodule Tradewinds.Logistics do
   end
 
   @doc """
+  Lists inventory for a specific warehouse owned by the company within the given scope.
+  """
+  def list_warehouse_inventory(%Scope{company_id: company_id}, warehouse_id, params \\ %{}) do
+    opts =
+      params
+      |> Map.take([:after, :before, :limit])
+      |> Map.to_list()
+      |> Keyword.merge(cursor_fields: [id: :asc], limit: 50)
+
+    WarehouseInventory
+    |> join(:inner, [wi], w in Warehouse, on: wi.warehouse_id == w.id)
+    |> where([wi, w], w.company_id == ^company_id and wi.warehouse_id == ^warehouse_id)
+    |> order_by([wi], asc: wi.id)
+    |> Repo.paginate(opts)
+  end
+
+  @doc """
   Fetches a single warehouse by ID owned by the company within the given scope.
   """
   def fetch_company_warehouse(%Scope{company_id: company_id}, id) do

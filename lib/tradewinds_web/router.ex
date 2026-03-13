@@ -137,6 +137,7 @@ defmodule TradewindsWeb.Router do
     get "/", WarehouseController, :warehouses
     post "/", WarehouseController, :create
     get "/:warehouse_id", WarehouseController, :warehouse
+    get "/:warehouse_id/inventory", WarehouseController, :inventory
     post "/:warehouse_id/grow", WarehouseController, :grow
     post "/:warehouse_id/shrink", WarehouseController, :shrink
     post "/:warehouse_id/transfer-to-ship", WarehouseController, :transfer_to_ship

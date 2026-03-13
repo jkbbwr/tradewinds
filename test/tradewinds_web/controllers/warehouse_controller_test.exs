@@ -90,6 +90,36 @@ defmodule TradewindsWeb.WarehouseControllerTest do
     end
   end
 
+  describe "GET /api/v1/warehouses/:id/inventory" do
+    test "returns empty inventory when warehouse has no items", %{
+      conn: conn,
+      company: company,
+      port: port
+    } do
+      warehouse = Factory.insert(:warehouse, company: company, port: port)
+
+      conn = get(conn, ~p"/api/v1/warehouses/#{warehouse.id}/inventory")
+      assert json_response(conn, 200)["data"] == []
+    end
+
+    test "returns list of inventory items", %{conn: conn, company: company, port: port, good: good} do
+      warehouse = Factory.insert(:warehouse, company: company, port: port)
+      inventory = Factory.insert(:warehouse_inventory, warehouse: warehouse, good: good, quantity: 100)
+
+      conn = get(conn, ~p"/api/v1/warehouses/#{warehouse.id}/inventory")
+      data = json_response(conn, 200)["data"]
+
+      assert length(data) == 1
+      assert Enum.at(data, 0)["id"] == inventory.id
+      assert Enum.at(data, 0)["quantity"] == 100
+    end
+
+    test "returns 404 when warehouse not found", %{conn: conn} do
+      conn = get(conn, ~p"/api/v1/warehouses/#{Ecto.UUID.generate()}/inventory")
+      assert json_response(conn, 404)
+    end
+  end
+
   describe "POST /api/v1/warehouses/:id/grow" do
     test "upgrades a warehouse", %{conn: conn, company: company, port: port} do
       warehouse =
