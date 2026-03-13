@@ -86,6 +86,7 @@ defmodule Tradewinds.Events do
          data: %{
            ship_id: ship.id,
            name: ship.name,
+           company_id: ship.company_id,
            route_id: ship.route_id
          }
        }}
@@ -115,6 +116,7 @@ defmodule Tradewinds.Events do
          data: %{
            ship_id: ship.id,
            name: ship.name,
+           company_id: ship.company_id,
            port_id: ship.port_id
          }
        }}
