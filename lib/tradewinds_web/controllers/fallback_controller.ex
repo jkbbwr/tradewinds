@@ -11,8 +11,8 @@ defmodule TradewindsWeb.FallbackController do
   def call(conn, {:error, :wrong_location}) do
     conn
     |> put_status(:unprocessable_entity)
-    |> put_view(json: TradewindsWeb.ErrorJSON)
-    |> render(:unprocessable_entity,
+    |> put_view(TradewindsWeb.ErrorJSON)
+    |> render("unprocessable_entity.json",
       message: "You are not at the correct location to perform this action."
     )
   end
@@ -20,22 +20,22 @@ defmodule TradewindsWeb.FallbackController do
   def call(conn, {:error, :quantity_mismatch}) do
     conn
     |> put_status(:unprocessable_entity)
-    |> put_view(json: TradewindsWeb.ErrorJSON)
-    |> render(:unprocessable_entity, message: "Quantity mismatch detected")
+    |> put_view(TradewindsWeb.ErrorJSON)
+    |> render("unprocessable_entity.json", message: "Quantity mismatch detected")
   end
 
   def call(conn, {:error, :missing_parameters}) do
     conn
     |> put_status(:unprocessable_entity)
-    |> put_view(json: TradewindsWeb.ErrorJSON)
-    |> render(:unprocessable_entity, message: "Missing required parameters.")
+    |> put_view(TradewindsWeb.ErrorJSON)
+    |> render("unprocessable_entity.json", message: "Missing required parameters.")
   end
 
   def call(conn, {:error, :not_at_port}) do
     conn
     |> put_status(:unprocessable_entity)
-    |> put_view(json: TradewindsWeb.ErrorJSON)
-    |> render(:unprocessable_entity, message: "Not at port")
+    |> put_view(TradewindsWeb.ErrorJSON)
+    |> render("unprocessable_entity.json", message: "Not at port")
   end
 
   def call(conn, {:error, :insufficient_funds}) do

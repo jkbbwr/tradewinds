@@ -27,8 +27,12 @@ defmodule TradewindsWeb.ErrorJSON do
     %{errors: %{detail: "Resource not found"}}
   end
 
+  def render("unprocessable_entity.json", %{message: message}) do
+    %{errors: %{detail: message}}
+  end
+
   def render("unprocessable_entity.json", %{}) do
-    %{errors: %{detail: "Insufficient Funds"}}
+    %{errors: %{detail: "Unprocessable entity"}}
   end
 
   def render("unauthorized.json", %{reason: reason}) do
