@@ -396,6 +396,16 @@ defmodule Tradewinds.Fleet do
   end
 
   @doc """
+  Releases ownership of a ship (used by the system when selling back to shipyard).
+  """
+  def release_ship(ship_id) do
+    case fetch_ship(ship_id) do
+      {:ok, ship} -> Ship.release_changeset(ship) |> Repo.update()
+      err -> err
+    end
+  end
+
+  @doc """
   Transfers a ship to another company, enforcing scope authorization on the current owner.
   """
   def transfer_ship(%Scope{company_id: company_id}, ship_id, new_company_id) do

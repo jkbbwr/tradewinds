@@ -76,6 +76,15 @@ defmodule Tradewinds.Fleet.Ship do
     |> foreign_key_constraint(:company_id)
   end
 
+  @doc """
+  Builds a changeset for releasing ownership of a ship (setting company_id to nil).
+  """
+  def release_changeset(ship) do
+    ship
+    |> cast(%{company_id: nil}, [:company_id])
+    |> foreign_key_constraint(:company_id)
+  end
+
   # Validates that a ship is exclusively at a port OR on a route, but never both or neither.
   defp validate_location(changeset) do
     port_id = get_field(changeset, :port_id)

@@ -9,6 +9,8 @@ defmodule TradewindsWeb.ShipyardController do
     ShipyardResponse,
     InventoryResponse,
     PurchaseShipRequest,
+    SellShipRequest,
+    SellShipResponse,
     ShipResponse,
     ErrorResponse,
     ChangesetResponse
@@ -100,6 +102,46 @@ defmodule TradewindsWeb.ShipyardController do
       |> put_status(:ok)
       |> put_view(TradewindsWeb.ShipJSON)
       |> render(:show, ship: ship)
+    end
+  end
+
+  # -- Sell Ship --
+
+  defparams :sell do
+    required(:ship_id, :string, format: :uuid)
+  end
+
+  operation(:sell,
+    operation_id: "sellShip",
+    tags: ["Shipyards"],
+    summary: "Sell a ship",
+    description: "Sells a ship back to the shipyard at a variable loss.",
+    security: [%{"bearerAuth" => []}],
+    parameters: [
+      %OpenApiSpex.Parameter{
+        name: "tradewinds-company-id",
+        in: :header,
+        required: true,
+        schema: %OpenApiSpex.Schema{type: :string, format: :uuid},
+        description: "Company ID"
+      },
+      shipyard_id: [in: :path, description: "Shipyard ID", type: :string]
+    ],
+    request_body: {"Sell details", "application/json", SellShipRequest},
+    responses: [
+      ok: {"Ship sold successfully", "application/json", SellShipResponse},
+      unprocessable_entity: {"Validation error", "application/json", ChangesetResponse},
+      unauthorized: {"Invalid or expired token", "application/json", ErrorResponse},
+      forbidden: {"Unauthorized or ship not at shipyard", "application/json", ErrorResponse},
+      not_found: {"Shipyard or ship not found", "application/json", ErrorResponse}
+    ]
+  )
+
+  def sell(conn, params = %{"shipyard_id" => shipyard_id}) do
+    with {:ok, valid} <- validate(:sell, params),
+         {:ok, result} <-
+           Shipyards.sell_ship(conn.assigns.scope, shipyard_id, valid.ship_id) do
+      render(conn, :sell, price: result.price)
     end
   end
 end

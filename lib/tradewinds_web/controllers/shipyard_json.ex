@@ -27,4 +27,8 @@ defmodule TradewindsWeb.ShipyardJSON do
       updated_at: inv.updated_at
     }
   end
+
+  def sell(%{price: price}) do
+    %{data: %{price: price}}
+  end
 end

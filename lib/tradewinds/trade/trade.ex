@@ -476,9 +476,9 @@ defmodule Tradewinds.Trade do
           # Low/zero flow decays the spread back down to encourage trading.
           new_spread =
             if abs(flow) > 0 do
-              min(0.20, position.spread + 0.0005 * abs(flow))
+              min(0.15, position.spread + 0.0004 * abs(flow))
             else
-              max(0.05, position.spread - 0.001)
+              max(0.03, position.spread - 0.001)
             end
 
           new_stock =
@@ -533,11 +533,11 @@ defmodule Tradewinds.Trade do
 
   @doc """
   Injects random noise to the market price.
-  Baseline noise is +/- 3%. Volatility modifier from shocks is applied.
+  Baseline noise is +/- 2%. Volatility modifier from shocks is applied.
   """
   def apply_volatility_jitter(market_price, vol_modifier \\ 1.0) do
-    # random noise between -3% and +3%
-    base_noise = :rand.uniform() * 0.06 - 0.03
+    # random noise between -2% and +2%
+    base_noise = :rand.uniform() * 0.04 - 0.02
     noise = 1.0 + base_noise * vol_modifier
     round(market_price * noise)
   end

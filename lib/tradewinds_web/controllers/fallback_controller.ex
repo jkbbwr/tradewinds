@@ -8,6 +8,15 @@ defmodule TradewindsWeb.FallbackController do
     |> render(:account_disabled)
   end
 
+  def call(conn, {:error, :wrong_location}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(json: TradewindsWeb.ErrorJSON)
+    |> render(:unprocessable_entity,
+      message: "You are not at the correct location to perform this action."
+    )
+  end
+
   def call(conn, {:error, :quantity_mismatch}) do
     conn
     |> put_status(:unprocessable_entity)

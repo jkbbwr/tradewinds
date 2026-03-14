@@ -68,6 +68,67 @@ defmodule Tradewinds.ShipyardsTest do
       assert inventory.ship_id == ship.id
       assert inventory.cost == cost
     end
+
+    test "produce_ships/1 builds up to 3 ships" do
+      # Clean up any ship types inserted by seeds/other tests to ensure isolation
+      Repo.delete_all(Tradewinds.World.ShipType)
+
+      shipyard = insert(:shipyard)
+      insert(:ship_type, capacity: 120) # 1 ship per tick on average
+
+      # Should produce first ship
+      Shipyards.produce_ships(shipyard.id)
+      assert Repo.aggregate(Inventory, :count) == 1
+
+      # Should produce second ship
+      Shipyards.produce_ships(shipyard.id)
+      assert Repo.aggregate(Inventory, :count) == 2
+
+      # Should produce third ship
+      Shipyards.produce_ships(shipyard.id)
+      assert Repo.aggregate(Inventory, :count) == 3
+
+      # Should NOT produce fourth ship
+      Shipyards.produce_ships(shipyard.id)
+      assert Repo.aggregate(Inventory, :count) == 3
+    end
+
+    test "produce_ships/1 fills stock faster for smaller ships" do
+      Repo.delete_all(Tradewinds.World.ShipType)
+      shipyard = insert(:shipyard)
+
+      # Capacity 40 means ratio = 120/40 = 3.0. Should fill 3 ships in one tick.
+      insert(:ship_type, capacity: 40)
+
+      Shipyards.produce_ships(shipyard.id)
+      assert Repo.aggregate(Inventory, :count) == 3
+    end
+
+    test "calculate_sell_price/2 returns correct price based on stock" do
+      shipyard = insert(:shipyard)
+      ship_type = insert(:ship_type, base_price: 1000)
+
+      # 0 stock: 90%
+      assert {:ok, 900} = Shipyards.calculate_sell_price(ship_type.id, shipyard.id)
+
+      # 1 stock: 80%
+      insert(:inventory, shipyard: shipyard, ship_type: ship_type)
+      assert {:ok, 800} = Shipyards.calculate_sell_price(ship_type.id, shipyard.id)
+
+      # 2 stock: 70%
+      insert(:inventory, shipyard: shipyard, ship_type: ship_type)
+      assert {:ok, 700} = Shipyards.calculate_sell_price(ship_type.id, shipyard.id)
+
+      # 5 stock: 40%
+      insert(:inventory, shipyard: shipyard, ship_type: ship_type)
+      insert(:inventory, shipyard: shipyard, ship_type: ship_type)
+      insert(:inventory, shipyard: shipyard, ship_type: ship_type)
+      assert {:ok, 400} = Shipyards.calculate_sell_price(ship_type.id, shipyard.id)
+
+      # 6 stock: 40% (min)
+      insert(:inventory, shipyard: shipyard, ship_type: ship_type)
+      assert {:ok, 400} = Shipyards.calculate_sell_price(ship_type.id, shipyard.id)
+    end
   end
 
   describe "purchase_ship/4" do
@@ -142,6 +203,67 @@ defmodule Tradewinds.ShipyardsTest do
 
       assert {:error, {:inventory_not_found, _}} =
                Shipyards.purchase_ship(scope, shipyard.id, ship_type.id)
+    end
+  end
+
+  describe "sell_ship/3" do
+    test "successfully sells a ship back to shipyard" do
+      player = insert(:player)
+      company = insert(:company, treasury: 1000)
+      insert(:director, company: company, player: player)
+
+      port = insert(:port)
+      shipyard = insert(:shipyard, port: port)
+      ship_type = insert(:ship_type, base_price: 1000)
+      ship = insert(:ship, company: company, port: port, ship_type: ship_type, status: :docked)
+
+      scope = Scope.for(player: player, company_id: company.id)
+
+      # 0 stock -> 90% = 900
+      assert {:ok, result} = Shipyards.sell_ship(scope, shipyard.id, ship.id)
+      assert result.price == 900
+
+      # Verify ship unowned
+      reloaded_ship = Repo.get(Tradewinds.Fleet.Ship, ship.id)
+      assert is_nil(reloaded_ship.company_id)
+
+      # Verify inventory added
+      assert Repo.get_by(Inventory, shipyard_id: shipyard.id, ship_id: ship.id)
+
+      # Verify treasury increased
+      reloaded_company = Repo.get(Tradewinds.Companies.Company, company.id)
+      assert reloaded_company.treasury == 1900
+    end
+
+    test "fails if ship is at wrong port" do
+      player = insert(:player)
+      company = insert(:company)
+      insert(:director, company: company, player: player)
+
+      port1 = insert(:port)
+      port2 = insert(:port)
+      shipyard = insert(:shipyard, port: port1)
+      ship = insert(:ship, company: company, port: port2, status: :docked)
+
+      scope = Scope.for(player: player, company_id: company.id)
+
+      assert {:error, :not_at_shipyard} = Shipyards.sell_ship(scope, shipyard.id, ship.id)
+    end
+
+    test "fails if ship has cargo" do
+      player = insert(:player)
+      company = insert(:company)
+      insert(:director, company: company, player: player)
+
+      port = insert(:port)
+      shipyard = insert(:shipyard, port: port)
+      ship = insert(:ship, company: company, port: port, status: :docked)
+      good = insert(:good)
+      insert(:ship_cargo, ship: ship, good: good, quantity: 10)
+
+      scope = Scope.for(player: player, company_id: company.id)
+
+      assert {:error, :ship_not_empty} = Shipyards.sell_ship(scope, shipyard.id, ship.id)
     end
   end
 end

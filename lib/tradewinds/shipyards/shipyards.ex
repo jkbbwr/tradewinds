@@ -110,7 +110,6 @@ defmodule Tradewinds.Shipyards do
     end)
   end
 
-  # Fetches and locks an inventory record for transaction safety during a purchase.
   defp fetch_inventory_for_update(shipyard_id, ship_type_id) do
     Inventory
     |> where(shipyard_id: ^shipyard_id, ship_type_id: ^ship_type_id)
@@ -118,6 +117,88 @@ defmodule Tradewinds.Shipyards do
     |> lock("FOR UPDATE")
     |> Repo.one()
     |> Repo.ok_or({:inventory_not_found, ship_type_id})
+  end
+
+  def fetch_ship_type(id) do
+    Tradewinds.World.ShipType
+    |> where(id: ^id)
+    |> Repo.one()
+    |> Repo.ok_or({:ship_type_not_found, id})
+  end
+
+  @doc """
+  Calculates the current buy-back price for a ship type at a specific shipyard.
+  Formula: 90% base price if 0 in stock, decreasing by 10% per ship in stock, min 40%.
+  """
+  def calculate_sell_price(ship_type_id, shipyard_id) do
+    with {:ok, ship_type} <- fetch_ship_type(ship_type_id) do
+      count =
+        Inventory
+        |> where(shipyard_id: ^shipyard_id, ship_type_id: ^ship_type_id)
+        |> Repo.aggregate(:count, :id)
+
+      # 0 ships: 0.9, 1: 0.8, 2: 0.7, 3: 0.6, 4: 0.5, 5+: 0.4
+      factor = max(0.4, 0.9 - count * 0.1)
+      price = floor(ship_type.base_price * factor)
+
+      {:ok, price}
+    end
+  end
+
+  @doc """
+  Sells a ship back to a shipyard at a variable loss.
+  The ship must be empty and docked at the shipyard's port.
+  """
+  def sell_ship(%Scope{company_id: company_id}, shipyard_id, ship_id) do
+    Repo.transact(fn ->
+      with {:ok, shipyard} <- fetch_shipyard(shipyard_id),
+           {:ok, ship} <-
+             Fleet.fetch_company_ship(%Scope{company_id: company_id}, ship_id,
+               preload: [:ship_type]
+             ),
+           :ok <- validate_ship_at_shipyard(ship, shipyard),
+           :ok <- validate_ship_empty(ship),
+           {:ok, price} <- calculate_sell_price(ship.ship_type_id, shipyard_id),
+           {:ok, _} <- Fleet.release_ship(ship_id),
+           {:ok, _} <-
+             create_ship(shipyard_id, ship.ship_type_id, ship_id, ship.ship_type.base_price),
+           now = DateTime.utc_now(),
+           {:ok, company} <-
+             Companies.record_transaction(
+               company_id,
+               price,
+               :ship_sale,
+               :ship,
+               ship_id,
+               now,
+               meta: %{
+                 shipyard_id: shipyard_id,
+                 ship_type_id: ship.ship_type_id,
+                 price: price
+               }
+             ) do
+        Tradewinds.Events.broadcast_ship_sold(company_id, ship)
+        {:ok, %{price: price, company: company}}
+      end
+    end)
+  end
+
+  defp validate_ship_at_shipyard(ship, shipyard) do
+    if ship.port_id == shipyard.port_id and ship.status == :docked do
+      :ok
+    else
+      {:error, :not_at_shipyard}
+    end
+  end
+
+  defp validate_ship_empty(ship) do
+    with {:ok, total} <- Fleet.current_cargo_total(ship.id) do
+      if total == 0 do
+        :ok
+      else
+        {:error, :ship_not_empty}
+      end
+    end
   end
 
   @doc """
@@ -150,12 +231,22 @@ defmodule Tradewinds.Shipyards do
                  |> where(shipyard_id: ^shipyard.id, ship_type_id: ^type.id)
                  |> Repo.aggregate(:count, :id)
 
-               # Calculate production probability. Base capacity of 100 has a 100% chance per week.
-               # Larger ships like a 200 capacity Galleon have a 50% chance per week (~2 weeks).
-               probability = min(1.0, 100.0 / max(type.capacity, 1))
+               # Calculate production ratio. Base capacity of 120 produces 1 ship/week on average.
+               # Smaller ships (e.g. 40 capacity) produce 3 ships/week.
+               # Larger ships (e.g. 240 capacity) produce 0.5 ships/week.
+               ratio = 120.0 / max(type.capacity, 1)
 
-               if count < 2 and :rand.uniform() <= probability do
-                 build_ship_for_inventory(shipyard, type)
+               base_to_build = floor(ratio)
+               chance_for_extra = ratio - base_to_build
+
+               potential_volume =
+                 base_to_build + if :rand.uniform() <= chance_for_extra, do: 1, else: 0
+
+               # Clamp production by the target stock (3)
+               to_build = min(potential_volume, max(0, 3 - count))
+
+               if to_build > 0 do
+                 Enum.each(1..to_build, fn _ -> build_ship_for_inventory(shipyard, type) end)
                end
              end)
 

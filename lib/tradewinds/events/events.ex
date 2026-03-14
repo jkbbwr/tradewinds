@@ -69,6 +69,30 @@ defmodule Tradewinds.Events do
     )
   end
 
+  def broadcast_ship_sold(company_id, ship) do
+    company_name =
+      case Tradewinds.Companies.fetch_company(company_id) do
+        {:ok, company} -> company.name
+        _ -> "Unknown"
+      end
+
+    PubSub.broadcast(
+      @pubsub,
+      "events:world:all",
+      {:message,
+       %{
+         type: "ship_sold",
+         data: %{
+           ship_id: ship.id,
+           name: ship.name,
+           ship_type_id: ship.ship_type_id,
+           company_id: company_id,
+           company_name: company_name
+         }
+       }}
+    )
+  end
+
   def broadcast_ship_transit_started(company_id, ship) do
     company_name =
       case Tradewinds.Companies.fetch_company(company_id) do

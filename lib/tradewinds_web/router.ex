@@ -153,6 +153,7 @@ defmodule TradewindsWeb.Router do
     pipe_through [:api, :auth, :company_context]
 
     post "/:shipyard_id/purchase", ShipyardController, :purchase
+    post "/:shipyard_id/sell", ShipyardController, :sell
   end
 
   scope "/api/v1/trade", TradewindsWeb do
