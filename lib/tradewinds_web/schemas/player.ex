@@ -7,7 +7,7 @@ defmodule TradewindsWeb.Schemas.Player do
     description: "A player in the system",
     type: :object,
     properties: %{
-      id: %Schema{type: :integer, description: "The player ID"},
+      id: %Schema{type: :string, format: :uuid, description: "The player ID"},
       name: %Schema{type: :string, description: "The player's name"},
       email: %Schema{type: :string, format: :email, description: "The player's email"},
       discord_id: %Schema{type: :string, description: "The player's Discord ID", nullable: true},
@@ -20,7 +20,7 @@ defmodule TradewindsWeb.Schemas.Player do
     },
     required: [:id, :name, :email, :enabled, :inserted_at],
     example: %{
-      "id" => 1,
+      "id" => "123e4567-e89b-12d3-a456-426614174000",
       "name" => "Kibb",
       "email" => "kibb@example.com",
       "discord_id" => "1234567890",

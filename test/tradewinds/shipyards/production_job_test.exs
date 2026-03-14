@@ -26,8 +26,8 @@ defmodule Tradewinds.Shipyards.ProductionJobTest do
     assert Enum.all?(ships, fn s -> s.port_id == shipyard.port_id end)
     assert Enum.all?(ships, fn s -> is_nil(s.company_id) end)
 
-    # 2. Verify next job is scheduled (4032 seconds = 1 game week after base_time)
-    expected_next_time = DateTime.add(base_time, 4032, :second)
+    # 2. Verify next job is scheduled (1008 seconds = 1 game week after base_time)
+    expected_next_time = DateTime.add(base_time, 1008, :second)
 
     assert_enqueued(
       worker: ProductionJob,
