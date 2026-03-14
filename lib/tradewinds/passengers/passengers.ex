@@ -173,8 +173,8 @@ defmodule Tradewinds.Passengers do
       archetype = weighted_random(archetypes)
       count = Enum.random(archetype.count_range)
 
-      # Ensure it's profitable: Base rate of 2 per NM per passenger
-      base_bid = row.distance * 2 * count
+      # Ensure it's profitable but not too overpowered: Base rate of 0.75 per NM per passenger
+      base_bid = row.distance * 0.75 * count
       final_bid = round(base_bid * archetype.bid_multiplier)
 
       # Random expiration between 30 and 90 minutes
