@@ -191,19 +191,7 @@ defmodule Tradewinds.Accounts do
   Generates a signed Phoenix Token for the player, valid for 24 hours.
   """
   def generate_token(player) do
-    # max_age here is ignored by sign/4, but kept for historical documentation
     Phoenix.Token.sign(TradewindsWeb.Endpoint, "player auth", player.id, max_age: 24 * 60 * 60)
-  end
-
-  @doc """
-  Generates a new read-only token for the given player, valid for 7 days.
-  """
-  def generate_read_only_token(player) do
-    token_str = generate_token(player)
-
-    %AuthToken{}
-    |> AuthToken.create_changeset(%{player_id: player.id, token: token_str, is_read_only: true})
-    |> Repo.insert()
   end
 
   ## IP Banning

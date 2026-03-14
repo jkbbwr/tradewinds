@@ -107,29 +107,29 @@ defmodule TradewindsWeb.AuthControllerTest do
     end
   end
 
-  describe "POST /api/v1/auth/read-only-token" do
+  describe "POST /api/v1/auth/restrict" do
     setup %{conn: conn} do
-      {:ok, player} = Accounts.register("ReadOnlyMe", "readonly@example.com", "password123")
+      {:ok, player} = Accounts.register("RestrictMe", "restrict@example.com", "password123")
       {:ok, _player} = Accounts.enable(player)
-      {:ok, auth_token} = Accounts.authenticate("readonly@example.com", "password123")
+      {:ok, auth_token} = Accounts.authenticate("restrict@example.com", "password123")
       conn = put_req_header(conn, "authorization", "Bearer #{auth_token.token}")
       %{player: player, auth_token: auth_token, conn: conn}
     end
 
-    test "generates a new read-only token successfully", %{conn: conn, auth_token: auth_token} do
+    test "restricts the token successfully", %{conn: conn, auth_token: auth_token} do
+      # Token starts out as not read only
       assert auth_token.is_read_only == false
 
-      conn = post(conn, ~p"/api/v1/auth/read-only-token")
-      assert %{"token" => new_token} = json_response(conn, 200)["data"]
-      assert new_token != auth_token.token
+      conn = post(conn, ~p"/api/v1/auth/restrict")
+      assert response(conn, 204)
 
-      # Verify the new token is read_only in DB
-      {:ok, updated_token} = Accounts.validate(new_token)
+      # Verify the token is now read_only in DB
+      {:ok, updated_token} = Accounts.validate(auth_token.token)
       assert updated_token.is_read_only == true
     end
 
     test "fails with no token", %{} do
-      conn = Phoenix.ConnTest.build_conn() |> post(~p"/api/v1/auth/read-only-token")
+      conn = Phoenix.ConnTest.build_conn() |> post(~p"/api/v1/auth/restrict")
       assert json_response(conn, 401)
     end
   end
