@@ -17,8 +17,23 @@ defmodule Tradewinds.Passengers.Passenger do
 
   def changeset(passenger, attrs) do
     passenger
-    |> cast(attrs, [:count, :bid, :status, :expires_at, :ship_id, :origin_port_id, :destination_port_id])
-    |> validate_required([:count, :bid, :status, :expires_at, :origin_port_id, :destination_port_id])
+    |> cast(attrs, [
+      :count,
+      :bid,
+      :status,
+      :expires_at,
+      :ship_id,
+      :origin_port_id,
+      :destination_port_id
+    ])
+    |> validate_required([
+      :count,
+      :bid,
+      :status,
+      :expires_at,
+      :origin_port_id,
+      :destination_port_id
+    ])
     |> validate_inclusion(:status, [:available, :boarded])
   end
 end

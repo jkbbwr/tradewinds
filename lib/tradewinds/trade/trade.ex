@@ -448,7 +448,7 @@ defmodule Tradewinds.Trade do
     effective_supply_rate = supply_rate * modifiers.supply
     effective_demand_rate = demand_rate * modifiers.demand
 
-    drift = floor((target_stock - current_stock) * effective_supply_rate)
+    drift = floor(target_stock * effective_supply_rate)
     consumption = floor(current_stock * effective_demand_rate)
     max_stock = target_stock * 5
 
@@ -467,8 +467,8 @@ defmodule Tradewinds.Trade do
       |> preload(:good)
       |> Repo.all()
 
-    # Look back 1 game day (576 seconds) for trade volume
-    start_time = DateTime.add(now, -576, :second)
+    # Look back 1Q for trade volume
+    start_time = DateTime.add(now, -51840, :second)
 
     Repo.transact(fn ->
       results =
@@ -485,13 +485,9 @@ defmodule Tradewinds.Trade do
               now
             )
 
-          # 2. Adjust target stock based on flow
-          # If flow > 0 (players buying), demand is high, so increase target stock.
-          # If flow < 0 (players selling), demand is low, so decrease target stock.
-          target_adjustment = floor(flow * 0.1)
-          max_adjustment = ceil(position.target_stock * 0.1)
-          clamped_adjustment = clamp(target_adjustment, -max_adjustment, max_adjustment)
-          new_target_stock = max(10, position.target_stock + clamped_adjustment)
+          # 2. Target stock is no longer permanently adjusted by player flow.
+          # We let current_stock handle the supply/demand curve naturally.
+          new_target_stock = position.target_stock
 
           # 3. Adjust spread based on flow intensity
           # High flow magnitude means high volatility/demand; increase spread to capitalize.

@@ -39,6 +39,7 @@ defmodule Tradewinds.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:remote_ip, "~> 1.2"},
       {:phoenix, "~> 1.8.3"},
       {:phoenix_ecto, "~> 4.5"},
       {:ecto_sql, "~> 3.13"},

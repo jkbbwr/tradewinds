@@ -237,11 +237,23 @@ defmodule TradewindsWeb.WarehouseControllerTest do
       assert response(conn, 204)
 
       # Verify it's gone
-      conn = get(build_conn() |> put_req_header("authorization", Enum.at(get_req_header(conn, "authorization"), 0)) |> put_req_header("tradewinds-company-id", company.id), ~p"/api/v1/warehouses/#{warehouse.id}")
+      conn =
+        get(
+          build_conn()
+          |> put_req_header("authorization", Enum.at(get_req_header(conn, "authorization"), 0))
+          |> put_req_header("tradewinds-company-id", company.id),
+          ~p"/api/v1/warehouses/#{warehouse.id}"
+        )
+
       assert json_response(conn, 404)
     end
 
-    test "fails to delete a non-empty warehouse", %{conn: conn, company: company, port: port, good: good} do
+    test "fails to delete a non-empty warehouse", %{
+      conn: conn,
+      company: company,
+      port: port,
+      good: good
+    } do
       warehouse = Factory.insert(:warehouse, company: company, port: port)
       Factory.insert(:warehouse_inventory, warehouse: warehouse, good: good, quantity: 100)
 

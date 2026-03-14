@@ -34,7 +34,7 @@ london =
     shortcode: "LON",
     country_id: uk.id,
     is_hub: true,
-    tax_rate_bps: 500
+    tax_rate_bps: 200
   })
 
 edinburgh =
@@ -43,22 +43,22 @@ edinburgh =
     shortcode: "EDI",
     country_id: uk.id,
     is_hub: true,
-    tax_rate_bps: 500
+    tax_rate_bps: 200
   })
 
 bristol =
-  Repo.insert!(%Port{name: "Bristol", shortcode: "BRS", country_id: uk.id, tax_rate_bps: 200})
+  Repo.insert!(%Port{name: "Bristol", shortcode: "BRS", country_id: uk.id, tax_rate_bps: 100})
 
-hull = Repo.insert!(%Port{name: "Hull", shortcode: "HUL", country_id: uk.id, tax_rate_bps: 200})
+hull = Repo.insert!(%Port{name: "Hull", shortcode: "HUL", country_id: uk.id, tax_rate_bps: 100})
 
 portsmouth =
-  Repo.insert!(%Port{name: "Portsmouth", shortcode: "PME", country_id: uk.id, tax_rate_bps: 200})
+  Repo.insert!(%Port{name: "Portsmouth", shortcode: "PME", country_id: uk.id, tax_rate_bps: 100})
 
 plymouth =
-  Repo.insert!(%Port{name: "Plymouth", shortcode: "PLH", country_id: uk.id, tax_rate_bps: 200})
+  Repo.insert!(%Port{name: "Plymouth", shortcode: "PLH", country_id: uk.id, tax_rate_bps: 100})
 
 glasgow =
-  Repo.insert!(%Port{name: "Glasgow", shortcode: "GLA", country_id: uk.id, tax_rate_bps: 200})
+  Repo.insert!(%Port{name: "Glasgow", shortcode: "GLA", country_id: uk.id, tax_rate_bps: 100})
 
 # Netherlands
 netherlands =
@@ -74,7 +74,7 @@ amsterdam =
     shortcode: "AMS",
     country_id: netherlands.id,
     is_hub: true,
-    tax_rate_bps: 500
+    tax_rate_bps: 200
   })
 
 rotterdam =
@@ -82,7 +82,7 @@ rotterdam =
     name: "Rotterdam",
     shortcode: "RTM",
     country_id: netherlands.id,
-    tax_rate_bps: 200
+    tax_rate_bps: 100
   })
 
 # Germany
@@ -99,11 +99,11 @@ hamburg =
     shortcode: "HAM",
     country_id: germany.id,
     is_hub: true,
-    tax_rate_bps: 500
+    tax_rate_bps: 200
   })
 
 bremen =
-  Repo.insert!(%Port{name: "Bremen", shortcode: "BRE", country_id: germany.id, tax_rate_bps: 200})
+  Repo.insert!(%Port{name: "Bremen", shortcode: "BRE", country_id: germany.id, tax_rate_bps: 100})
 
 # Belgium
 belgium =
@@ -118,7 +118,7 @@ antwerp =
     name: "Antwerp",
     shortcode: "ANR",
     country_id: belgium.id,
-    tax_rate_bps: 200
+    tax_rate_bps: 100
   })
 
 # France
@@ -130,10 +130,10 @@ france =
   })
 
 dunkirk =
-  Repo.insert!(%Port{name: "Dunkirk", shortcode: "DKK", country_id: france.id, tax_rate_bps: 200})
+  Repo.insert!(%Port{name: "Dunkirk", shortcode: "DKK", country_id: france.id, tax_rate_bps: 100})
 
 calais =
-  Repo.insert!(%Port{name: "Calais", shortcode: "CQF", country_id: france.id, tax_rate_bps: 200})
+  Repo.insert!(%Port{name: "Calais", shortcode: "CQF", country_id: france.id, tax_rate_bps: 100})
 
 # Ireland
 ireland =
@@ -144,7 +144,7 @@ ireland =
   })
 
 dublin =
-  Repo.insert!(%Port{name: "Dublin", shortcode: "DUB", country_id: ireland.id, tax_rate_bps: 200})
+  Repo.insert!(%Port{name: "Dublin", shortcode: "DUB", country_id: ireland.id, tax_rate_bps: 100})
 
 # Routes
 

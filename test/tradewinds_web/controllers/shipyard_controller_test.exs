@@ -143,7 +143,10 @@ defmodule TradewindsWeb.ShipyardControllerTest do
       assert json_response(conn, 404)
     end
 
-    test "returns 422 when both ship_id and ship_type_id are missing", %{conn: conn, shipyard: shipyard} do
+    test "returns 422 when both ship_id and ship_type_id are missing", %{
+      conn: conn,
+      shipyard: shipyard
+    } do
       conn = get(conn, ~p"/api/v1/shipyards/#{shipyard.id}/sell-quote")
 
       assert json_response(conn, 422)

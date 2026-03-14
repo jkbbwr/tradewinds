@@ -107,7 +107,10 @@ defmodule Tradewinds.Passengers do
   def disembark_passengers_for_ship(company_id, ship_id, port_id, now \\ DateTime.utc_now()) do
     passengers =
       Passenger
-      |> where([p], p.ship_id == ^ship_id and p.destination_port_id == ^port_id and p.status == :boarded)
+      |> where(
+        [p],
+        p.ship_id == ^ship_id and p.destination_port_id == ^port_id and p.status == :boarded
+      )
       |> Repo.all()
 
     Enum.reduce(passengers, {:ok, 0}, fn passenger, {:ok, total_payout} ->
@@ -120,7 +123,15 @@ defmodule Tradewinds.Passengers do
 
   defp process_passenger_delivery(company_id, passenger, now) do
     Repo.transact(fn ->
-      with {:ok, _} <- Companies.record_transaction(company_id, passenger.bid, :passenger_fare, :passenger, passenger.id, now),
+      with {:ok, _} <-
+             Companies.record_transaction(
+               company_id,
+               passenger.bid,
+               :passenger_fare,
+               :passenger,
+               passenger.id,
+               now
+             ),
            {:ok, _} <- log_passenger_delivery(company_id, passenger, now),
            {:ok, _} <- Repo.delete(passenger) do
         {:ok, passenger.bid}
@@ -152,24 +163,31 @@ defmodule Tradewinds.Passengers do
     # Define some archetypes for "fun" variety
     archetypes = [
       %{name: "Standard Fare", count_range: 5..15, bid_multiplier: 1.0, weight: 70},
-      %{name: "VIPs", count_range: 1..3, bid_multiplier: 4.5, weight: 10},
-      %{name: "Large Group", count_range: 20..40, bid_multiplier: 0.8, weight: 20}
+      %{name: "VIPs", count_range: 1..3, bid_multiplier: 3.0, weight: 10},
+      %{name: "Large Group", count_range: 20..40, bid_multiplier: 0.75, weight: 20}
     ]
 
-    # Use database-level randomness to pick approx 15% of ports and one random route for each
-    World.list_random_port_routes()
+    # Use database-level randomness to pick approx 4% of ports and one random route for each
+    World.list_random_port_routes(0.04)
     |> Enum.each(fn row ->
       archetype = weighted_random(archetypes)
       count = Enum.random(archetype.count_range)
 
-      # Ensure it's profitable: Base rate of 10 per NM per passenger
-      base_bid = row.distance * 10 * count
+      # Ensure it's profitable: Base rate of 2 per NM per passenger
+      base_bid = row.distance * 2 * count
       final_bid = round(base_bid * archetype.bid_multiplier)
 
       # Random expiration between 30 and 90 minutes
       expires_at = DateTime.add(now, Enum.random(30..90) * 60, :second)
 
-      create_passenger(row.origin_id, row.destination_id, count, final_bid, :available, expires_at)
+      create_passenger(
+        row.origin_id,
+        row.destination_id,
+        count,
+        final_bid,
+        :available,
+        expires_at
+      )
     end)
   end
 

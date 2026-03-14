@@ -71,23 +71,48 @@ defmodule Tradewinds.ShipyardsTest do
 
     test "produce_ships/1 builds up to 3 ships" do
       shipyard = insert(:shipyard)
-      ship_type = insert(:ship_type, capacity: 120) # 1 ship per tick on average
+      # 1 ship per tick on average
+      ship_type = insert(:ship_type, capacity: 120)
 
       # Should produce first ship
       Shipyards.produce_ships(shipyard.id)
-      assert Repo.aggregate(from(i in Inventory, where: i.shipyard_id == ^shipyard.id and i.ship_type_id == ^ship_type.id), :count) == 1
+
+      assert Repo.aggregate(
+               from(i in Inventory,
+                 where: i.shipyard_id == ^shipyard.id and i.ship_type_id == ^ship_type.id
+               ),
+               :count
+             ) == 1
 
       # Should produce second ship
       Shipyards.produce_ships(shipyard.id)
-      assert Repo.aggregate(from(i in Inventory, where: i.shipyard_id == ^shipyard.id and i.ship_type_id == ^ship_type.id), :count) == 2
+
+      assert Repo.aggregate(
+               from(i in Inventory,
+                 where: i.shipyard_id == ^shipyard.id and i.ship_type_id == ^ship_type.id
+               ),
+               :count
+             ) == 2
 
       # Should produce third ship
       Shipyards.produce_ships(shipyard.id)
-      assert Repo.aggregate(from(i in Inventory, where: i.shipyard_id == ^shipyard.id and i.ship_type_id == ^ship_type.id), :count) == 3
+
+      assert Repo.aggregate(
+               from(i in Inventory,
+                 where: i.shipyard_id == ^shipyard.id and i.ship_type_id == ^ship_type.id
+               ),
+               :count
+             ) == 3
 
       # Should NOT produce fourth ship
       Shipyards.produce_ships(shipyard.id)
-      assert Repo.aggregate(from(i in Inventory, where: i.shipyard_id == ^shipyard.id and i.ship_type_id == ^ship_type.id), :count) == 3
+
+      assert Repo.aggregate(
+               from(i in Inventory,
+                 where: i.shipyard_id == ^shipyard.id and i.ship_type_id == ^ship_type.id
+               ),
+               :count
+             ) == 3
     end
 
     test "produce_ships/1 fills stock faster for smaller ships" do
@@ -96,7 +121,13 @@ defmodule Tradewinds.ShipyardsTest do
       ship_type = insert(:ship_type, capacity: 40)
 
       Shipyards.produce_ships(shipyard.id)
-      assert Repo.aggregate(from(i in Inventory, where: i.shipyard_id == ^shipyard.id and i.ship_type_id == ^ship_type.id), :count) == 3
+
+      assert Repo.aggregate(
+               from(i in Inventory,
+                 where: i.shipyard_id == ^shipyard.id and i.ship_type_id == ^ship_type.id
+               ),
+               :count
+             ) == 3
     end
 
     test "calculate_sell_price/2 returns correct price based on stock" do

@@ -41,6 +41,8 @@ defmodule TradewindsWeb.Endpoint do
   plug Plug.RequestId
   plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]
 
+  plug RemoteIp, headers: ["fly-client-ip"]
+
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],
     pass: ["*/*"],

@@ -141,6 +141,33 @@ defmodule TradewindsWeb.ShipControllerTest do
       assert id == ship.id
     end
 
+    test "returns 422 when renaming to an existing ship name in the same company", %{
+      conn: conn,
+      company: company,
+      ship_type: ship_type,
+      port: port
+    } do
+      Factory.insert(:ship,
+        company: company,
+        ship_type: ship_type,
+        port: port,
+        name: "Existing Name"
+      )
+
+      ship =
+        Factory.insert(:ship,
+          company: company,
+          ship_type: ship_type,
+          port: port,
+          name: "Old Name"
+        )
+
+      conn = patch(conn, ~p"/api/v1/ships/#{ship.id}", %{name: "Existing Name"})
+
+      response = json_response(conn, 422)
+      assert response["errors"]["name"] == ["has already been taken"]
+    end
+
     test "returns 404 when ship not found", %{conn: conn} do
       conn = patch(conn, ~p"/api/v1/ships/#{Ecto.UUID.generate()}", %{name: "New Name"})
       assert json_response(conn, 404)

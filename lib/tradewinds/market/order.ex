@@ -69,9 +69,14 @@ defmodule Tradewinds.Market.Order do
     trader_id = get_field(changeset, :trader_id)
 
     case {company_id, trader_id} do
-      {nil, nil} -> add_error(changeset, :company_id, "must have either company_id or trader_id")
-      {cid, tid} when cid != nil and tid != nil -> add_error(changeset, :company_id, "cannot have both company_id and trader_id")
-      _ -> changeset
+      {nil, nil} ->
+        add_error(changeset, :company_id, "must have either company_id or trader_id")
+
+      {cid, tid} when cid != nil and tid != nil ->
+        add_error(changeset, :company_id, "cannot have both company_id and trader_id")
+
+      _ ->
+        changeset
     end
   end
 

@@ -35,6 +35,7 @@ defmodule Tradewinds.Fleet.Ship do
     |> cast(%{name: new_name}, [:name])
     |> validate_required([:name])
     |> update_change(:name, &String.trim/1)
+    |> unique_constraint(:name, name: :ship_name_company_id_index)
   end
 
   @doc """

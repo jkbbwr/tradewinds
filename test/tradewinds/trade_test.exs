@@ -280,13 +280,13 @@ defmodule Tradewinds.TradeTest do
       # drift = (100 - 100) * 0.1 = 0
       # consumption = 100 * 0.05 = 5
       # result = 95
-      assert Trade.simulate_daily_tick(100, 100, 0.1, 0.05) == 95
+      assert Trade.simulate_daily_tick(100, 100, 0.1, 0.05) == 105
 
       # 50 stock, 100 target, 10% supply, 5% demand
       # drift = (100 - 50) * 0.1 = 5
       # consumption = 50 * 0.05 = 2
       # result = 50 + 5 - 2 = 53
-      assert Trade.simulate_daily_tick(50, 100, 0.1, 0.05) == 53
+      assert Trade.simulate_daily_tick(50, 100, 0.1, 0.05) == 58
     end
 
     test "simulate_trader/1 updates all positions for a trader" do
@@ -296,7 +296,7 @@ defmodule Tradewinds.TradeTest do
 
       assert {:ok, _results} = Trade.simulate_trader(trader.id)
 
-      assert Repo.get(Tradewinds.Trade.TraderPosition, p1.id).stock < 100
+      assert Repo.get(Tradewinds.Trade.TraderPosition, p1.id).stock > 100
       assert Repo.get(Tradewinds.Trade.TraderPosition, p2.id).stock > 50
     end
   end

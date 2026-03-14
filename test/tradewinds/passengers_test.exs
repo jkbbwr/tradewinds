@@ -19,7 +19,14 @@ defmodule Tradewinds.PassengersTest do
       expires_at = DateTime.add(now, 1, :hour)
 
       assert {:ok, %Passenger{} = passenger} =
-               Passengers.create_passenger(origin.id, destination.id, 10, 500, :available, expires_at)
+               Passengers.create_passenger(
+                 origin.id,
+                 destination.id,
+                 10,
+                 500,
+                 :available,
+                 expires_at
+               )
 
       assert passenger.origin_port_id == origin.id
       assert passenger.destination_port_id == destination.id
@@ -76,20 +83,28 @@ defmodule Tradewinds.PassengersTest do
       passenger = insert(:passenger, origin_port: port, count: 10, status: :available)
       scope = %Tradewinds.Scope{company_id: company.id}
 
-      assert {:error, :capacity_exceeded} = Passengers.board_passenger(scope, ship.id, passenger.id)
+      assert {:error, :capacity_exceeded} =
+               Passengers.board_passenger(scope, ship.id, passenger.id)
     end
 
     test "disembark_passengers_for_ship/3 credits company and removes passengers" do
       company = insert(:company)
       port = insert(:port)
       ship = insert(:ship, company: company)
-      passenger = insert(:passenger, destination_port: port, ship: ship, status: :boarded, bid: 1000)
+
+      passenger =
+        insert(:passenger, destination_port: port, ship: ship, status: :boarded, bid: 1000)
 
       assert {:ok, 1000} = Passengers.disembark_passengers_for_ship(company.id, ship.id, port.id)
       refute Repo.get(Passenger, passenger.id)
 
       # Check ledger
-      ledger = Repo.get_by(Tradewinds.Companies.Ledger, company_id: company.id, reference_type: :passenger)
+      ledger =
+        Repo.get_by(Tradewinds.Companies.Ledger,
+          company_id: company.id,
+          reference_type: :passenger
+        )
+
       assert ledger.amount == 1000
     end
 

@@ -4,7 +4,13 @@ defmodule TradewindsWeb.PassengerController do
   use OpenApiSpex.ControllerSpecs
 
   alias Tradewinds.Passengers
-  alias TradewindsWeb.Schemas.{PassengerResponse, PassengersResponse, BoardPassengerRequest, ErrorResponse}
+
+  alias TradewindsWeb.Schemas.{
+    PassengerResponse,
+    PassengersResponse,
+    BoardPassengerRequest,
+    ErrorResponse
+  }
 
   action_fallback TradewindsWeb.FallbackController
 

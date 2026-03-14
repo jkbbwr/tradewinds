@@ -31,6 +31,19 @@ defmodule Tradewinds.FleetTest do
       assert updated_ship.name == "New Name"
     end
 
+    test "rename_ship/3 fails if name is already taken within company" do
+      player = insert(:player)
+      company = insert(:company)
+      insert(:director, company: company, player: player)
+      insert(:ship, company: company, name: "Existing Name")
+      ship = insert(:ship, company: company, name: "Old Name")
+
+      scope = Scope.for(player: player, company_id: company.id)
+
+      assert {:error, changeset} = Fleet.rename_ship(scope, ship.id, "Existing Name")
+      assert "has already been taken" in errors_on(changeset).name
+    end
+
     test "rename_ship/3 fails if unauthorized" do
       player = insert(:player)
       other_company = insert(:company)

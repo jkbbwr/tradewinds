@@ -17,7 +17,23 @@ defmodule Tradewinds.Passengers.PassengerLog do
 
   def changeset(log, attrs) do
     log
-    |> cast(attrs, [:occurred_at, :count, :fare, :company_id, :ship_id, :origin_port_id, :destination_port_id])
-    |> validate_required([:occurred_at, :count, :fare, :company_id, :ship_id, :origin_port_id, :destination_port_id])
+    |> cast(attrs, [
+      :occurred_at,
+      :count,
+      :fare,
+      :company_id,
+      :ship_id,
+      :origin_port_id,
+      :destination_port_id
+    ])
+    |> validate_required([
+      :occurred_at,
+      :count,
+      :fare,
+      :company_id,
+      :ship_id,
+      :origin_port_id,
+      :destination_port_id
+    ])
   end
 end

@@ -24,7 +24,9 @@ defmodule Tradewinds.Companies.Ledger do
         :passenger_fare
       ]
 
-    field :reference_type, Ecto.Enum, values: [:market, :ship, :warehouse, :order, :system, :passenger]
+    field :reference_type, Ecto.Enum,
+      values: [:market, :ship, :warehouse, :order, :system, :passenger]
+
     field :reference_id, :binary_id
     field :idempotency_key, :string
     field :meta, :map

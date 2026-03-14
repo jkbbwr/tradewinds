@@ -156,7 +156,7 @@ defmodule Tradewinds.World do
   Returns a random selection of ports and one of their outgoing routes.
   Useful for spawning dynamic jobs or events.
   """
-  def list_random_port_routes(probability \\ 0.15) do
+  def list_random_port_routes(probability \\ 0.10) do
     query =
       from p in Port,
         join: r in Route,
