@@ -157,6 +157,31 @@ defmodule TradewindsWeb.WarehouseControllerTest do
       conn = post(conn, ~p"/api/v1/warehouses/#{Ecto.UUID.generate()}/shrink")
       assert json_response(conn, 404)
     end
+
+    test "returns 422 when already at minimum tier", %{conn: conn, company: company, port: port} do
+      warehouse =
+        Factory.insert(:warehouse, company: company, port: port, level: 1, capacity: 1000)
+
+      conn = post(conn, ~p"/api/v1/warehouses/#{warehouse.id}/shrink")
+      assert response = json_response(conn, 422)
+      assert response["errors"]["detail"] =~ "Already minimum tier"
+    end
+
+    test "returns 422 when inventory exceeds new capacity", %{
+      conn: conn,
+      company: company,
+      port: port,
+      good: good
+    } do
+      warehouse =
+        Factory.insert(:warehouse, company: company, port: port, level: 2, capacity: 2000)
+
+      Factory.insert(:warehouse_inventory, warehouse: warehouse, good: good, quantity: 1500)
+
+      conn = post(conn, ~p"/api/v1/warehouses/#{warehouse.id}/shrink")
+      assert response = json_response(conn, 422)
+      assert response["errors"]["detail"] =~ "Capacity exceeded if shrunk"
+    end
   end
 
   describe "POST /api/v1/warehouses/:id/transfer-to-ship" do

@@ -84,7 +84,9 @@ defmodule TradewindsWeb.FallbackController do
              :ship_not_docked,
              :ship_not_traveling,
              :ship_not_arrived,
-             :warehouse_not_empty
+             :warehouse_not_empty,
+             :already_minimum_tier,
+             :capacity_exceeded_if_shrunk
            ] do
     conn
     |> put_status(:unprocessable_entity)
