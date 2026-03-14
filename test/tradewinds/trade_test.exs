@@ -108,7 +108,8 @@ defmodule Tradewinds.TradeTest do
           stock: 100,
           target_stock: 100,
           elasticity: 1.0,
-          spread: 0.03
+          ask_spread: 0.03,
+          bid_spread: 0.03
         )
 
       ship = insert(:ship, company: company, port: port, status: :docked)
@@ -190,7 +191,8 @@ defmodule Tradewinds.TradeTest do
         stock: 100,
         target_stock: 100,
         elasticity: 1.0,
-        spread: 0.03
+        ask_spread: 0.03,
+        bid_spread: 0.03
       )
 
       ship = insert(:ship, company: company, port: port, status: :docked)

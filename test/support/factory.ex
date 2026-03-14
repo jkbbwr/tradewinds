@@ -154,7 +154,8 @@ defmodule Tradewinds.Factory do
       supply_rate: 0.1,
       demand_rate: 0.05,
       elasticity: 0.12,
-      spread: 0.03,
+      ask_spread: 0.03,
+      bid_spread: 0.03,
       quarterly_profit: 0
     }
   end

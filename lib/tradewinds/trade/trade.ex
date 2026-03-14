@@ -102,7 +102,14 @@ defmodule Tradewinds.Trade do
            ),
          final_base_price <-
            apply_volatility_jitter(market_price, modifiers.volatility),
-         {ask, bid} <- quotes(final_base_price, position.spread),
+         {ask, bid} <-
+           quotes(
+             final_base_price,
+             position.ask_spread,
+             position.bid_spread,
+             position.stock,
+             position.target_stock
+           ),
          {quote_price, impact_action} <-
            quote_price_and_action(action, ask, bid),
          final_unit_price <-
@@ -123,7 +130,8 @@ defmodule Tradewinds.Trade do
              unit_price: final_unit_price,
              total_price: final_unit_price * quantity,
              market_price: final_base_price,
-             spread: position.spread,
+             ask_spread: position.ask_spread,
+             bid_spread: position.bid_spread,
              timestamp: DateTime.to_iso8601(now)
            },
          token <-
@@ -229,7 +237,14 @@ defmodule Tradewinds.Trade do
 
           final_base_price = apply_volatility_jitter(market_price, modifiers.volatility)
 
-          {ask, bid} = quotes(final_base_price, position.spread)
+          {ask, bid} =
+            quotes(
+              final_base_price,
+              position.ask_spread,
+              position.bid_spread,
+              position.stock,
+              position.target_stock
+            )
 
           quote_price = if action == :buy, do: ask, else: bid
           impact_action = if action == :buy, do: :ask, else: :bid
@@ -247,7 +262,8 @@ defmodule Tradewinds.Trade do
             unit_price: final_unit_price,
             total_price: final_unit_price * total_qty,
             market_price: final_base_price,
-            spread: position.spread
+            ask_spread: position.ask_spread,
+            bid_spread: position.bid_spread
           }
 
           perform_execution(quote_data, position, destinations, now)
@@ -424,7 +440,10 @@ defmodule Tradewinds.Trade do
         do: position.stock - quote_data.quantity,
         else: position.stock + quote_data.quantity
 
-    profit_accrued = floor(quote_data.quantity * quote_data.market_price * quote_data.spread)
+    effective_spread =
+      if quote_data.action == :buy, do: position.ask_spread, else: position.bid_spread
+
+    profit_accrued = floor(quote_data.quantity * quote_data.market_price * effective_spread)
 
     position
     |> Tradewinds.Trade.TraderPosition.changeset(%{
@@ -450,7 +469,7 @@ defmodule Tradewinds.Trade do
 
     drift = floor(target_stock * effective_supply_rate)
     consumption = floor(current_stock * effective_demand_rate)
-    max_stock = target_stock * 5
+    max_stock = target_stock * 3
 
     new_stock = current_stock + drift - consumption
     clamp(new_stock, 0, max_stock)
@@ -489,14 +508,41 @@ defmodule Tradewinds.Trade do
           # We let current_stock handle the supply/demand curve naturally.
           new_target_stock = position.target_stock
 
-          # 3. Adjust spread based on flow intensity
-          # High flow magnitude means high volatility/demand; increase spread to capitalize.
-          # Low/zero flow decays the spread back down to encourage trading.
-          new_spread =
-            if abs(flow) > 0 do
-              min(0.15, position.spread + 0.0004 * abs(flow))
-            else
-              max(0.03, position.spread - 0.001)
+          # 3. Adjust spread based on flow direction
+          # Net player buying (negative stock flow):
+          #   - Widen ask_spread
+          #   - Shrink bid_spread
+          # Net player selling (positive stock flow):
+          #   - Widen bid_spread
+          #   - Shrink ask_spread
+          # Stagnant:
+          #   - Decay both
+          {new_ask_spread, new_bid_spread} =
+            cond do
+              # Net buying from NPC
+              flow < 0 ->
+                spread_shift = 0.0004 * abs(flow)
+
+                {
+                  min(0.10, position.ask_spread + spread_shift),
+                  max(0.015, position.bid_spread - spread_shift)
+                }
+
+              # Net selling to NPC
+              flow > 0 ->
+                spread_shift = 0.0004 * abs(flow)
+
+                {
+                  max(0.015, position.ask_spread - spread_shift),
+                  min(0.10, position.bid_spread + spread_shift)
+                }
+
+              # Stagnant
+              true ->
+                {
+                  max(0.015, position.ask_spread - 0.002),
+                  max(0.015, position.bid_spread - 0.002)
+                }
             end
 
           new_stock =
@@ -512,7 +558,8 @@ defmodule Tradewinds.Trade do
           |> Tradewinds.Trade.TraderPosition.update_simulation_changeset(%{
             stock: new_stock,
             target_stock: new_target_stock,
-            spread: new_spread
+            ask_spread: new_ask_spread,
+            bid_spread: new_bid_spread
           })
           |> Repo.update!()
 
@@ -561,12 +608,34 @@ defmodule Tradewinds.Trade do
   end
 
   @doc """
-  Returns {ask_price, bid_price} based on the final base price and spread.
+  Returns {ask_price, bid_price} based on the final base price and spreads.
   Ask is what the player pays to buy. Bid is what the player receives when selling.
+  Applies Phase 3.4 Counterparty bonus based on stock levels relative to target.
   """
-  def quotes(final_base_price, spread) do
-    ask = floor(final_base_price * (1.0 + spread))
-    bid = floor(final_base_price * (1.0 - spread))
+  def quotes(final_base_price, ask_spread, bid_spread, current_stock, target_stock) do
+    # Counterparty bonus: In the price calculation, after computing ask/bid:
+    # - If player is buying and Stock > Target: reduce effective ask_spread by up to 0.03, scaled linearly by (Stock - Target) / Target
+    # - If player is selling and Stock < Target: reduce effective bid_spread by up to 0.03, scaled linearly by (Target - Stock) / Target
+
+    effective_ask_spread =
+      if current_stock > target_stock do
+        bonus = min(0.03, 0.03 * ((current_stock - target_stock) / max(1, target_stock)))
+        max(0.015, ask_spread - bonus)
+      else
+        ask_spread
+      end
+
+    effective_bid_spread =
+      if current_stock < target_stock do
+        bonus = min(0.03, 0.03 * ((target_stock - current_stock) / max(1, target_stock)))
+        max(0.015, bid_spread - bonus)
+      else
+        bid_spread
+      end
+
+    ask = floor(final_base_price * (1.0 + effective_ask_spread))
+    bid = floor(final_base_price * (1.0 - effective_bid_spread))
+
     {ask, bid}
   end
 
@@ -576,22 +645,19 @@ defmodule Tradewinds.Trade do
   """
   def apply_slippage(:ask, quote_price, order_qty, current_stock) do
     # Buying from NPC: price goes up
-    # average_impact_factor = 1.0 + (order_qty / (2 * (current_stock + 1)))
-    quote_price + div(quote_price * order_qty, 4 * (current_stock + 1))
+    quote_price + div(quote_price * order_qty, 8 * (current_stock + 10))
   end
 
   def apply_slippage(:bid, quote_price, order_qty, current_stock) do
     # Selling to NPC: price goes down
-    # average_impact_factor = 1.0 + (order_qty / (2 * (current_stock + 1)))
-    # final_price = quote_price / average_impact_factor
-    div(quote_price * 4 * (current_stock + 1), 4 * (current_stock + 1) + order_qty)
+    div(quote_price * 8 * (current_stock + 10), 8 * (current_stock + 10) + order_qty)
   end
 
   @doc """
-  Clamps the final unit price to not fall below 10% of base price or exceed 1000% of base price.
+  Clamps the final unit price to not fall below 5% of base price or exceed 1000% of base price.
   """
   def clamp_price(price, base_price) do
-    floor_price = floor(base_price * 0.1)
+    floor_price = floor(base_price * 0.05)
     ceil_price = floor(base_price * 10.0)
     clamp(price, floor_price, ceil_price)
   end

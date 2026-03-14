@@ -39,7 +39,8 @@ defmodule TradewindsWeb.TradeControllerTest do
         good: good,
         stock: 100,
         target_stock: 100,
-        spread: 0.1
+        ask_spread: 0.1,
+        bid_spread: 0.1
       )
 
     conn =

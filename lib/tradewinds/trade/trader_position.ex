@@ -7,7 +7,8 @@ defmodule Tradewinds.Trade.TraderPosition do
     field :supply_rate, :float
     field :demand_rate, :float
     field :elasticity, :float
-    field :spread, :float
+    field :ask_spread, :float
+    field :bid_spread, :float
     field :quarterly_profit, :integer, default: 0
 
     belongs_to :trader, Tradewinds.Trade.Trader
@@ -32,7 +33,8 @@ defmodule Tradewinds.Trade.TraderPosition do
       :supply_rate,
       :demand_rate,
       :elasticity,
-      :spread,
+      :ask_spread,
+      :bid_spread,
       :quarterly_profit
     ])
     |> validate_required([
@@ -44,7 +46,8 @@ defmodule Tradewinds.Trade.TraderPosition do
       :supply_rate,
       :demand_rate,
       :elasticity,
-      :spread,
+      :ask_spread,
+      :bid_spread,
       :quarterly_profit
     ])
     |> validate_number(:stock, greater_than_or_equal_to: 0)
@@ -62,14 +65,15 @@ defmodule Tradewinds.Trade.TraderPosition do
   end
 
   @doc """
-  Builds a changeset for the daily simulation update, which can modify stock, target_stock, and spread.
+  Builds a changeset for the daily simulation update, which can modify stock, target_stock, and spreads.
   """
   def update_simulation_changeset(position, attrs) do
     position
-    |> cast(attrs, [:stock, :target_stock, :spread])
-    |> validate_required([:stock, :target_stock, :spread])
+    |> cast(attrs, [:stock, :target_stock, :ask_spread, :bid_spread])
+    |> validate_required([:stock, :target_stock, :ask_spread, :bid_spread])
     |> validate_number(:stock, greater_than_or_equal_to: 0)
     |> validate_number(:target_stock, greater_than_or_equal_to: 0)
-    |> validate_number(:spread, greater_than_or_equal_to: 0.0)
+    |> validate_number(:ask_spread, greater_than_or_equal_to: 0.0)
+    |> validate_number(:bid_spread, greater_than_or_equal_to: 0.0)
   end
 end
