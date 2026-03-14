@@ -133,10 +133,23 @@ defmodule Tradewinds.Accounts do
   Returns `{:ok, auth_token}` with preloaded player, or `{:error, reason}`.
   """
   def validate(token) do
-    with {:ok, player_id} <- Phoenix.Token.verify(TradewindsWeb.Endpoint, "player auth", token),
-         {:ok, auth_token} <- fetch_auth_token(token, player_id),
-         :ok <- is_enabled?(auth_token.player) do
-      {:ok, auth_token}
+    # Fetch from DB first to check if the token is read_only so we can adjust max_age
+    case Repo.get_by(AuthToken, token: token) do
+      nil ->
+        {:error, :unauthorized}
+
+      auth_token ->
+        auth_token = Repo.preload(auth_token, :player)
+        # Read-only tokens last 7 days, standard tokens last 1 day
+        max_age = if auth_token.is_read_only, do: 7 * 24 * 60 * 60, else: 86400
+
+        with {:ok, _player_id} <-
+               Phoenix.Token.verify(TradewindsWeb.Endpoint, "player auth", token,
+                 max_age: max_age
+               ),
+             :ok <- is_enabled?(auth_token.player) do
+          {:ok, auth_token}
+        end
     end
   end
 
@@ -178,7 +191,19 @@ defmodule Tradewinds.Accounts do
   Generates a signed Phoenix Token for the player, valid for 24 hours.
   """
   def generate_token(player) do
+    # max_age here is ignored by sign/4, but kept for historical documentation
     Phoenix.Token.sign(TradewindsWeb.Endpoint, "player auth", player.id, max_age: 24 * 60 * 60)
+  end
+
+  @doc """
+  Generates a new read-only token for the given player, valid for 7 days.
+  """
+  def generate_read_only_token(player) do
+    token_str = generate_token(player)
+
+    %AuthToken{}
+    |> AuthToken.create_changeset(%{player_id: player.id, token: token_str, is_read_only: true})
+    |> Repo.insert()
   end
 
   ## IP Banning

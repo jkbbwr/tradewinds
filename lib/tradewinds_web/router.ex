@@ -79,7 +79,7 @@ defmodule TradewindsWeb.Router do
     pipe_through [:api, :strict_rate_limits, :auth]
 
     post "/revoke", AuthController, :revoke
-    post "/restrict", AuthController, :restrict
+    post "/read-only-token", AuthController, :read_only_token
   end
 
   scope "/api/v1", TradewindsWeb do

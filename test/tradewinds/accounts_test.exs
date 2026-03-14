@@ -126,7 +126,7 @@ defmodule Tradewinds.AccountsTest do
     end
 
     test "validate/1 fails with invalid token string" do
-      assert {:error, :invalid} = Accounts.validate("invalid_token_string")
+      assert {:error, :unauthorized} = Accounts.validate("invalid_token_string")
     end
 
     test "validate/1 fails if token exists but signature is invalid (tampered)" do
@@ -138,8 +138,8 @@ defmodule Tradewinds.AccountsTest do
       # Tamper the token
       tampered_token = created_token.token <> "tampered"
 
-      # Should fail at Phoenix.Token.verify
-      assert {:error, :invalid} = Accounts.validate(tampered_token)
+      # Should fail at Repo fetch
+      assert {:error, :unauthorized} = Accounts.validate(tampered_token)
     end
 
     test "validate/1 fails if player is disabled after login" do

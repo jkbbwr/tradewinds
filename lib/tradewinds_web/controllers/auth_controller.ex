@@ -91,21 +91,24 @@ defmodule TradewindsWeb.AuthController do
     send_resp(conn, :no_content, "")
   end
 
-  operation(:restrict,
-    operation_id: "restrictToken",
+  operation(:read_only_token,
+    operation_id: "generateReadOnlyToken",
     tags: ["Accounts"],
-    summary: "Restrict token to read-only",
-    description: "Restricts the currently active JWT token to read-only access permanently.",
+    summary: "Generate read-only token",
+    description:
+      "Generates a new read-only token for the currently authenticated player, valid for 7 days.",
     security: [%{"bearerAuth" => []}],
     responses: [
-      no_content: "Token restricted successfully",
+      ok: {"Token generated successfully", "application/json", LoginResponse},
       unauthorized: {"Invalid or expired token", "application/json", ErrorResponse}
     ]
   )
 
-  def restrict(conn, _params) do
-    with {:ok, _token} <- Accounts.restrict_token_to_read_only(conn.assigns.token.token) do
-      send_resp(conn, :no_content, "")
+  def read_only_token(conn, _params) do
+    with {:ok, auth_token} <- Accounts.generate_read_only_token(conn.assigns.token.player) do
+      conn
+      |> put_status(:ok)
+      |> render(:login, auth_token: auth_token)
     end
   end
 
