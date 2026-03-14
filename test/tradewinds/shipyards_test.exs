@@ -70,38 +70,33 @@ defmodule Tradewinds.ShipyardsTest do
     end
 
     test "produce_ships/1 builds up to 3 ships" do
-      # Clean up any ship types inserted by seeds/other tests to ensure isolation
-      Repo.delete_all(Tradewinds.World.ShipType)
-
       shipyard = insert(:shipyard)
-      insert(:ship_type, capacity: 120) # 1 ship per tick on average
+      ship_type = insert(:ship_type, capacity: 120) # 1 ship per tick on average
 
       # Should produce first ship
       Shipyards.produce_ships(shipyard.id)
-      assert Repo.aggregate(Inventory, :count) == 1
+      assert Repo.aggregate(from(i in Inventory, where: i.shipyard_id == ^shipyard.id and i.ship_type_id == ^ship_type.id), :count) == 1
 
       # Should produce second ship
       Shipyards.produce_ships(shipyard.id)
-      assert Repo.aggregate(Inventory, :count) == 2
+      assert Repo.aggregate(from(i in Inventory, where: i.shipyard_id == ^shipyard.id and i.ship_type_id == ^ship_type.id), :count) == 2
 
       # Should produce third ship
       Shipyards.produce_ships(shipyard.id)
-      assert Repo.aggregate(Inventory, :count) == 3
+      assert Repo.aggregate(from(i in Inventory, where: i.shipyard_id == ^shipyard.id and i.ship_type_id == ^ship_type.id), :count) == 3
 
       # Should NOT produce fourth ship
       Shipyards.produce_ships(shipyard.id)
-      assert Repo.aggregate(Inventory, :count) == 3
+      assert Repo.aggregate(from(i in Inventory, where: i.shipyard_id == ^shipyard.id and i.ship_type_id == ^ship_type.id), :count) == 3
     end
 
     test "produce_ships/1 fills stock faster for smaller ships" do
-      Repo.delete_all(Tradewinds.World.ShipType)
       shipyard = insert(:shipyard)
-
       # Capacity 40 means ratio = 120/40 = 3.0. Should fill 3 ships in one tick.
-      insert(:ship_type, capacity: 40)
+      ship_type = insert(:ship_type, capacity: 40)
 
       Shipyards.produce_ships(shipyard.id)
-      assert Repo.aggregate(Inventory, :count) == 3
+      assert Repo.aggregate(from(i in Inventory, where: i.shipyard_id == ^shipyard.id and i.ship_type_id == ^ship_type.id), :count) == 3
     end
 
     test "calculate_sell_price/2 returns correct price based on stock" do
