@@ -1,5 +1,5 @@
 defmodule Tradewinds.ScopeTest do
-  use Tradewinds.DataCase
+  use Tradewinds.DataCase, async: true
 
   alias Tradewinds.Scope
 

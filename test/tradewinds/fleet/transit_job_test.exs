@@ -1,5 +1,5 @@
 defmodule Tradewinds.Fleet.TransitJobTest do
-  use Tradewinds.DataCase, async: true
+  use Tradewinds.DataCase, async: true, async: true
 
   alias Tradewinds.Fleet.TransitJob
 

@@ -1,5 +1,5 @@
 defmodule Tradewinds.TradeTest do
-  use Tradewinds.DataCase
+  use Tradewinds.DataCase, async: true
   import Mox
   import Tradewinds.Factory
   alias Tradewinds.Trade

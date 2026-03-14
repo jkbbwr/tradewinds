@@ -1,5 +1,5 @@
 defmodule Tradewinds.CompaniesTest do
-  use Tradewinds.DataCase
+  use Tradewinds.DataCase, async: true
 
   alias Tradewinds.Companies
   alias Tradewinds.Companies.Company

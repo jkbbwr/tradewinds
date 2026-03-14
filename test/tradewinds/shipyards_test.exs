@@ -1,5 +1,5 @@
 defmodule Tradewinds.ShipyardsTest do
-  use Tradewinds.DataCase
+  use Tradewinds.DataCase, async: true
 
   alias Tradewinds.Shipyards
   alias Tradewinds.Shipyards.Inventory

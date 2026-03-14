@@ -1,5 +1,5 @@
 defmodule Tradewinds.Market.SystemOrderJobTest do
-  use Tradewinds.DataCase
+  use Tradewinds.DataCase, async: true
   use Oban.Testing, repo: Tradewinds.Repo
 
   alias Tradewinds.Market.SystemOrderJob

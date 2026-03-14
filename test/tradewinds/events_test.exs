@@ -1,5 +1,5 @@
 defmodule Tradewinds.EventsTest do
-  use Tradewinds.DataCase
+  use Tradewinds.DataCase, async: true
   alias Tradewinds.Events
   alias Phoenix.PubSub
 

@@ -1,5 +1,5 @@
 defmodule Tradewinds.MarketTest do
-  use Tradewinds.DataCase
+  use Tradewinds.DataCase, async: true
   alias Tradewinds.Market
   alias Tradewinds.Logistics
   alias Tradewinds.Companies

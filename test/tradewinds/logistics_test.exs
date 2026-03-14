@@ -1,5 +1,5 @@
 defmodule Tradewinds.LogisticsTest do
-  use Tradewinds.DataCase
+  use Tradewinds.DataCase, async: true
 
   alias Tradewinds.Logistics
   alias Tradewinds.Logistics.WarehouseInventory

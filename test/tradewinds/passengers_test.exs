@@ -1,5 +1,5 @@
 defmodule Tradewinds.PassengersTest do
-  use Tradewinds.DataCase
+  use Tradewinds.DataCase, async: true
 
   alias Tradewinds.Passengers
   alias Tradewinds.Passengers.Passenger

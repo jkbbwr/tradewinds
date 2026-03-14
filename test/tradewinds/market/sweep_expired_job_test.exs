@@ -1,5 +1,5 @@
 defmodule Tradewinds.Market.SweepExpiredJobTest do
-  use Tradewinds.DataCase, async: true
+  use Tradewinds.DataCase, async: true, async: true
   use Oban.Testing, repo: Tradewinds.Repo
 
   alias Tradewinds.Market.SweepExpiredJob

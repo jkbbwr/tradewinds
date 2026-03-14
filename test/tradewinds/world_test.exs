@@ -1,5 +1,5 @@
 defmodule Tradewinds.WorldTest do
-  use Tradewinds.DataCase
+  use Tradewinds.DataCase, async: true
 
   alias Tradewinds.World
 

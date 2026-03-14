@@ -1,5 +1,5 @@
 defmodule Tradewinds.Companies.UpkeepJobTest do
-  use Tradewinds.DataCase, async: true
+  use Tradewinds.DataCase, async: true, async: true
   use Oban.Testing, repo: Tradewinds.Repo
 
   alias Tradewinds.Companies.UpkeepJob

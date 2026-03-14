@@ -1,5 +1,5 @@
 defmodule Tradewinds.EconomyTest do
-  use Tradewinds.DataCase
+  use Tradewinds.DataCase, async: true
   alias Tradewinds.Economy
   alias Tradewinds.Economy.TradeLog
   import Tradewinds.Factory
