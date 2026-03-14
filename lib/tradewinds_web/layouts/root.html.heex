@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
     <title>Tradewinds</title>
+    
+    <!-- Discord / Open Graph -->
+    <meta property="og:site_name" content="Tradewinds" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Tradewinds - Command the Oceans" />
+    <meta property="og:description" content="A strategic multiplayer trading simulation. Build companies, navigate global routes, and master the markets." />
+    <meta property="og:url" content="https://tradewinds.fly.dev" />
+    <meta name="twitter:card" content="summary_large_image" />
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
@@ -62,13 +71,8 @@
       .resource-card h3 { font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--text-main); }
       .resource-card p { color: var(--text-muted); font-size: 0.95rem; }
     </style>
-    <script src="https://cdn.jsdelivr.net/gh/phoenixframework/phoenix@v1.7.10/priv/static/phoenix.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/phoenixframework/phoenix_live_view@v0.20.2/priv/static/phoenix_live_view.min.js"></script>
-    <script>
-      let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
-      let liveSocket = new window.LiveView.LiveSocket("/live", window.Phoenix.Socket, {params: {_csrf_token: csrfToken}})
-      liveSocket.connect()
-    </script>
+    <script defer phx-track-static type="text/javascript" src="/assets/app.js"></script>
+    <link rel="stylesheet" href="/assets/app.css" />
   </head>
   <body>
     <div class="container">

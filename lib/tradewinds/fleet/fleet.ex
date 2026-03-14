@@ -105,6 +105,18 @@ defmodule Tradewinds.Fleet do
   end
 
   @doc """
+  Lists all active transit logs (ships currently at sea).
+  Preloads the associated ship and route.
+  """
+  def list_active_transits do
+    from(t in TransitLog,
+      where: is_nil(t.arrived_at),
+      preload: [:ship, :route]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
   Docks a traveling ship at its destination port if the arrival time has passed.
   """
   def dock_ship(ship_id) do

@@ -22,8 +22,12 @@ FROM ${BUILDER_IMAGE} AS builder
 
 # install build dependencies
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends build-essential git \
+  && apt-get install -y --no-install-recommends build-essential git curl unzip \
   && rm -rf /var/lib/apt/lists/*
+
+# Install Bun
+RUN curl -fsSL https://bun.sh/install | bash
+ENV PATH="/root/.bun/bin:${PATH}"
 
 # prepare build dir
 WORKDIR /app
@@ -49,6 +53,11 @@ RUN mix deps.compile
 COPY priv priv
 
 COPY lib lib
+
+COPY assets assets
+
+# build assets
+RUN mix assets.deploy
 
 # Compile the release
 RUN mix compile

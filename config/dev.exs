@@ -25,7 +25,9 @@ config :tradewinds, TradewindsWeb.Endpoint,
   code_reloader: true,
   debug_errors: true,
   secret_key_base: "iIL1z0nLEUhx4WV1SXGOgahDI8W6SNVIWAWl0BpKijtTecUG+9leb3qBCRDnrwZJ",
-  watchers: []
+  watchers: [
+    bun: ["run", "watch", cd: Path.expand("../assets", __DIR__)]
+  ]
 
 # ## SSL Support
 #

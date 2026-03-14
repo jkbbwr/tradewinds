@@ -88,7 +88,14 @@ defmodule Tradewinds.MixProject do
       ],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
-      precommit: ["compile --warnings-as-errors", "deps.unlock --unused", "format", "test"]
+      precommit: ["compile --warnings-as-errors", "deps.unlock --unused", "format", "test"],
+      "assets.routes": ["cmd --cd tools uv run generate_routes.py"],
+      "assets.build": ["assets.routes", "cmd --cd assets bun run build"],
+      "assets.deploy": [
+        "cmd --cd assets bun install",
+        "cmd --cd assets bun run build",
+        "phx.digest"
+      ]
     ]
   end
 end

@@ -1,0 +1,17 @@
+{
+  "name": "tradewinds-assets",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "bun build js/app.js --outdir=../priv/static/assets --external fonts/* --external images/* && bun run copy-assets",
+    "watch": "bun build js/app.js --outdir=../priv/static/assets --watch",
+    "copy-assets": "cp routes.json ../priv/static/assets/ && cp robots.txt ../priv/static/ 2>/dev/null || true && mkdir -p ../priv/static/images ../priv/static/fonts && cp images/favicon.ico ../priv/static/ 2>/dev/null || true && cp -r images/* ../priv/static/images/ 2>/dev/null || true && cp -r fonts/* ../priv/static/fonts/ 2>/dev/null || true"
+  },
+  "dependencies": {
+    "@turf/bearing": "^7.3.4",
+    "@turf/turf": "^7.3.4",
+    "maplibre-gl": "^5.2.0",
+    "phoenix": "^1.7.10",
+    "phoenix_html": "^4.0.0",
+    "phoenix_live_view": "1.1.26"
+  }
+}

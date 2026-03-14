@@ -44,6 +44,7 @@ defmodule TradewindsWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    live "/map", WorldMapLive
   end
 
   scope "/admin", TradewindsWeb do
