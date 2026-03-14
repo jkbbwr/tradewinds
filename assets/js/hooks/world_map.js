@@ -118,9 +118,21 @@ export default {
       const currentPos = along(routeFeature, currentLen);
       const coords = currentPos.geometry.coordinates;
 
-      const lookahead = Math.min(totalLen, currentLen + 0.1);
-      const nextPos = along(routeFeature, lookahead);
-      const angle = bearing(currentPos, nextPos);
+      const epsilon = Math.min(0.1, totalLen / 2);
+      let p1_len = currentLen;
+      let p2_len = isReversed ? currentLen - epsilon : currentLen + epsilon;
+
+      if (p2_len < 0) {
+        p2_len = 0;
+        p1_len = epsilon;
+      } else if (p2_len > totalLen) {
+        p2_len = totalLen;
+        p1_len = totalLen - epsilon;
+      }
+
+      const p1 = along(routeFeature, p1_len);
+      const p2 = along(routeFeature, p2_len);
+      const angle = bearing(p1, p2);
 
       if (!this.shipMarkers[ship.id]) {
         const el = document.createElement('div');

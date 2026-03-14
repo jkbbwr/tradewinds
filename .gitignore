@@ -28,6 +28,8 @@ tradewinds-*.tar
 .env
 
 # Ignore fingerprinted and compressed assets
+/priv/static/assets
+/priv/static/images
 /priv/static/assets/app-*.js
 /priv/static/assets/app-*.js.gz
 /priv/static/assets/app-*.css
