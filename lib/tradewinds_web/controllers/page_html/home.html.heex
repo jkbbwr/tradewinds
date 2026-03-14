@@ -1,0 +1,54 @@
+<div class="landing-page">
+  <header class="hero">
+    <div class="hero-content">
+      <h1 class="title">Tradewinds</h1>
+      <p class="subtitle">Command the Oceans. Master the Markets.</p>
+      <p class="description">
+        Tradewinds is a strategic, multiplayer trading simulation game.
+        Build trading companies, acquire fleets of ships, navigate the open seas,
+        and engage in dynamic economic competition across a vast world of ports and goods.
+      </p>
+      <div class="hero-actions">
+        <a href="https://discord.gg/UV9fb5JbXu" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
+          Join the Discord
+        </a>
+        <a href="/api/swaggerui" class="btn btn-secondary">
+          Explore the API
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <section class="stats-section">
+    <div class="stat-card">
+      <span class="stat-value"><%= @companies_count %></span>
+      <span class="stat-label">Registered Companies</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value"><%= @ships_at_sea %></span>
+      <span class="stat-label">Ships at Sea</span>
+    </div>
+  </section>
+
+  <section class="resources-section">
+    <h2>Community</h2>
+    <div class="resources-grid" style="display: flex; justify-content: center; margin-bottom: 4rem;">
+      <a href="https://discord.gg/UV9fb5JbXu" class="resource-card" target="_blank" rel="noopener noreferrer" style="max-width: 500px; text-align: center;">
+        <h3 style="color: var(--accent); font-size: 1.5rem; margin-bottom: 1rem;">Community Discord</h3>
+        <p>Join the community, get support, and collaborate with other developers and players.</p>
+      </a>
+    </div>
+
+    <h2>Developer Resources</h2>
+    <div class="resources-grid" style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;">
+      <a href="/api/openapi" class="resource-card" style="flex: 1; min-width: 300px; max-width: 450px;">
+        <h3>OpenAPI Spec</h3>
+        <p>Raw JSON specification for the Tradewinds API endpoints and models.</p>
+      </a>
+      <a href="/api/swaggerui" class="resource-card" style="flex: 1; min-width: 300px; max-width: 450px;">
+        <h3>Swagger UI</h3>
+        <p>Interactive documentation to test and explore endpoints directly in your browser.</p>
+      </a>
+    </div>
+  </section>
+</div>

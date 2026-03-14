@@ -5,9 +5,62 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
     <title>Tradewinds</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-      body { font-family: sans-serif; padding: 2rem; line-height: 1.5; }
-      .container { max-width: 800px; margin: 0 auto; }
+      :root {
+        --bg-color: #050b14;
+        --text-main: #e2e8f0;
+        --text-muted: #94a3b8;
+        --accent: #d4af37;
+        --accent-glow: rgba(212, 175, 55, 0.4);
+        --card-bg: rgba(255, 255, 255, 0.03);
+        --card-border: rgba(255, 255, 255, 0.1);
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        line-height: 1.6;
+        min-height: 100vh;
+        background-image: 
+          radial-gradient(circle at 50% 0%, #112240 0%, transparent 50%),
+          linear-gradient(to bottom, transparent, rgba(0,0,0,0.8));
+      }
+      h1, h2, h3, .title { font-family: 'Cinzel', serif; font-weight: 700; color: var(--accent); }
+      a { color: var(--accent); text-decoration: none; transition: all 0.2s ease; }
+      a:hover { color: #f1c40f; text-shadow: 0 0 8px var(--accent-glow); }
+      .container { max-width: 1000px; margin: 0 auto; padding: 2rem; }
+      
+      /* Landing Page Styles */
+      .landing-page { display: flex; flex-direction: column; gap: 4rem; padding-top: 4rem; }
+      
+      .hero { text-align: center; }
+      .hero .title { font-size: 4rem; letter-spacing: 2px; margin-bottom: 0.5rem; text-shadow: 0 0 20px var(--accent-glow); }
+      .hero .subtitle { font-size: 1.5rem; color: var(--text-muted); margin-bottom: 2rem; font-family: 'Cinzel', serif; }
+      .hero .description { max-width: 600px; margin: 0 auto 3rem; font-size: 1.1rem; color: var(--text-muted); }
+      
+      .hero-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+      .btn { display: inline-block; padding: 0.8rem 2rem; border-radius: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem; transition: all 0.3s ease; }
+      .btn-primary { background-color: var(--accent); color: #000; border: 1px solid var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
+      .btn-primary:hover { background-color: #f1c40f; color: #000; box-shadow: 0 0 25px var(--accent-glow); transform: translateY(-2px); }
+      .btn-secondary { background-color: transparent; color: var(--accent); border: 1px solid var(--accent); }
+      .btn-secondary:hover { background-color: rgba(212, 175, 55, 0.1); transform: translateY(-2px); }
+      
+      .stats-section { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; }
+      .stat-card { background: var(--card-bg); border: 1px solid var(--card-border); padding: 2rem; border-radius: 8px; text-align: center; min-width: 250px; backdrop-filter: blur(10px); }
+      .stat-value { display: block; font-size: 3rem; font-family: 'Cinzel', serif; color: var(--accent); margin-bottom: 0.5rem; line-height: 1; text-shadow: 0 0 10px var(--accent-glow); }
+      .stat-label { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); }
+      
+      .resources-section { text-align: center; padding-bottom: 4rem; }
+      .resources-section h2 { font-size: 2rem; margin-bottom: 2rem; }
+      .resources-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; text-align: left; }
+      .resource-card { display: block; background: var(--card-bg); border: 1px solid var(--card-border); padding: 2rem; border-radius: 8px; transition: all 0.3s ease; }
+      .resource-card:hover { border-color: var(--accent); background: rgba(255, 255, 255, 0.05); transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+      .resource-card h3 { font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--text-main); }
+      .resource-card p { color: var(--text-muted); font-size: 0.95rem; }
     </style>
     <script src="https://cdn.jsdelivr.net/gh/phoenixframework/phoenix@v1.7.10/priv/static/phoenix.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/phoenixframework/phoenix_live_view@v0.20.2/priv/static/phoenix_live_view.min.js"></script>

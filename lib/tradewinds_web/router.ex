@@ -40,6 +40,12 @@ defmodule TradewindsWeb.Router do
     plug TradewindsWeb.Plugs.RateLimiter, limit: 10, scale: 60_000
   end
 
+  scope "/", TradewindsWeb do
+    pipe_through :browser
+
+    get "/", PageController, :home
+  end
+
   scope "/admin", TradewindsWeb do
     pipe_through [:browser, :admin_auth]
 
