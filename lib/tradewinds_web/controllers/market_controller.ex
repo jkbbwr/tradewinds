@@ -34,8 +34,16 @@ defmodule TradewindsWeb.MarketController do
     summary: "List open market orders",
     description: "Returns a list of open orders, optionally filtered by ports, goods, and side.",
     parameters: [
-      port_ids: [in: :query, description: "List of Port IDs", schema: %OpenApiSpex.Schema{type: :array, items: %OpenApiSpex.Schema{type: :string}}],
-      good_ids: [in: :query, description: "List of Good IDs", schema: %OpenApiSpex.Schema{type: :array, items: %OpenApiSpex.Schema{type: :string}}],
+      port_ids: [
+        in: :query,
+        description: "List of Port IDs",
+        schema: %OpenApiSpex.Schema{type: :array, items: %OpenApiSpex.Schema{type: :string}}
+      ],
+      good_ids: [
+        in: :query,
+        description: "List of Good IDs",
+        schema: %OpenApiSpex.Schema{type: :array, items: %OpenApiSpex.Schema{type: :string}}
+      ],
       side: [in: :query, description: "Order side (buy or sell)", type: :string],
       after: [in: :query, description: "Cursor for next page", type: :string],
       before: [in: :query, description: "Cursor for previous page", type: :string],

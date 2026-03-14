@@ -151,6 +151,15 @@ defmodule Tradewinds.Companies do
     |> Repo.ok_or({:company_not_found, id})
   end
 
+  @doc """
+  Fetches a single company by ticker.
+  """
+  def fetch_company_by_ticker(ticker) do
+    Company
+    |> Repo.get_by(ticker: ticker)
+    |> Repo.ok_or({:company_not_found, ticker})
+  end
+
   # Fetches and locks a company record for transaction safety.
   defp fetch_company_for_update(id) do
     Company

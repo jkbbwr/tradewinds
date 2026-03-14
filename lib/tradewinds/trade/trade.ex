@@ -279,7 +279,11 @@ defmodule Tradewinds.Trade do
         else: {Tradewinds.Economy.system_npc_id(), quote_data.company_id}
 
     tax_amount =
-      Tradewinds.Economy.calculate_tax_for_port(quote_data.total_price, quote_data.port_id)
+      if quote_data.action == :buy do
+        Tradewinds.Economy.calculate_tax_for_port(quote_data.total_price, quote_data.port_id)
+      else
+        0
+      end
 
     with {:ok, _} <-
            Tradewinds.Companies.record_transaction(
@@ -403,7 +407,7 @@ defmodule Tradewinds.Trade do
     position
     |> Tradewinds.Trade.TraderPosition.changeset(%{
       stock: new_stock,
-      monthly_profit: position.monthly_profit + profit_accrued
+      quarterly_profit: position.quarterly_profit + profit_accrued
     })
     |> Repo.update()
   end
@@ -471,8 +475,8 @@ defmodule Tradewinds.Trade do
           # High flow magnitude means high volatility/demand; increase spread to capitalize.
           # Low/zero flow decays the spread back down to encourage trading.
           new_spread =
-            if abs(flow) > 100 do
-              min(0.20, position.spread + 0.005)
+            if abs(flow) > 0 do
+              min(0.20, position.spread + 0.0005 * abs(flow))
             else
               max(0.05, position.spread - 0.001)
             end
@@ -508,13 +512,13 @@ defmodule Tradewinds.Trade do
   end
 
   @doc """
-  Resets the monthly profit for a trader's positions.
+  Resets the quarterly profit for a trader's positions.
   This allows the trader to reassess their stance (e.g., adjust spread) in the future.
   """
   def reset_trader_stances(trader_id) do
     Tradewinds.Trade.TraderPosition
     |> where(trader_id: ^trader_id)
-    |> Repo.update_all(set: [monthly_profit: 0, updated_at: DateTime.utc_now()])
+    |> Repo.update_all(set: [quarterly_profit: 0, updated_at: DateTime.utc_now()])
 
     {:ok, :reset}
   end
@@ -555,14 +559,14 @@ defmodule Tradewinds.Trade do
   def apply_slippage(:ask, quote_price, order_qty, current_stock) do
     # Buying from NPC: price goes up
     # average_impact_factor = 1.0 + (order_qty / (2 * (current_stock + 1)))
-    quote_price + div(quote_price * order_qty, 2 * (current_stock + 1))
+    quote_price + div(quote_price * order_qty, 4 * (current_stock + 1))
   end
 
   def apply_slippage(:bid, quote_price, order_qty, current_stock) do
     # Selling to NPC: price goes down
     # average_impact_factor = 1.0 + (order_qty / (2 * (current_stock + 1)))
     # final_price = quote_price / average_impact_factor
-    div(quote_price * 2 * (current_stock + 1), 2 * (current_stock + 1) + order_qty)
+    div(quote_price * 4 * (current_stock + 1), 4 * (current_stock + 1) + order_qty)
   end
 
   @doc """

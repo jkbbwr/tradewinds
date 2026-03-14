@@ -76,7 +76,11 @@ defmodule TradewindsWeb.MarketControllerTest do
         )
 
       conn =
-        get(conn, ~p"/api/v1/market/orders", port_ids: [port.id], good_ids: [good.id], side: "sell")
+        get(conn, ~p"/api/v1/market/orders",
+          port_ids: [port.id],
+          good_ids: [good.id],
+          side: "sell"
+        )
 
       data = json_response(conn, 200)["data"]
 

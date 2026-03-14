@@ -584,7 +584,7 @@ for port <- ports do
       # Use the good's specific elasticity for varied economic behavior
       elasticity: good.elasticity,
       spread: base_spread,
-      monthly_profit: 0
+      quarterly_profit: 0
     })
   end
 end

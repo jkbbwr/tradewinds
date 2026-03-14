@@ -9,7 +9,15 @@ defmodule Tradewinds.EventsTest do
     test "broadcasts ship_set_sail with company_id to world topic" do
       company = insert(:company)
       route = insert(:route)
-      ship = insert(:ship, company: company, name: "The Flying Dutchman", route: route, port: nil, status: :traveling)
+
+      ship =
+        insert(:ship,
+          company: company,
+          name: "The Flying Dutchman",
+          route: route,
+          port: nil,
+          status: :traveling
+        )
 
       PubSub.subscribe(@pubsub, "events:world:all")
 
@@ -26,7 +34,15 @@ defmodule Tradewinds.EventsTest do
     test "broadcasts ship_docked_world with company_id to world topic" do
       company = insert(:company)
       port = insert(:port)
-      ship = insert(:ship, company: company, name: "The Black Pearl", port: port, route: nil, status: :docked)
+
+      ship =
+        insert(:ship,
+          company: company,
+          name: "The Black Pearl",
+          port: port,
+          route: nil,
+          status: :docked
+        )
 
       PubSub.subscribe(@pubsub, "events:world:all")
 

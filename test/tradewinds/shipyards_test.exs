@@ -101,7 +101,9 @@ defmodule Tradewinds.ShipyardsTest do
       assert reloaded_company.treasury == 5000 - 2000
 
       # Check ledger metadata
-      ledger = Repo.get_by(Tradewinds.Companies.Ledger, company_id: company.id, reason: :ship_purchase)
+      ledger =
+        Repo.get_by(Tradewinds.Companies.Ledger, company_id: company.id, reason: :ship_purchase)
+
       assert ledger.meta["shipyard_id"] == shipyard.id
       assert ledger.meta["ship_type_id"] == ship_type.id
       assert ledger.meta["cost"] == 2000

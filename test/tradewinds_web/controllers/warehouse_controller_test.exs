@@ -102,9 +102,16 @@ defmodule TradewindsWeb.WarehouseControllerTest do
       assert json_response(conn, 200)["data"] == []
     end
 
-    test "returns list of inventory items", %{conn: conn, company: company, port: port, good: good} do
+    test "returns list of inventory items", %{
+      conn: conn,
+      company: company,
+      port: port,
+      good: good
+    } do
       warehouse = Factory.insert(:warehouse, company: company, port: port)
-      inventory = Factory.insert(:warehouse_inventory, warehouse: warehouse, good: good, quantity: 100)
+
+      inventory =
+        Factory.insert(:warehouse_inventory, warehouse: warehouse, good: good, quantity: 100)
 
       conn = get(conn, ~p"/api/v1/warehouses/#{warehouse.id}/inventory")
       data = json_response(conn, 200)["data"]

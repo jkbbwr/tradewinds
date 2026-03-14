@@ -22,6 +22,7 @@ defmodule Tradewinds.Companies.Company do
     company
     |> cast(attrs, [:name, :ticker, :treasury, :reputation, :home_port_id, :status])
     |> validate_required([:name, :ticker, :treasury, :home_port_id])
+    |> update_change(:ticker, &String.upcase/1)
     |> validate_length(:ticker, max: 5)
     |> validate_number(:reputation, greater_than: 0)
     |> unique_constraint(:name)

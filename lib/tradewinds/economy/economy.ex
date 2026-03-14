@@ -18,7 +18,11 @@ defmodule Tradewinds.Economy do
   Rounding is performed using floor to ensure we don't overcharge, but keep a minimum of 0.
   """
   def calculate_tax(amount, tax_rate_bps) when amount >= 0 do
-    floor(amount * tax_rate_bps / 10_000)
+    if amount < 1000 do
+      0
+    else
+      floor(amount * tax_rate_bps / 10_000)
+    end
   end
 
   @doc """

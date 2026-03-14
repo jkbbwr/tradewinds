@@ -14,7 +14,7 @@ defmodule TradewindsWeb.Router do
   end
 
   pipeline :api do
-    plug :accepts, ["json"]
+    plug :accepts, ["json", "sse"]
     plug TradewindsWeb.Plugs.IPBan
     plug TradewindsWeb.Plugs.RateLimiter
     plug OpenApiSpex.Plug.PutApiSpec, module: TradewindsWeb.ApiSpec

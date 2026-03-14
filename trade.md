@@ -86,7 +86,7 @@ final_unit_price = floor(quote_price * impact_factor)
 2. **Execution:**
    - Deduct/Credit `player_credits`.
    - Update `trader_position.stock`.
-   - Update `trader_position.monthly_profit` (Value = `qty * final_base_price * spread`).
+   - Update `trader_position.quarterly_profit` (Value = `qty * final_base_price * spread`).
    - Transfer `ship_cargo`.
 3. **Partial Fills:** Allowed if stock is less than `order_qty`. Honor the `quote_price` for whatever is available.
 

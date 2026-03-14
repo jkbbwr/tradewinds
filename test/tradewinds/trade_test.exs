@@ -76,7 +76,8 @@ defmodule Tradewinds.TradeTest do
     @tag :skip
     test "generate_quote/5 fails if not at home port and no ship present", %{player: player} do
       port = insert(:port)
-      company = insert(:company) # has a different random home port
+      # has a different random home port
+      company = insert(:company)
       insert(:director, company: company, player: player)
       scope = Scope.for(player: player, company_id: company.id)
 
@@ -132,7 +133,7 @@ defmodule Tradewinds.TradeTest do
       # Verify market stock decreased
       updated_position = Tradewinds.Repo.get(Tradewinds.Trade.TraderPosition, position.id)
       assert updated_position.stock == 90
-      assert updated_position.monthly_profit > 0
+      assert updated_position.quarterly_profit > 0
     end
 
     test "fails if destinations total quantity doesn't match quote", %{player: player} do
@@ -201,10 +202,9 @@ defmodule Tradewinds.TradeTest do
       assert {:ok, _quote} =
                Trade.execute_quote(scope, token, [%{type: :ship, id: ship.id, quantity: 10}])
 
-      # Verify company treasury increased by total_price - tax
-      tax_expected = floor(quote_data.total_price * 200 / 10000)
+      # Verify company treasury increased by total_price (tax is 0 for sells)
       updated_company = Tradewinds.Repo.get(Tradewinds.Companies.Company, company.id)
-      assert updated_company.treasury == 10_000 + quote_data.total_price - tax_expected
+      assert updated_company.treasury == 10_000 + quote_data.total_price
 
       # Verify ship lost cargo
       assert {:ok, 0} = Tradewinds.Fleet.current_cargo_total(ship.id)
@@ -224,7 +224,9 @@ defmodule Tradewinds.TradeTest do
       {:ok, token, quote_data} = Trade.generate_quote(scope, port.id, good.id, :buy, 10)
       {:ok, _} = Trade.execute_quote(scope, token, [%{type: :ship, id: ship.id, quantity: 10}])
 
-      ledger = Repo.get_by(Tradewinds.Companies.Ledger, company_id: company.id, reason: :npc_trade)
+      ledger =
+        Repo.get_by(Tradewinds.Companies.Ledger, company_id: company.id, reason: :npc_trade)
+
       assert ledger.meta["trader_id"] == trader.id
       assert ledger.meta["good_id"] == good.id
       assert ledger.meta["quantity"] == 10

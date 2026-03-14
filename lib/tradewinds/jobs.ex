@@ -5,7 +5,7 @@ defmodule Tradewinds.Jobs do
 
   import Ecto.Query
   alias Tradewinds.Repo
-  alias Tradewinds.Trade.{Trader, TraderSimulationJob, TraderMonthlyJob}
+  alias Tradewinds.Trade.{Trader, TraderSimulationJob, TraderQuarterlyJob}
   alias Tradewinds.Companies.{Company, UpkeepJob}
   alias Tradewinds.Shipyards.{Shipyard, ProductionJob}
 
@@ -48,9 +48,9 @@ defmodule Tradewinds.Jobs do
       |> TraderSimulationJob.new()
       |> Oban.insert!()
 
-      # Monthly Stance Reset
+      # Quarterly Stance Reset
       %{trader_id: trader.id}
-      |> TraderMonthlyJob.new()
+      |> TraderQuarterlyJob.new()
       |> Oban.insert!()
     end)
   end

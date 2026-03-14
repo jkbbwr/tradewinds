@@ -29,6 +29,13 @@ defmodule TradewindsWeb.FallbackController do
     |> render(:error, status: :insufficient_funds)
   end
 
+  def call(conn, {:error, :bankrupt}) do
+    conn
+    |> put_status(:unauthorized)
+    |> put_view(TradewindsWeb.ErrorJSON)
+    |> render(:unauthorized, reason: "bankrupt")
+  end
+
   def call(conn, {:error, {reason, id}})
       when reason in [
              :route_not_found,

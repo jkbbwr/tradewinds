@@ -8,7 +8,7 @@ defmodule Tradewinds.Trade.TraderPosition do
     field :demand_rate, :float
     field :elasticity, :float
     field :spread, :float
-    field :monthly_profit, :integer, default: 0
+    field :quarterly_profit, :integer, default: 0
 
     belongs_to :trader, Tradewinds.Trade.Trader
     belongs_to :port, Tradewinds.World.Port
@@ -33,7 +33,7 @@ defmodule Tradewinds.Trade.TraderPosition do
       :demand_rate,
       :elasticity,
       :spread,
-      :monthly_profit
+      :quarterly_profit
     ])
     |> validate_required([
       :trader_id,
@@ -45,7 +45,7 @@ defmodule Tradewinds.Trade.TraderPosition do
       :demand_rate,
       :elasticity,
       :spread,
-      :monthly_profit
+      :quarterly_profit
     ])
     |> validate_number(:stock, greater_than_or_equal_to: 0)
     |> validate_number(:target_stock, greater_than_or_equal_to: 0)

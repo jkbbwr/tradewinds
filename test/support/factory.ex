@@ -155,7 +155,7 @@ defmodule Tradewinds.Factory do
       demand_rate: 0.05,
       elasticity: 0.12,
       spread: 0.05,
-      monthly_profit: 0
+      quarterly_profit: 0
     }
   end
 

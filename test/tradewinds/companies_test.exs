@@ -24,6 +24,15 @@ defmodule Tradewinds.CompaniesTest do
       assert company.id in company_ids
     end
 
+    test "create/5 automatically uppercases the ticker" do
+      player = insert(:player)
+      port = insert(:port)
+      scope = Scope.for(player: player)
+
+      assert {:ok, company} = Companies.create(scope, "Lowercase Co", "low", port.id)
+      assert company.ticker == "LOW"
+    end
+
     test "create/5 fails with invalid attributes" do
       player = insert(:player)
       port = insert(:port)

@@ -15,6 +15,10 @@ defmodule TradewindsWeb.ErrorJSON do
     %{errors: %{detail: "Not Found"}}
   end
 
+  def render("406.json", _assigns) do
+    %{errors: %{detail: "Not Acceptable"}}
+  end
+
   def render("not_found.json", %{reason: reason, id: id}) do
     %{errors: %{detail: humanize_reason(reason), id: id}}
   end
@@ -25,6 +29,10 @@ defmodule TradewindsWeb.ErrorJSON do
 
   def render("unprocessable_entity.json", %{}) do
     %{errors: %{detail: "Insufficient Funds"}}
+  end
+
+  def render("unauthorized.json", %{reason: reason}) do
+    %{errors: %{detail: "Unauthorized: #{reason}"}}
   end
 
   def render("unauthorized.json", %{}) do

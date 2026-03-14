@@ -16,13 +16,13 @@ defmodule Tradewinds.Shipyards.ProductionJobTest do
 
     assert :ok = ProductionJob.perform(job)
 
-    # 1. Verify ships were produced (min stock of 2 for each ship type)
+    # 1. Verify ships were produced (up to 1 per type per week)
     inventory = Repo.all(Inventory)
-    assert length(inventory) >= 2
+    assert length(inventory) >= 1
 
     # Verify ships actually created and unowned
     ships = Repo.all(Ship)
-    assert length(ships) >= 2
+    assert length(ships) >= 1
     assert Enum.all?(ships, fn s -> s.port_id == shipyard.port_id end)
     assert Enum.all?(ships, fn s -> is_nil(s.company_id) end)
 

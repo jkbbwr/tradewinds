@@ -95,7 +95,8 @@ defmodule TradewindsWeb.ShipController do
     operation_id: "shipInventory",
     tags: ["Fleet"],
     summary: "Get ship inventory",
-    description: "Returns the cargo currently loaded on a specific ship owned by the current company.",
+    description:
+      "Returns the cargo currently loaded on a specific ship owned by the current company.",
     security: [%{"bearerAuth" => []}],
     parameters: [
       %OpenApiSpex.Parameter{

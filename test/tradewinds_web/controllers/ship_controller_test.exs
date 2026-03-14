@@ -76,7 +76,13 @@ defmodule TradewindsWeb.ShipControllerTest do
   end
 
   describe "GET /api/v1/ships/:id/inventory" do
-    test "returns ship inventory", %{conn: conn, company: company, ship_type: ship_type, port: port, good: good} do
+    test "returns ship inventory", %{
+      conn: conn,
+      company: company,
+      ship_type: ship_type,
+      port: port,
+      good: good
+    } do
       ship = Factory.insert(:ship, company: company, ship_type: ship_type, port: port)
       Factory.insert(:ship_cargo, ship: ship, good: good, quantity: 100)
 
