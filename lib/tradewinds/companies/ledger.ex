@@ -20,10 +20,11 @@ defmodule Tradewinds.Companies.Ledger do
         :warehouse_upkeep,
         :ship_upkeep,
         :npc_trade,
-        :bailout
+        :bailout,
+        :passenger_fare
       ]
 
-    field :reference_type, Ecto.Enum, values: [:market, :ship, :warehouse, :order, :system]
+    field :reference_type, Ecto.Enum, values: [:market, :ship, :warehouse, :order, :system, :passenger]
     field :reference_id, :binary_id
     field :idempotency_key, :string
     field :meta, :map

@@ -115,7 +115,14 @@ defmodule Tradewinds.Fleet do
         now = DateTime.utc_now()
 
         with {:ok, updated_ship} <- ship |> Ship.dock_changeset(ship.route.to_id) |> Repo.update(),
-             {:ok, _log} <- complete_active_transit_log(ship_id, now) do
+             {:ok, _log} <- complete_active_transit_log(ship_id, now),
+             {:ok, _payout} <-
+               Tradewinds.Passengers.disembark_passengers_for_ship(
+                 ship.company_id,
+                 ship.id,
+                 ship.route.to_id,
+                 now
+               ) do
           Tradewinds.Events.broadcast_ship_docked(updated_ship.company_id, updated_ship)
           {:ok, updated_ship}
         end

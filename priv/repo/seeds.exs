@@ -492,8 +492,8 @@ Repo.insert!(%ShipType{
   capacity: 50,
   speed: 4,
   base_price: 3000,
-  upkeep: 1500,
-  passengers: 0
+  upkeep: 500,
+  passengers: 20
 })
 
 Repo.insert!(%ShipType{
@@ -502,8 +502,8 @@ Repo.insert!(%ShipType{
   capacity: 100,
   speed: 6,
   base_price: 6000,
-  upkeep: 3000,
-  passengers: 0
+  upkeep: 1000,
+  passengers: 45
 })
 
 Repo.insert!(%ShipType{
@@ -512,8 +512,8 @@ Repo.insert!(%ShipType{
   capacity: 200,
   speed: 5,
   base_price: 12000,
-  upkeep: 6000,
-  passengers: 0
+  upkeep: 2000,
+  passengers: 70
 })
 
 # Shipyards

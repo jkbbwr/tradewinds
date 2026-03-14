@@ -211,4 +211,15 @@ defmodule Tradewinds.Factory do
       idempotency_key: sequence(:idempotency_key, &"key-#{&1}")
     }
   end
+
+  def passenger_factory do
+    %Tradewinds.Passengers.Passenger{
+      count: 10,
+      bid: 1000,
+      status: :available,
+      expires_at: DateTime.add(DateTime.utc_now(), 1, :hour),
+      origin_port: build(:port),
+      destination_port: build(:port)
+    }
+  end
 end

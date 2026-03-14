@@ -153,6 +153,23 @@ defmodule Tradewinds.World do
   end
 
   @doc """
+  Returns a random selection of ports and one of their outgoing routes.
+  Useful for spawning dynamic jobs or events.
+  """
+  def list_random_port_routes(probability \\ 0.15) do
+    query =
+      from p in Port,
+        join: r in Route,
+        on: r.from_id == p.id,
+        where: fragment("RANDOM() < ?", ^probability),
+        distinct: p.id,
+        order_by: [p.id, fragment("RANDOM()")],
+        select: %{origin_id: p.id, distance: r.distance, destination_id: r.to_id}
+
+    Repo.all(query)
+  end
+
+  @doc """
   Emits telemetry stats for the World context.
   """
   def emit_stats do

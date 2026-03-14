@@ -272,4 +272,23 @@ defmodule Tradewinds.Events do
        }}
     )
   end
+
+  def broadcast_passenger_request_created(passenger) do
+    PubSub.broadcast(
+      @pubsub,
+      "events:world:all",
+      {:message,
+       %{
+         type: "passenger_request_created",
+         data: %{
+           id: passenger.id,
+           origin_port_id: passenger.origin_port_id,
+           destination_port_id: passenger.destination_port_id,
+           count: passenger.count,
+           bid: passenger.bid,
+           expires_at: passenger.expires_at
+         }
+       }}
+    )
+  end
 end

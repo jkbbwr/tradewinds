@@ -67,12 +67,28 @@ defmodule TradewindsWeb.FallbackController do
              :inventory_not_found,
              :trader_position_not_found,
              :market_not_found,
-             :country_not_found
+             :country_not_found,
+             :passenger_not_found
            ] do
     conn
     |> put_status(:not_found)
     |> put_view(TradewindsWeb.ErrorJSON)
     |> render(:not_found, reason: reason, id: id)
+  end
+
+  def call(conn, {:error, reason})
+      when reason in [
+             :wrong_port,
+             :capacity_exceeded,
+             :passenger_not_available,
+             :ship_not_docked,
+             :ship_not_traveling,
+             :ship_not_arrived
+           ] do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(TradewindsWeb.ErrorJSON)
+    |> render("422.json", message: humanize_reason(reason))
   end
 
   def call(conn, {:error, reason})
@@ -95,5 +111,13 @@ defmodule TradewindsWeb.FallbackController do
     |> put_status(:unprocessable_entity)
     |> put_view(TradewindsWeb.ErrorJSON)
     |> render(:error, changeset: changeset)
+  end
+
+  defp humanize_reason(atom) do
+    atom
+    |> Atom.to_string()
+    |> String.replace("_", " ")
+    |> String.downcase()
+    |> String.capitalize()
   end
 end

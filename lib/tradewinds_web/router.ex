@@ -189,6 +189,19 @@ defmodule TradewindsWeb.Router do
     delete "/orders/:order_id", MarketController, :delete_order
   end
 
+  scope "/api/v1/passengers", TradewindsWeb do
+    pipe_through :api
+
+    get "/", PassengerController, :index
+    get "/:id", PassengerController, :show
+  end
+
+  scope "/api/v1/passengers", TradewindsWeb do
+    pipe_through [:api, :auth, :company_context]
+
+    post "/:passenger_id/board", PassengerController, :board
+  end
+
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:tradewinds, :dev_routes) do
     scope "/dev" do
