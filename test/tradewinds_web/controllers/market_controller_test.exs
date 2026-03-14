@@ -202,5 +202,41 @@ defmodule TradewindsWeb.MarketControllerTest do
       conn = post(conn, ~p"/api/v1/market/orders/#{Ecto.UUID.generate()}/fill", %{quantity: 20})
       assert json_response(conn, 404)
     end
+
+    test "returns 400 bad request and voids trade when seller has no inventory", %{
+      conn: conn,
+      company: company,
+      port: port,
+      good: good
+    } do
+      # Set up another company (the seller) but without any warehouse/inventory
+      seller_scope = Tradewinds.Scope.for_player(Factory.insert(:player))
+      {:ok, seller_company} = Companies.create(seller_scope, "Broke Seller Co", "BROKE", port.id)
+      {:ok, _} = Companies.update_reputation(seller_company.id, 500)
+
+      # Seller warehouse (needs to exist to get past the warehouse check, but no inventory!)
+      Factory.insert(:warehouse, company: seller_company, port: port)
+
+      # Buyer warehouse
+      Factory.insert(:warehouse, company: company, port: port)
+
+      # Seller creates order (bypassing normal checks to force a bad state later, or they just lost inventory)
+      order =
+        Factory.insert(:order,
+          company: seller_company,
+          port: port,
+          good: good,
+          side: :sell,
+          price: 100,
+          total: 50,
+          remaining: 50
+        )
+
+      conn = post(conn, ~p"/api/v1/market/orders/#{order.id}/fill", %{quantity: 20})
+
+      assert response = json_response(conn, 400)
+      assert response["error"] == "trade_voided"
+      assert response["message"] =~ "Trade was voided"
+    end
   end
 end

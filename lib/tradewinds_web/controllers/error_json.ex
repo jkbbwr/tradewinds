@@ -27,6 +27,11 @@ defmodule TradewindsWeb.ErrorJSON do
     %{errors: %{detail: "Resource not found"}}
   end
 
+  def render("trade_voided.json", %{reason: reason}) do
+    reason_msg = if is_binary(reason), do: reason, else: inspect(reason)
+    %{error: "trade_voided", message: "Trade was voided due to #{reason_msg}."}
+  end
+
   def render("unprocessable_entity.json", %{message: message}) do
     %{errors: %{detail: message}}
   end

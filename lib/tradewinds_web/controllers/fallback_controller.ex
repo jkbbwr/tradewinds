@@ -45,6 +45,13 @@ defmodule TradewindsWeb.FallbackController do
     |> render(:error, status: :insufficient_funds)
   end
 
+  def call(conn, {:error, {:trade_voided, reason, _offender_id}}) do
+    conn
+    |> put_status(:bad_request)
+    |> put_view(TradewindsWeb.ErrorJSON)
+    |> render("trade_voided.json", reason: reason)
+  end
+
   def call(conn, {:error, :bankrupt}) do
     conn
     |> put_status(:unauthorized)

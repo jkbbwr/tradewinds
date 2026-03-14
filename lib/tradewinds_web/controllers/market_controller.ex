@@ -190,26 +190,10 @@ defmodule TradewindsWeb.MarketController do
   )
 
   def fill_order(conn, params = %{"order_id" => order_id}) do
-    with {:ok, valid} <- validate(:fill_order, params) do
-      case Market.fill_order(conn.assigns.scope, order_id, valid.quantity) do
-        {:ok, order} ->
-          render(conn, :show, order: order)
-
-        {:error, {:order_not_found, _}} = error ->
-          error
-
-        {:error, {:trade_voided, reason, _offender_id}} ->
-          reason_msg = if is_tuple(reason), do: inspect(reason), else: reason
-
-          conn
-          |> put_status(:bad_request)
-          |> json(%{error: "trade_voided", message: "Trade was voided due to #{reason_msg}."})
-
-        {:error, reason} ->
-          conn
-          |> put_status(:bad_request)
-          |> json(%{error: "bad_request", message: "Trade failed: #{reason}"})
-      end
+    with {:ok, valid} <- validate(:fill_order, params),
+         {:ok, %Tradewinds.Market.Order{} = order} <-
+           Market.fill_order(conn.assigns.scope, order_id, valid.quantity) do
+      render(conn, :show, order: order)
     end
   end
 

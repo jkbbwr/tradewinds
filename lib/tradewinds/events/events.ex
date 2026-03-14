@@ -194,7 +194,9 @@ defmodule Tradewinds.Events do
          data: %{
            port_id: order.port_id,
            side: order.side,
-           good_id: order.good_id
+           good_id: order.good_id,
+           amount: order.total,
+           price: order.price
          }
        }}
     )

@@ -259,7 +259,13 @@ defmodule Tradewinds.Market do
       end
 
     if is_penalty_reason do
-      apply_penalties(order_id, taker_company_id, quantity, reason)
+      case apply_penalties(order_id, taker_company_id, quantity, reason) do
+        {:ok, {:trade_voided, reason, offender_id}} ->
+          {:error, {:trade_voided, reason, offender_id}}
+
+        error ->
+          error
+      end
     else
       {:error, reason}
     end
