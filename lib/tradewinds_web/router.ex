@@ -169,6 +169,7 @@ defmodule TradewindsWeb.Router do
   scope "/api/v1/trade", TradewindsWeb do
     pipe_through [:api, :auth, :company_context]
 
+    get "/history", TradeController, :history
     post "/quote", TradeController, :quote
     post "/quotes/batch", TradeController, :batch_quote
     post "/quotes/execute", TradeController, :execute_quote

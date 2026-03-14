@@ -43,6 +43,35 @@ defmodule Tradewinds.Economy do
   end
 
   @doc """
+  Lists trade history for a company, optionally filtered by role (:buyer or :seller).
+  """
+  def list_company_trades(%Tradewinds.Scope{company_id: company_id}, params \\ %{}) do
+    paginator_opts =
+      params
+      |> Map.take([:after, :before, :limit])
+      |> Map.to_list()
+      |> Keyword.merge(cursor_fields: [occurred_at: :desc, id: :desc], limit: 50)
+
+    query = TradeLog
+
+    query =
+      case Map.get(params, :role) do
+        :buyer ->
+          where(query, [t], t.buyer_id == ^company_id)
+
+        :seller ->
+          where(query, [t], t.seller_id == ^company_id)
+
+        _ ->
+          where(query, [t], t.buyer_id == ^company_id or t.seller_id == ^company_id)
+      end
+
+    query
+    |> order_by([t], desc: t.occurred_at, desc: t.id)
+    |> Repo.paginate(paginator_opts)
+  end
+
+  @doc """
   Creates a new economy shock.
   """
   def create_shock(attrs) do

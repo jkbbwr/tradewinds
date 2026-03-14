@@ -17,6 +17,7 @@ defmodule TradewindsWeb.TradeController do
     TradeExecutionResponse,
     TraderPositionsResponse,
     TradersResponse,
+    TradeHistoryResponse,
     ErrorResponse
   }
 
@@ -285,6 +286,52 @@ defmodule TradewindsWeb.TradeController do
           token: req.token,
           message: "Failed to execute quote: #{inspect(reason)}"
         }
+    end
+  end
+
+  # -- Trade History --
+
+  defparams :history do
+    optional(:role, :enum, values: [:buyer, :seller])
+    optional(:after, :string)
+    optional(:before, :string)
+    optional(:limit, :integer, min: 1, max: 100)
+  end
+
+  operation(:history,
+    operation_id: "tradeHistory",
+    tags: ["Trade"],
+    summary: "Get trade history",
+    description: "Returns a paginated list of trade history for the current company.",
+    security: [%{"bearerAuth" => []}],
+    parameters: [
+      %OpenApiSpex.Parameter{
+        name: "tradewinds-company-id",
+        in: :header,
+        required: true,
+        schema: %OpenApiSpex.Schema{type: :string, format: :uuid},
+        description: "Company ID"
+      },
+      role: [
+        in: :query,
+        description: "Filter by role (buyer or seller)",
+        type: :string,
+        required: false
+      ],
+      after: [in: :query, description: "Cursor for next page", type: :string],
+      before: [in: :query, description: "Cursor for previous page", type: :string],
+      limit: [in: :query, description: "Number of items per page", type: :integer]
+    ],
+    responses: [
+      ok: {"List of trades", "application/json", TradeHistoryResponse},
+      unauthorized: {"Invalid or expired token", "application/json", ErrorResponse}
+    ]
+  )
+
+  def history(conn, params) do
+    with {:ok, valid} <- validate(:history, params) do
+      page = Tradewinds.Economy.list_company_trades(conn.assigns.scope, valid)
+      render(conn, :history, page: page)
     end
   end
 

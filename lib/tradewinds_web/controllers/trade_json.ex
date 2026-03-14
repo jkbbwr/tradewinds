@@ -89,6 +89,31 @@ defmodule TradewindsWeb.TradeJSON do
     }
   end
 
+  def history(%{page: page}) do
+    %{
+      data: for(trade <- page.entries, do: trade_history_entry(trade)),
+      metadata: %{
+        after: page.metadata.after,
+        before: page.metadata.before,
+        limit: page.metadata.limit
+      }
+    }
+  end
+
+  defp trade_history_entry(trade) do
+    %{
+      id: trade.id,
+      occurred_at: trade.occurred_at,
+      quantity: trade.quantity,
+      price: trade.price,
+      source: to_string(trade.source),
+      buyer_id: trade.buyer_id,
+      seller_id: trade.seller_id,
+      port_id: trade.port_id,
+      good_id: trade.good_id
+    }
+  end
+
   def traders(%{page: page}) do
     %{
       data: for(trader <- page.entries, do: trader_data(trader)),
