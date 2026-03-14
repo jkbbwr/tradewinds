@@ -91,6 +91,24 @@ defmodule TradewindsWeb.AuthController do
     send_resp(conn, :no_content, "")
   end
 
+  operation(:restrict,
+    operation_id: "restrictToken",
+    tags: ["Accounts"],
+    summary: "Restrict token to read-only",
+    description: "Restricts the currently active JWT token to read-only access permanently.",
+    security: [%{"bearerAuth" => []}],
+    responses: [
+      no_content: "Token restricted successfully",
+      unauthorized: {"Invalid or expired token", "application/json", ErrorResponse}
+    ]
+  )
+
+  def restrict(conn, _params) do
+    with {:ok, _token} <- Accounts.restrict_token_to_read_only(conn.assigns.token.token) do
+      send_resp(conn, :no_content, "")
+    end
+  end
+
   operation(:me,
     operation_id: "me",
     tags: ["Accounts"],

@@ -107,6 +107,33 @@ defmodule TradewindsWeb.AuthControllerTest do
     end
   end
 
+  describe "POST /api/v1/auth/restrict" do
+    setup %{conn: conn} do
+      {:ok, player} = Accounts.register("RestrictMe", "restrict@example.com", "password123")
+      {:ok, _player} = Accounts.enable(player)
+      {:ok, auth_token} = Accounts.authenticate("restrict@example.com", "password123")
+      conn = put_req_header(conn, "authorization", "Bearer #{auth_token.token}")
+      %{player: player, auth_token: auth_token, conn: conn}
+    end
+
+    test "restricts the token successfully", %{conn: conn, auth_token: auth_token} do
+      # Token starts out as not read only
+      assert auth_token.is_read_only == false
+
+      conn = post(conn, ~p"/api/v1/auth/restrict")
+      assert response(conn, 204)
+
+      # Verify the token is now read_only in DB
+      {:ok, updated_token} = Accounts.validate(auth_token.token)
+      assert updated_token.is_read_only == true
+    end
+
+    test "fails with no token", %{} do
+      conn = Phoenix.ConnTest.build_conn() |> post(~p"/api/v1/auth/restrict")
+      assert json_response(conn, 401)
+    end
+  end
+
   describe "GET /api/v1/me" do
     setup %{conn: conn} do
       {:ok, player} = Accounts.register("Kibb", "kibb@example.com", "password123")

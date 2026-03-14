@@ -114,6 +114,21 @@ defmodule Tradewinds.Accounts do
   end
 
   @doc """
+  Restricts an existing token to read-only access.
+  """
+  def restrict_token_to_read_only(token_string) do
+    case Repo.get_by(AuthToken, token: token_string) do
+      nil ->
+        {:error, :not_found}
+
+      token ->
+        token
+        |> AuthToken.restrict_changeset()
+        |> Repo.update()
+    end
+  end
+
+  @doc """
   Validates a signed token, ensuring it belongs to an enabled player.
   Returns `{:ok, auth_token}` with preloaded player, or `{:error, reason}`.
   """

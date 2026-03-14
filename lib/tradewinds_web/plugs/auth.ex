@@ -9,7 +9,7 @@ defmodule TradewindsWeb.Plugs.Auth do
     with ["Bearer " <> token] <- get_req_header(conn, "authorization"),
          {:ok, token} <- Tradewinds.Accounts.validate(token) do
       conn
-      |> assign(:scope, Scope.for_player(token.player))
+      |> assign(:scope, Scope.for_player(token.player, read_only: token.is_read_only))
       |> assign(:token, token)
     else
       _ ->

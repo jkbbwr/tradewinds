@@ -40,6 +40,10 @@ defmodule TradewindsWeb.Router do
     plug TradewindsWeb.Plugs.RateLimiter, limit: 10, scale: 60_000
   end
 
+  pipeline :require_write do
+    plug TradewindsWeb.Plugs.RequireWriteAccess
+  end
+
   scope "/", TradewindsWeb do
     pipe_through :browser
 
@@ -75,6 +79,7 @@ defmodule TradewindsWeb.Router do
     pipe_through [:api, :strict_rate_limits, :auth]
 
     post "/revoke", AuthController, :revoke
+    post "/restrict", AuthController, :restrict
   end
 
   scope "/api/v1", TradewindsWeb do
@@ -88,6 +93,10 @@ defmodule TradewindsWeb.Router do
 
     get "/me", AuthController, :me
     get "/me/companies", CompanyController, :companies
+  end
+
+  scope "/api/v1", TradewindsWeb do
+    pipe_through [:api, :auth, :require_write]
 
     post "/companies", CompanyController, :create_company
   end
@@ -134,6 +143,11 @@ defmodule TradewindsWeb.Router do
     get "/:ship_id", ShipController, :ship
     get "/:ship_id/inventory", ShipController, :inventory
     get "/:ship_id/transit-logs", ShipController, :transit_logs
+  end
+
+  scope "/api/v1/ships", TradewindsWeb do
+    pipe_through [:api, :auth, :company_context, :require_write]
+
     patch "/:ship_id", ShipController, :rename_ship
     post "/:ship_id/transit", ShipController, :transit
     post "/:ship_id/transfer-to-warehouse", ShipController, :transfer_to_warehouse
@@ -143,9 +157,14 @@ defmodule TradewindsWeb.Router do
     pipe_through [:api, :auth, :company_context]
 
     get "/", WarehouseController, :warehouses
-    post "/", WarehouseController, :create
     get "/:warehouse_id", WarehouseController, :warehouse
     get "/:warehouse_id/inventory", WarehouseController, :inventory
+  end
+
+  scope "/api/v1/warehouses", TradewindsWeb do
+    pipe_through [:api, :auth, :company_context, :require_write]
+
+    post "/", WarehouseController, :create
     post "/:warehouse_id/grow", WarehouseController, :grow
     post "/:warehouse_id/shrink", WarehouseController, :shrink
     post "/:warehouse_id/transfer-to-ship", WarehouseController, :transfer_to_ship
@@ -153,7 +172,7 @@ defmodule TradewindsWeb.Router do
   end
 
   scope "/api/v1/shipyards", TradewindsWeb do
-    pipe_through [:api, :auth, :company_context]
+    pipe_through [:api, :auth, :company_context, :require_write]
 
     post "/:shipyard_id/purchase", ShipyardController, :purchase
     post "/:shipyard_id/sell", ShipyardController, :sell
@@ -170,6 +189,11 @@ defmodule TradewindsWeb.Router do
     pipe_through [:api, :auth, :company_context]
 
     get "/history", TradeController, :history
+  end
+
+  scope "/api/v1/trade", TradewindsWeb do
+    pipe_through [:api, :auth, :company_context, :require_write]
+
     post "/quote", TradeController, :quote
     post "/quotes/batch", TradeController, :batch_quote
     post "/quotes/execute", TradeController, :execute_quote
@@ -185,7 +209,7 @@ defmodule TradewindsWeb.Router do
   end
 
   scope "/api/v1/market", TradewindsWeb do
-    pipe_through [:api, :auth, :company_context]
+    pipe_through [:api, :auth, :company_context, :require_write]
 
     post "/orders", MarketController, :create_order
     post "/orders/:order_id/fill", MarketController, :fill_order
@@ -200,7 +224,7 @@ defmodule TradewindsWeb.Router do
   end
 
   scope "/api/v1/passengers", TradewindsWeb do
-    pipe_through [:api, :auth, :company_context]
+    pipe_through [:api, :auth, :company_context, :require_write]
 
     post "/:passenger_id/board", PassengerController, :board
   end
