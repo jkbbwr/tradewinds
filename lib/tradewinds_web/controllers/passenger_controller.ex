@@ -93,9 +93,7 @@ defmodule TradewindsWeb.PassengerController do
   )
 
   def board(conn, %{"passenger_id" => passenger_id, "ship_id" => ship_id}) do
-    company_id = conn.assigns.scope.company_id
-
-    with {:ok, passenger} <- Passengers.board_passenger(company_id, ship_id, passenger_id) do
+    with {:ok, passenger} <- Passengers.board_passenger(conn.assigns.scope, ship_id, passenger_id) do
       render(conn, :show, passenger: passenger)
     end
   end

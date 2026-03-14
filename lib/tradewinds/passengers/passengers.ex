@@ -85,7 +85,7 @@ defmodule Tradewinds.Passengers do
   @doc """
   Boards a passenger group onto a ship if capacity and location requirements are met.
   """
-  def board_passenger(company_id, ship_id, passenger_id) do
+  def board_passenger(%Tradewinds.Scope{company_id: company_id}, ship_id, passenger_id) do
     Repo.transact(fn ->
       with {:ok, ship} <- Fleet.fetch_ship(ship_id, preload: [:ship_type]),
            :ok <- validate_ship_ownership(ship, company_id),

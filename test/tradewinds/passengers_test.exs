@@ -50,8 +50,9 @@ defmodule Tradewinds.PassengersTest do
       ship_type = insert(:ship_type, passengers: 20)
       ship = insert(:ship, company: company, port: port, ship_type: ship_type, status: :docked)
       passenger = insert(:passenger, origin_port: port, count: 10, status: :available)
+      scope = %Tradewinds.Scope{company_id: company.id}
 
-      assert {:ok, updated_passenger} = Passengers.board_passenger(company.id, ship.id, passenger.id)
+      assert {:ok, updated_passenger} = Passengers.board_passenger(scope, ship.id, passenger.id)
       assert updated_passenger.status == :boarded
       assert updated_passenger.ship_id == ship.id
     end
@@ -62,8 +63,9 @@ defmodule Tradewinds.PassengersTest do
       port2 = insert(:port)
       ship = insert(:ship, company: company, port: port1, status: :docked)
       passenger = insert(:passenger, origin_port: port2, status: :available)
+      scope = %Tradewinds.Scope{company_id: company.id}
 
-      assert {:error, :wrong_port} = Passengers.board_passenger(company.id, ship.id, passenger.id)
+      assert {:error, :wrong_port} = Passengers.board_passenger(scope, ship.id, passenger.id)
     end
 
     test "board_passenger/3 fails if capacity is exceeded" do
@@ -72,8 +74,9 @@ defmodule Tradewinds.PassengersTest do
       ship_type = insert(:ship_type, passengers: 5)
       ship = insert(:ship, company: company, port: port, ship_type: ship_type, status: :docked)
       passenger = insert(:passenger, origin_port: port, count: 10, status: :available)
+      scope = %Tradewinds.Scope{company_id: company.id}
 
-      assert {:error, :capacity_exceeded} = Passengers.board_passenger(company.id, ship.id, passenger.id)
+      assert {:error, :capacity_exceeded} = Passengers.board_passenger(scope, ship.id, passenger.id)
     end
 
     test "disembark_passengers_for_ship/3 credits company and removes passengers" do
