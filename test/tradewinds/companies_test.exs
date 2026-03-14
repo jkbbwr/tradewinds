@@ -130,14 +130,14 @@ defmodule Tradewinds.CompaniesTest do
       insert(:ship, company: company, ship_type: ship_type)
       insert(:ship, company: company, ship_type: ship_type)
 
-      # 1 warehouse at level 1, capacity 1000 = 1000/10 * 10 = 1000 upkeep
+      # 1 warehouse at level 1, capacity 1000. New formula: (1000 * 0.08) + (1000 * 0.01 * 1^1.6) = 80 + 10 = 90
       insert(:warehouse, company: company, level: 1, capacity: 1000)
 
       now = ~U[2026-03-06 12:00:00Z]
-      assert {:ok, 3000} = Companies.process_monthly_upkeep(company.id, now)
+      assert {:ok, 2090} = Companies.process_monthly_upkeep(company.id, now)
 
       updated_co = Repo.get!(Company, company.id)
-      assert updated_co.treasury == 5000 - 2000 - 1000
+      assert updated_co.treasury == 5000 - 2000 - 90
       assert updated_co.status == :active
 
       # Verify ledger entries
@@ -152,7 +152,7 @@ defmodule Tradewinds.CompaniesTest do
           reason: :warehouse_upkeep
         )
 
-      assert warehouse_ledger.amount == -1000
+      assert warehouse_ledger.amount == -90
     end
 
     test "process_monthly_upkeep/2 marks company bankrupt if insufficient funds" do

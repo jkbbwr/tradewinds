@@ -38,24 +38,30 @@ defmodule Tradewinds.LogisticsTest do
     end
 
     test "upkeep_cost/1 calculates correct total cost based on tier and capacity" do
-      # Base rate per 10 capacity: 10 * 1.05^(tier-1)
-      # Tier 1: 10
-      assert Logistics.upkeep_cost(%Warehouse{level: 1, capacity: 100}) == 100
-      # Tier 2: 10 * 1.05 = 10
-      assert Logistics.upkeep_cost(%Warehouse{level: 2, capacity: 100}) == 100
-      # Tier 3: 10 * 1.05^2 = 11.025 -> 11
-      assert Logistics.upkeep_cost(%Warehouse{level: 3, capacity: 100}) == 110
-      # Tier 4: 10 * 1.05^3 = 11.57625 -> 11
-      assert Logistics.upkeep_cost(%Warehouse{level: 4, capacity: 100}) == 110
-      # Tier 5: 10 * 1.05^4 = 12.1550625 -> 12
-      assert Logistics.upkeep_cost(%Warehouse{level: 5, capacity: 100}) == 120
-      # Test capacity variation
-      assert Logistics.upkeep_cost(%Warehouse{level: 5, capacity: 200}) == 240
+      # Formula: Total = (Capacity * 0.08) + (Capacity * 0.01 * Tier^1.6)
+
+      # Tier 1, Cap 100: (100 * 0.08) + (100 * 0.01 * 1^1.6) = 8 + 1 = 9
+      assert Logistics.upkeep_cost(%Warehouse{level: 1, capacity: 100}) == 9
+
+      # Tier 2, Cap 100: (100 * 0.08) + (100 * 0.01 * 2^1.6) = 8 + 3.03 = 11
+      assert Logistics.upkeep_cost(%Warehouse{level: 2, capacity: 100}) == 11
+
+      # Tier 3, Cap 100: (100 * 0.08) + (100 * 0.01 * 3^1.6) = 8 + 5.79 = 13
+      assert Logistics.upkeep_cost(%Warehouse{level: 3, capacity: 100}) == 13
+
+      # Tier 4, Cap 100: (100 * 0.08) + (100 * 0.01 * 4^1.6) = 8 + 9.18 = 17
+      assert Logistics.upkeep_cost(%Warehouse{level: 4, capacity: 100}) == 17
+
+      # Tier 5, Cap 100: (100 * 0.08) + (100 * 0.01 * 5^1.6) = 8 + 13.13 = 21
+      assert Logistics.upkeep_cost(%Warehouse{level: 5, capacity: 100}) == 21
+
+      # Tier 5, Cap 200: (200 * 0.08) + (200 * 0.01 * 5^1.6) = 16 + 26.26 = 42
+      assert Logistics.upkeep_cost(%Warehouse{level: 5, capacity: 200}) == 42
     end
 
     test "upkeep_cost/1 fetches warehouse and returns calculated cost" do
       warehouse = insert(:warehouse, level: 3, capacity: 100)
-      assert {:ok, 110} = Logistics.upkeep_cost(warehouse.id)
+      assert {:ok, 13} = Logistics.upkeep_cost(warehouse.id)
     end
 
     test "upkeep_cost/1 returns error if warehouse not found" do
