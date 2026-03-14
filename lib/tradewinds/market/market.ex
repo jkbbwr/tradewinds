@@ -73,6 +73,36 @@ defmodule Tradewinds.Market do
   end
 
   @doc """
+  Posts a new order to the order book on behalf of a trader (system NPC).
+  Skips fee and reputation checks.
+  """
+  def post_system_order(trader_id, port_id, good_id, side, price, total, expires_at \\ nil) do
+    now = DateTime.utc_now()
+    expires_at = expires_at || DateTime.add(now, @listing_expiry_hours, :hour)
+
+    attrs = %{
+      trader_id: trader_id,
+      port_id: port_id,
+      good_id: good_id,
+      side: side,
+      price: price,
+      total: total,
+      created_at: now,
+      expires_at: expires_at,
+      posted_reputation: 1000,
+      status: :open
+    }
+
+    %Order{}
+    |> Order.create_changeset(attrs)
+    |> Repo.insert()
+    |> tap(fn
+      {:ok, order} -> Tradewinds.Events.broadcast_order_created(trader_id, order)
+      _ -> :ok
+    end)
+  end
+
+  @doc """
   Cancels an open order.
   """
   def cancel_order(%Scope{company_id: company_id}, order_id) do

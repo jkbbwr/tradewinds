@@ -18,6 +18,7 @@ defmodule Tradewinds.Jobs do
       kickstart_traders()
       kickstart_companies()
       kickstart_shipyards()
+      kickstart_market_system()
       {:ok, :kickstarted}
     end)
   end
@@ -75,5 +76,12 @@ defmodule Tradewinds.Jobs do
       |> ProductionJob.new()
       |> Oban.insert!()
     end)
+  end
+
+  defp kickstart_market_system do
+    # Only one system order job needs to be enqueued initially, it will self-schedule from there.
+    %{}
+    |> Tradewinds.Market.SystemOrderJob.new()
+    |> Oban.insert!()
   end
 end

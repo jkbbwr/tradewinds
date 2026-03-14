@@ -50,6 +50,28 @@ defmodule Tradewinds.Trade do
   end
 
   @doc """
+  Returns the current guild price for a good at a specific port.
+  Useful for background systems and price checking.
+  """
+  def get_guild_price(port_id, good_id) do
+    with {:ok, position} <- fetch_position(port_id, good_id) do
+      now = DateTime.utc_now()
+      modifiers = Tradewinds.Economy.get_active_modifiers(port_id, good_id, now)
+      base_price = round(position.good.base_price * modifiers.price)
+
+      market_price =
+        base_market_price(
+          position.stock,
+          position.target_stock,
+          base_price,
+          position.elasticity
+        )
+
+      {:ok, apply_volatility_jitter(market_price, modifiers.volatility)}
+    end
+  end
+
+  @doc """
   Generates a signed, stateless quote for a company to buy or sell goods from/to
   a trader. Applies active economic shocks to base price and volatility. Returns
   `{:ok, token, quote_data}` or `{:error, reason}`.
@@ -120,13 +142,13 @@ defmodule Tradewinds.Trade do
 
   defp ensure_available_stock(_position, _action, _quantity), do: :ok
 
-  defp ensure_presence(company, port_id) do
-    if company.home_port_id == port_id or Tradewinds.Fleet.has_ship_at_port?(company.id, port_id) do
-      :ok
-    else
-      {:error, :not_at_port}
-    end
-  end
+  # defp ensure_presence(company, port_id) do
+  #   if company.home_port_id == port_id or Tradewinds.Fleet.has_ship_at_port?(company.id, port_id) do
+  #     :ok
+  #   else
+  #     {:error, :not_at_port}
+  #   end
+  # end
 
   defp quote_price_and_action(:buy, ask, _bid), do: {ask, :ask}
   defp quote_price_and_action(:sell, _ask, bid), do: {bid, :bid}
