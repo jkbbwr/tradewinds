@@ -144,4 +144,46 @@ defmodule TradewindsWeb.ShipyardController do
       render(conn, :sell, price: result.price)
     end
   end
+
+  # -- Sell Quote --
+
+  defparams :sell_quote do
+    optional(:ship_id, :string, format: :uuid)
+    optional(:ship_type_id, :string, format: :uuid)
+  end
+
+  operation(:sell_quote,
+    operation_id: "sellQuote",
+    tags: ["Shipyards"],
+    summary: "Get a sell quote for a ship",
+    description: "Returns the estimated buy-back price for a ship if sold to this shipyard.",
+    parameters: [
+      shipyard_id: [in: :path, description: "Shipyard ID", type: :string],
+      ship_id: [in: :query, description: "Ship ID", type: :string, required: false],
+      ship_type_id: [in: :query, description: "Ship Type ID", type: :string, required: false]
+    ],
+    responses: [
+      ok: {"Sell quote", "application/json", SellShipResponse},
+      not_found: {"Shipyard, ship, or ship type not found", "application/json", ErrorResponse}
+    ]
+  )
+
+  def sell_quote(conn, params = %{"shipyard_id" => shipyard_id}) do
+    with {:ok, valid} <- validate(:sell_quote, params),
+         {:ok, ship_type_id} <- resolve_ship_type_id(valid),
+         {:ok, price} <- Shipyards.calculate_sell_price(ship_type_id, shipyard_id) do
+      render(conn, :sell, price: price)
+    end
+  end
+
+  defp resolve_ship_type_id(%{ship_type_id: ship_type_id}), do: {:ok, ship_type_id}
+
+  defp resolve_ship_type_id(%{ship_id: ship_id}) do
+    case Tradewinds.Fleet.fetch_ship(ship_id) do
+      {:ok, ship} -> {:ok, ship.ship_type_id}
+      {:error, reason} -> {:error, reason}
+    end
+  end
+
+  defp resolve_ship_type_id(_), do: {:error, :missing_parameters}
 end

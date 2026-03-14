@@ -123,6 +123,7 @@ defmodule TradewindsWeb.Router do
     pipe_through :api
 
     get "/:shipyard_id/inventory", ShipyardController, :inventory
+    get "/:shipyard_id/sell-quote", ShipyardController, :sell_quote
   end
 
   scope "/api/v1/ships", TradewindsWeb do

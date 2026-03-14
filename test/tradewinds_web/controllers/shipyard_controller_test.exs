@@ -107,4 +107,46 @@ defmodule TradewindsWeb.ShipyardControllerTest do
       assert json_response(conn, 404)
     end
   end
+
+  describe "GET /api/v1/shipyards/:shipyard_id/sell-quote" do
+    test "returns quote for ship_type_id", %{conn: conn, shipyard: shipyard} do
+      ship_type = Factory.insert(:ship_type, base_price: 1000)
+
+      conn =
+        get(conn, ~p"/api/v1/shipyards/#{shipyard.id}/sell-quote", %{
+          ship_type_id: ship_type.id
+        })
+
+      # 0 stock -> 90% = 900
+      assert json_response(conn, 200)["data"]["price"] == 900
+    end
+
+    test "returns quote for ship_id", %{conn: conn, shipyard: shipyard} do
+      ship_type = Factory.insert(:ship_type, base_price: 1000)
+      ship = Factory.insert(:ship, ship_type: ship_type)
+
+      conn =
+        get(conn, ~p"/api/v1/shipyards/#{shipyard.id}/sell-quote", %{
+          ship_id: ship.id
+        })
+
+      # 0 stock -> 90% = 900
+      assert json_response(conn, 200)["data"]["price"] == 900
+    end
+
+    test "returns 404 when ship not found", %{conn: conn, shipyard: shipyard} do
+      conn =
+        get(conn, ~p"/api/v1/shipyards/#{shipyard.id}/sell-quote", %{
+          ship_id: Ecto.UUID.generate()
+        })
+
+      assert json_response(conn, 404)
+    end
+
+    test "returns 422 when both ship_id and ship_type_id are missing", %{conn: conn, shipyard: shipyard} do
+      conn = get(conn, ~p"/api/v1/shipyards/#{shipyard.id}/sell-quote")
+
+      assert json_response(conn, 422)
+    end
+  end
 end
