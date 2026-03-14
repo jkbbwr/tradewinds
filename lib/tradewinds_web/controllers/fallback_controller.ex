@@ -83,7 +83,8 @@ defmodule TradewindsWeb.FallbackController do
              :passenger_not_available,
              :ship_not_docked,
              :ship_not_traveling,
-             :ship_not_arrived
+             :ship_not_arrived,
+             :warehouse_not_empty
            ] do
     conn
     |> put_status(:unprocessable_entity)

@@ -3,7 +3,7 @@ defmodule TradewindsWeb.CompanyControllerTest do
 
   alias Tradewinds.Accounts
   alias Tradewinds.Companies
-  alias Tradewinds.World
+  
 
   setup %{conn: conn} do
     {:ok, player} = Accounts.register("Director", "director@example.com", "password123")

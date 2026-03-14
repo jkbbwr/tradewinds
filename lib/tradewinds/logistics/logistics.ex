@@ -240,6 +240,26 @@ defmodule Tradewinds.Logistics do
   end
 
   @doc """
+  Deletes a warehouse if it has no inventory.
+  """
+  def delete_warehouse(%Scope{company_id: company_id}, warehouse_id) do
+    Repo.transact(fn ->
+      with {:ok, warehouse} <- fetch_warehouse_for_update(warehouse_id),
+           :ok <- validate_warehouse_ownership(warehouse, company_id),
+           {:ok, company} <- Tradewinds.Companies.fetch_company(company_id),
+           {:ok, :active} <- Tradewinds.Companies.is_active?(company),
+           {:ok, inventory_total} <- current_inventory_total(warehouse_id),
+           :ok <- check_can_delete(inventory_total),
+           {:ok, deleted} <- Repo.delete(warehouse) do
+        {:ok, deleted}
+      end
+    end)
+  end
+
+  defp check_can_delete(0), do: :ok
+  defp check_can_delete(_), do: {:error, :warehouse_not_empty}
+
+  @doc """
   Retrieves a warehouse by its ID.
   """
   def fetch_warehouse(id) do

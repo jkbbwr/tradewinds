@@ -148,6 +148,7 @@ defmodule TradewindsWeb.Router do
     post "/:warehouse_id/grow", WarehouseController, :grow
     post "/:warehouse_id/shrink", WarehouseController, :shrink
     post "/:warehouse_id/transfer-to-ship", WarehouseController, :transfer_to_ship
+    delete "/:warehouse_id", WarehouseController, :delete
   end
 
   scope "/api/v1/shipyards", TradewindsWeb do

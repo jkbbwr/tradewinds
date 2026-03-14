@@ -203,4 +203,31 @@ defmodule TradewindsWeb.WarehouseControllerTest do
       assert json_response(conn, 404)
     end
   end
+
+  describe "DELETE /api/v1/warehouses/:id" do
+    test "deletes an empty warehouse", %{conn: conn, company: company, port: port} do
+      warehouse = Factory.insert(:warehouse, company: company, port: port)
+
+      conn = delete(conn, ~p"/api/v1/warehouses/#{warehouse.id}")
+      assert response(conn, 204)
+
+      # Verify it's gone
+      conn = get(build_conn() |> put_req_header("authorization", Enum.at(get_req_header(conn, "authorization"), 0)) |> put_req_header("tradewinds-company-id", company.id), ~p"/api/v1/warehouses/#{warehouse.id}")
+      assert json_response(conn, 404)
+    end
+
+    test "fails to delete a non-empty warehouse", %{conn: conn, company: company, port: port, good: good} do
+      warehouse = Factory.insert(:warehouse, company: company, port: port)
+      Factory.insert(:warehouse_inventory, warehouse: warehouse, good: good, quantity: 100)
+
+      conn = delete(conn, ~p"/api/v1/warehouses/#{warehouse.id}")
+      assert response = json_response(conn, 422)
+      assert response["errors"]["detail"] =~ "Warehouse not empty"
+    end
+
+    test "returns 404 when warehouse not found", %{conn: conn} do
+      conn = delete(conn, ~p"/api/v1/warehouses/#{Ecto.UUID.generate()}")
+      assert json_response(conn, 404)
+    end
+  end
 end

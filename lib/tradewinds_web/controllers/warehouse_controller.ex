@@ -280,4 +280,36 @@ defmodule TradewindsWeb.WarehouseController do
       send_resp(conn, :no_content, "")
     end
   end
+
+  # -- Delete --
+
+  operation(:delete,
+    operation_id: "deleteWarehouse",
+    tags: ["Logistics"],
+    summary: "Delete a warehouse",
+    description: "Deletes a warehouse if it is empty.",
+    security: [%{"bearerAuth" => []}],
+    parameters: [
+      %OpenApiSpex.Parameter{
+        name: "tradewinds-company-id",
+        in: :header,
+        required: true,
+        schema: %OpenApiSpex.Schema{type: :string, format: :uuid},
+        description: "Company ID"
+      },
+      warehouse_id: [in: :path, description: "Warehouse ID", type: :string]
+    ],
+    responses: [
+      no_content: "Warehouse deleted successfully",
+      unprocessable_entity: {"Warehouse not empty", "application/json", ErrorResponse},
+      unauthorized: {"Invalid or expired token", "application/json", ErrorResponse},
+      not_found: {"Warehouse not found", "application/json", ErrorResponse}
+    ]
+  )
+
+  def delete(conn, %{"warehouse_id" => warehouse_id}) do
+    with {:ok, _deleted} <- Logistics.delete_warehouse(conn.assigns.scope, warehouse_id) do
+      send_resp(conn, :no_content, "")
+    end
+  end
 end
