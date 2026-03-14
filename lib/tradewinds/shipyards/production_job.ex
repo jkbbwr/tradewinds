@@ -7,7 +7,7 @@ defmodule Tradewinds.Shipyards.ProductionJob do
   alias Tradewinds.Repo
 
   # 1 game week = 7 days = 168 ticks. 1 tick = 24 seconds. 168 * 24 = 4032 seconds.
-  @game_week_seconds 4032
+  @game_week_seconds 1008
 
   require Logger
 
