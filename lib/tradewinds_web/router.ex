@@ -1,5 +1,6 @@
 defmodule TradewindsWeb.Router do
   use TradewindsWeb, :router
+  use ErrorTracker.Web, :router
 
   import Phoenix.LiveDashboard.Router
 
@@ -53,6 +54,8 @@ defmodule TradewindsWeb.Router do
 
   scope "/admin", TradewindsWeb do
     pipe_through [:browser, :admin_auth]
+
+    error_tracker_dashboard "/errors"
 
     live_dashboard "/dashboard",
       metrics: TradewindsWeb.Telemetry,

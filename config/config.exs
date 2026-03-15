@@ -11,6 +11,11 @@ config :mime, :types, %{
   "text/event-stream" => ["sse"]
 }
 
+config :error_tracker,
+  repo: Tradewinds.Repo,
+  otp_app: :tradewinds,
+  enabled: true
+
 config :tradewinds, :discord,
   enabled: false,
   token: ""

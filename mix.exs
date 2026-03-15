@@ -64,6 +64,7 @@ defmodule Tradewinds.MixProject do
       {:cachex, "~> 4.0"},
       {:hammer, "~> 7.0"},
       {:open_api_spex, "~> 3.21"},
+      {:error_tracker, "~> 0.8.0"},
       {:nosedrum, github: "jchristgit/nosedrum", override: true},
       {:nostrum, github: "Kraigie/nostrum", override: true},
       {:ex_machina, "~> 2.8", only: :test},
