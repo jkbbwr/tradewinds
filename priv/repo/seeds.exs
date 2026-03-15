@@ -583,7 +583,8 @@ for port <- ports do
       demand_rate: d_rate,
       # Use the good's specific elasticity for varied economic behavior
       elasticity: good.elasticity,
-      spread: base_spread,
+      ask_spread: base_spread,
+      bid_spread: base_spread,
       quarterly_profit: 0
     })
   end

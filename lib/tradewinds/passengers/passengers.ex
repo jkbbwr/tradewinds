@@ -167,8 +167,8 @@ defmodule Tradewinds.Passengers do
       %{name: "Large Group", count_range: 20..40, bid_multiplier: 0.75, weight: 20}
     ]
 
-    # Use database-level randomness to pick approx 8% of ports and one random route for each
-    World.list_random_port_routes(0.08)
+    # Use database-level randomness to pick approx 10% of ports and one random route for each
+    World.list_random_port_routes(0.1)
     |> Enum.each(fn row ->
       archetype = weighted_random(archetypes)
       count = Enum.random(archetype.count_range)
@@ -177,8 +177,8 @@ defmodule Tradewinds.Passengers do
       base_bid = row.distance * 0.5 * count
       final_bid = round(base_bid * archetype.bid_multiplier)
 
-      # Random expiration between 30 and 90 minutes
-      expires_at = DateTime.add(now, Enum.random(30..90) * 60, :second)
+      # Random expiration between 10 and 100 minutes
+      expires_at = DateTime.add(now, Enum.random(10..100) * 60, :second)
 
       create_passenger(
         row.origin_id,
