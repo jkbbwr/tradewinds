@@ -76,4 +76,16 @@ defmodule Tradewinds.Trade.TraderPosition do
     |> validate_number(:ask_spread, greater_than_or_equal_to: 0.0)
     |> validate_number(:bid_spread, greater_than_or_equal_to: 0.0)
   end
+
+  @doc """
+  Builds a changeset for the arbitrage balancer, which tweaks target_stock, supply_rate, and demand_rate.
+  """
+  def update_balancing_changeset(position, attrs) do
+    position
+    |> cast(attrs, [:target_stock, :supply_rate, :demand_rate])
+    |> validate_required([:target_stock, :supply_rate, :demand_rate])
+    |> validate_number(:target_stock, greater_than_or_equal_to: 100)
+    |> validate_number(:supply_rate, greater_than_or_equal_to: 0.0001, less_than_or_equal_to: 0.10)
+    |> validate_number(:demand_rate, greater_than_or_equal_to: 0.0001, less_than_or_equal_to: 0.10)
+  end
 end

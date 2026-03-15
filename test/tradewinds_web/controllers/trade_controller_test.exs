@@ -85,6 +85,23 @@ defmodule TradewindsWeb.TradeControllerTest do
       assert data["quote"]["action"] == "buy"
     end
 
+    test "fails to generate a quote when insufficient stock", %{
+      conn: conn,
+      port: port,
+      good: good
+    } do
+      conn =
+        post(conn, ~p"/api/v1/trade/quote", %{
+          port_id: port.id,
+          good_id: good.id,
+          action: "buy",
+          # Stock is set to 100 in setup
+          quantity: 150
+        })
+
+      assert json_response(conn, 422)["errors"]["detail"] == "Insufficient stock"
+    end
+
     @tag :skip
     test "fails to generate a quote when not at port", %{conn: conn, good: good} do
       other_port = Factory.insert(:port)

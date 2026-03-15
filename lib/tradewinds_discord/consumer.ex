@@ -5,7 +5,8 @@ defmodule Tradewinds.Discord.Consumer do
     commands = [
       {"toggle", Tradewinds.Discord.Commands.Toggle},
       {"health", Tradewinds.Discord.Commands.Health},
-      {"bailout", Tradewinds.Discord.Commands.Bailout}
+      {"bailout", Tradewinds.Discord.Commands.Bailout},
+      {"grant", Tradewinds.Discord.Commands.Grant}
     ]
 
     for {name, command} <- commands do

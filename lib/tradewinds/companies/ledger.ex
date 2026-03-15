@@ -21,7 +21,8 @@ defmodule Tradewinds.Companies.Ledger do
         :ship_upkeep,
         :npc_trade,
         :bailout,
-        :passenger_fare
+        :passenger_fare,
+        :grant
       ]
 
     field :reference_type, Ecto.Enum,

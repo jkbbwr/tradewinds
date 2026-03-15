@@ -589,6 +589,117 @@ defmodule Tradewinds.Trade do
   end
 
   @doc """
+  Periodically scans all un-shocked market positions to identify and dynamically correct
+  abnormal profit margins. Margins > 60% are squeezed, and Margins < 20% are stretched.
+  """
+  def balance_arbitrage(now \\ DateTime.utc_now()) do
+    goods = Tradewinds.World.list_goods()
+
+    Repo.transact(fn ->
+      results = Enum.map(goods, fn good ->
+        positions =
+          Tradewinds.Trade.TraderPosition
+          |> where(good_id: ^good.id)
+          |> preload(:port)
+          |> Repo.all()
+
+        valid_positions =
+          Enum.filter(positions, fn pos ->
+            modifiers = Tradewinds.Economy.get_active_modifiers(pos.port_id, pos.good_id, now)
+            modifiers == %{demand: 1.0, supply: 1.0, price: 1.0, volatility: 1.0}
+          end)
+
+        if length(valid_positions) >= 2 do
+          quotes =
+            Enum.map(valid_positions, fn pos ->
+              base_price = good.base_price
+              market_price = base_market_price(pos.stock, pos.target_stock, base_price, pos.elasticity)
+
+              {ask, bid} = quotes(market_price, pos.ask_spread, pos.bid_spread, pos.stock, pos.target_stock)
+
+              tax = Tradewinds.Economy.calculate_tax(ask, pos.port.tax_rate_bps)
+              true_ask = ask + tax
+
+              %{position: pos, ask: true_ask, bid: bid}
+            end)
+
+          cheap_q = Enum.min_by(quotes, & &1.ask)
+          expensive_q = Enum.max_by(quotes, & &1.bid)
+
+          if cheap_q.ask > 0 and cheap_q.position.port_id != expensive_q.position.port_id do
+            margin = (expensive_q.bid - cheap_q.ask) / cheap_q.ask
+
+            cond do
+              margin > 0.60 -> apply_arbitrage_action(cheap_q.position, expensive_q.position, margin, :squeezed)
+              margin < 0.20 -> apply_arbitrage_action(cheap_q.position, expensive_q.position, margin, :stretched)
+              true -> nil
+            end
+          end
+        end
+      end)
+      
+      {:ok, results}
+    end)
+  end
+
+  defp apply_arbitrage_action(cheap_pos, exp_pos, margin, action) do
+    {c_target_mod, c_sup_mod, c_dem_mod, e_target_mod, e_sup_mod, e_dem_mod} =
+      case action do
+        :squeezed -> {1.02, 0.995, 1.005, 0.98, 1.005, 0.995}
+        :stretched -> {0.98, 1.005, 0.995, 1.02, 0.995, 1.005}
+      end
+
+    c_attrs = %{
+      target_stock: max(100, round(cheap_pos.target_stock * c_target_mod)),
+      supply_rate: cheap_pos.supply_rate * c_sup_mod,
+      demand_rate: cheap_pos.demand_rate * c_dem_mod
+    }
+
+    e_attrs = %{
+      target_stock: max(100, round(exp_pos.target_stock * e_target_mod)),
+      supply_rate: exp_pos.supply_rate * e_sup_mod,
+      demand_rate: exp_pos.demand_rate * e_dem_mod
+    }
+
+    cheap_changeset =
+      Tradewinds.Trade.TraderPosition.update_balancing_changeset(cheap_pos, c_attrs)
+
+    exp_changeset = Tradewinds.Trade.TraderPosition.update_balancing_changeset(exp_pos, e_attrs)
+
+    if cheap_changeset.valid? and exp_changeset.valid? do
+      Repo.update!(cheap_changeset)
+      Repo.update!(exp_changeset)
+
+      Tradewinds.Trade.ArbitrageLog.changeset(%Tradewinds.Trade.ArbitrageLog{}, %{
+        good_id: cheap_pos.good_id,
+        cheap_port_id: cheap_pos.port_id,
+        expensive_port_id: exp_pos.port_id,
+        margin: margin,
+        action: to_string(action),
+        details: %{
+          cheap_port: %{
+            old_target: cheap_pos.target_stock,
+            new_target: c_attrs.target_stock,
+            old_supply: cheap_pos.supply_rate,
+            new_supply: c_attrs.supply_rate,
+            old_demand: cheap_pos.demand_rate,
+            new_demand: c_attrs.demand_rate
+          },
+          expensive_port: %{
+            old_target: exp_pos.target_stock,
+            new_target: e_attrs.target_stock,
+            old_supply: exp_pos.supply_rate,
+            new_supply: e_attrs.supply_rate,
+            old_demand: exp_pos.demand_rate,
+            new_demand: e_attrs.demand_rate
+          }
+        }
+      })
+      |> Repo.insert!()
+    end
+  end
+
+  @doc """
   Calculates the base market price based on elasticity and how far stock deviates from the target.
   """
   def base_market_price(current_stock, target_stock, base_price, elasticity) do

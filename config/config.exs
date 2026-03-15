@@ -28,10 +28,11 @@ config :tradewinds, Oban,
     {Oban.Plugins.Cron,
      crontab: [
        # Runs every 5 minutes
-       {"*/5 * * * *", Tradewinds.Market.SweepExpiredJob},
-       {"*/5 * * * *", Tradewinds.Economy.ScanShocksJob},
-       {"*/5 * * * *", Tradewinds.Passengers.SweepExpiredJob},
-       {"*/10 * * * *", Tradewinds.Passengers.SpawnJob}
+       {"*/7 * * * *", Tradewinds.Market.SweepExpiredJob},
+       {"*/8 * * * *", Tradewinds.Economy.ScanShocksJob},
+       {"*/6 * * * *", Tradewinds.Passengers.SweepExpiredJob},
+       {"*/5 * * * *", Tradewinds.Trade.BalanceArbitrageJob},
+       {"*/7 * * * *", Tradewinds.Passengers.SpawnJob}
      ]}
   ],
   repo: Tradewinds.Repo

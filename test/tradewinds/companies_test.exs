@@ -66,6 +66,21 @@ defmodule Tradewinds.CompaniesTest do
       assert co2.id in ids
     end
 
+    test "grant/2 increases company money and logs it in the ledger" do
+      company = insert(:company, treasury: 1000)
+
+      assert {:ok, updated_company} = Companies.grant(company.id, 5000)
+
+      assert updated_company.treasury == 6000
+
+      ledger_entry =
+        Repo.get_by(Tradewinds.Companies.Ledger, company_id: company.id, reason: :grant)
+
+      assert ledger_entry.amount == 5000
+      assert ledger_entry.reference_type == :system
+      assert ledger_entry.reference_id == company.id
+    end
+
     test "record_transaction/8 updates treasury and creates ledger entry" do
       company = insert(:company, treasury: 1000)
 

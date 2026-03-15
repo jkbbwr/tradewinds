@@ -15,7 +15,7 @@ defmodule Tradewinds.Companies do
   @doc """
   Creates a new company and automatically assigns the calling player as its first director.
   """
-  def create(%Scope{player: player}, name, ticker, home_port_id, treasury \\ 10000) do
+  def create(%Scope{player: player}, name, ticker, home_port_id, treasury \\ 20000) do
     Repo.transact(fn ->
       with changeset <-
              Company.create_changeset(%Company{}, %{
@@ -266,6 +266,20 @@ defmodule Tradewinds.Companies do
         {:ok, updated_company}
       end
     end)
+  end
+
+  @doc """
+  Grants a specified amount of money to the given company and logs it in the ledger.
+  """
+  def grant(company_id, amount) do
+    record_transaction(
+      company_id,
+      amount,
+      :grant,
+      :system,
+      company_id,
+      DateTime.utc_now()
+    )
   end
 
   @doc """
