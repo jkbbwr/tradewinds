@@ -67,7 +67,11 @@ defmodule Tradewinds.Jobs do
     end)
   end
 
-  defp kickstart_shipyards do
+  def kickstart_shipyards do
+    # Clear existing production jobs to avoid duplicates or misaligned schedules
+    from(j in Oban.Job, where: j.worker == "Tradewinds.Shipyards.ProductionJob")
+    |> Repo.delete_all()
+
     shipyards = Repo.all(Shipyard)
 
     Enum.each(shipyards, fn shipyard ->

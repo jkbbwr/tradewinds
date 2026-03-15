@@ -596,48 +596,73 @@ defmodule Tradewinds.Trade do
     goods = Tradewinds.World.list_goods()
 
     Repo.transact(fn ->
-      results = Enum.map(goods, fn good ->
-        positions =
-          Tradewinds.Trade.TraderPosition
-          |> where(good_id: ^good.id)
-          |> preload(:port)
-          |> Repo.all()
+      results =
+        Enum.map(goods, fn good ->
+          positions =
+            Tradewinds.Trade.TraderPosition
+            |> where(good_id: ^good.id)
+            |> preload(:port)
+            |> Repo.all()
 
-        valid_positions =
-          Enum.filter(positions, fn pos ->
-            modifiers = Tradewinds.Economy.get_active_modifiers(pos.port_id, pos.good_id, now)
-            modifiers == %{demand: 1.0, supply: 1.0, price: 1.0, volatility: 1.0}
-          end)
-
-        if length(valid_positions) >= 2 do
-          quotes =
-            Enum.map(valid_positions, fn pos ->
-              base_price = good.base_price
-              market_price = base_market_price(pos.stock, pos.target_stock, base_price, pos.elasticity)
-
-              {ask, bid} = quotes(market_price, pos.ask_spread, pos.bid_spread, pos.stock, pos.target_stock)
-
-              tax = Tradewinds.Economy.calculate_tax(ask, pos.port.tax_rate_bps)
-              true_ask = ask + tax
-
-              %{position: pos, ask: true_ask, bid: bid}
+          valid_positions =
+            Enum.filter(positions, fn pos ->
+              modifiers = Tradewinds.Economy.get_active_modifiers(pos.port_id, pos.good_id, now)
+              modifiers == %{demand: 1.0, supply: 1.0, price: 1.0, volatility: 1.0}
             end)
 
-          cheap_q = Enum.min_by(quotes, & &1.ask)
-          expensive_q = Enum.max_by(quotes, & &1.bid)
+          if length(valid_positions) >= 2 do
+            quotes =
+              Enum.map(valid_positions, fn pos ->
+                base_price = good.base_price
 
-          if cheap_q.ask > 0 and cheap_q.position.port_id != expensive_q.position.port_id do
-            margin = (expensive_q.bid - cheap_q.ask) / cheap_q.ask
+                market_price =
+                  base_market_price(pos.stock, pos.target_stock, base_price, pos.elasticity)
 
-            cond do
-              margin > 0.60 -> apply_arbitrage_action(cheap_q.position, expensive_q.position, margin, :squeezed)
-              margin < 0.20 -> apply_arbitrage_action(cheap_q.position, expensive_q.position, margin, :stretched)
-              true -> nil
+                {ask, bid} =
+                  quotes(
+                    market_price,
+                    pos.ask_spread,
+                    pos.bid_spread,
+                    pos.stock,
+                    pos.target_stock
+                  )
+
+                tax = Tradewinds.Economy.calculate_tax(ask, pos.port.tax_rate_bps)
+                true_ask = ask + tax
+
+                %{position: pos, ask: true_ask, bid: bid}
+              end)
+
+            cheap_q = Enum.min_by(quotes, & &1.ask)
+            expensive_q = Enum.max_by(quotes, & &1.bid)
+
+            if cheap_q.ask > 0 and cheap_q.position.port_id != expensive_q.position.port_id do
+              margin = (expensive_q.bid - cheap_q.ask) / cheap_q.ask
+
+              cond do
+                margin > 0.80 ->
+                  apply_arbitrage_action(
+                    cheap_q.position,
+                    expensive_q.position,
+                    margin,
+                    :squeezed
+                  )
+
+                margin < 0.30 ->
+                  apply_arbitrage_action(
+                    cheap_q.position,
+                    expensive_q.position,
+                    margin,
+                    :stretched
+                  )
+
+                true ->
+                  nil
+              end
             end
           end
-        end
-      end)
-      
+        end)
+
       {:ok, results}
     end)
   end
@@ -645,8 +670,8 @@ defmodule Tradewinds.Trade do
   defp apply_arbitrage_action(cheap_pos, exp_pos, margin, action) do
     {c_target_mod, c_sup_mod, c_dem_mod, e_target_mod, e_sup_mod, e_dem_mod} =
       case action do
-        :squeezed -> {1.02, 0.995, 1.005, 0.98, 1.005, 0.995}
-        :stretched -> {0.98, 1.005, 0.995, 1.02, 0.995, 1.005}
+        :squeezed -> {1.01, 0.998, 1.002, 0.99, 1.002, 0.998}
+        :stretched -> {0.95, 1.01, 0.99, 1.05, 0.99, 1.01}
       end
 
     c_attrs = %{

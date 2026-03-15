@@ -44,14 +44,14 @@ defmodule Tradewinds.Trade.BalanceArbitrageTest do
     updated_cheap = Repo.get!(TraderPosition, cheap_pos.id)
     updated_exp = Repo.get!(TraderPosition, exp_pos.id)
 
-    assert updated_cheap.target_stock == round(100 * 1.02)
-    assert_in_delta updated_cheap.supply_rate, 0.05 * 0.995, 0.0001
-    assert_in_delta updated_cheap.demand_rate, 0.05 * 1.005, 0.0001
+    assert updated_cheap.target_stock == round(100 * 1.01)
+    assert_in_delta updated_cheap.supply_rate, 0.05 * 0.998, 0.0001
+    assert_in_delta updated_cheap.demand_rate, 0.05 * 1.002, 0.0001
 
     # Target decreases, but min limit is 100
     assert updated_exp.target_stock == 100
-    assert_in_delta updated_exp.supply_rate, 0.05 * 1.005, 0.0001
-    assert_in_delta updated_exp.demand_rate, 0.05 * 0.995, 0.0001
+    assert_in_delta updated_exp.supply_rate, 0.05 * 1.002, 0.0001
+    assert_in_delta updated_exp.demand_rate, 0.05 * 0.998, 0.0001
 
     log = Repo.one(ArbitrageLog)
     assert log
@@ -96,7 +96,7 @@ defmodule Tradewinds.Trade.BalanceArbitrageTest do
     updated2 = Repo.get!(TraderPosition, p2.id)
 
     targets = [updated1.target_stock, updated2.target_stock]
-    assert Enum.member?(targets, 102)
+    assert Enum.member?(targets, 105)
   end
 
   test "balance_arbitrage skips goods with active shocks" do
